@@ -6,5 +6,5 @@
     "name": "Benchling, Inc.",
     "url": "https://www.benchling.com"
   },
-  "mcpServers": "./benchling.mcpb"
+  "mcpServers": "https://storage.googleapis.com/anthropic-serve-us-east4-0/life-sciences/benchling.mcpb"
 }

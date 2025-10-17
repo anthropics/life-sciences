@@ -6,12 +6,12 @@ This marketplace provides MCP (Model Context Protocol) servers for life sciences
 
 ```bash
 claude marketplace add https://github.com/anthropics/life-sciences.git
-claude plugin install life-sciences pubmed
-claude plugin install life-sciences biorender
-claude plugin install life-sciences synapse
-claude plugin install life-sciences wiley-scholar-gateway
-claude plugin install life-sciences benchling-mcp
-claude plugin install life-sciences 10x-genomics
+claude plugin install pubmed@life-sciences
+claude plugin install biorender@life-sciences
+claude plugin install synapse@life-sciences
+claude plugin install wiley-scholar-gateway@life-sciences
+claude plugin install benchling-mcp@life-sciences
+claude plugin install 10x-genomics@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -88,14 +88,14 @@ claude marketplace add https://github.com/anthropics/life-sciences.git
 
 ```bash
 # Remote servers (no configuration needed for PubMed)
-claude plugin install life-sciences pubmed
-claude plugin install life-sciences biorender
-claude plugin install life-sciences synapse
-claude plugin install life-sciences wiley-scholar-gateway
+claude plugin install pubmed@life-sciences
+claude plugin install biorender@life-sciences
+claude plugin install synapse@life-sciences
+claude plugin install wiley-scholar-gateway@life-sciences
 
 # Local servers (require configuration)
-claude plugin install life-sciences benchling-mcp
-claude plugin install life-sciences 10x-genomics
+claude plugin install benchling-mcp@life-sciences
+claude plugin install 10x-genomics@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

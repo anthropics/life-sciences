@@ -2,63 +2,7 @@
 
 This marketplace provides MCP (Model Context Protocol) servers for life sciences tools. Install these plugins to access specialized research and analysis tools directly within Claude Code.
 
-## Available Servers
-
-### Remote MCP Servers
-
-#### PubMed
-**Plugin**: `pubmed@life-sciences`
-
-Search and access biomedical literature and research articles from PubMed.
-
-**Requirements**: None - accessible to all users
-
-#### BioRender
-**Plugin**: `biorender@life-sciences`
-
-Create and access scientific illustrations and diagrams.
-
-**Requirements**: Free BioRender account (https://www.biorender.com)
-
-#### Synapse.org
-**Plugin**: `synapse@life-sciences`
-
-Collaborative research data management platform by Sage Bionetworks.
-
-**Requirements**: Free Synapse account (https://www.synapse.org)
-
-#### Scholar Gateway (Wiley)
-**Plugin**: `wiley-scholar-gateway@life-sciences`
-
-Access academic research and publications from Wiley's Scholar Gateway.
-
-**Requirements**: Free Scholar Gateway account
-
-### Local MCP Servers (MCPB)
-
-#### Benchling
-**Plugin**: `benchling-mcp@life-sciences`
-
-Access Benchling notebooks, entries, schemas, and more.
-
-**Requirements**:
-- Benchling account with Benchling AI, API access, and "Ask" functionality enabled
-- API key (generate from Benchling Settings)
-- Benchling tenant URL
-
-#### 10x Genomics Cloud
-**Plugin**: `10x-genomics@life-sciences`
-
-Access 10x Genomics Cloud analysis data and workflows.
-
-**Requirements**:
-- 10x Genomics Cloud account (https://www.10xgenomics.com/products/cloud-analysis)
-- Access token (generate from: https://cloud.10xgenomics.com/account/security)
-- Note: Only useful if you have analysis data in your account
-
-## Installation
-
-### Quick Start - Install All Servers
+## Quick Start
 
 ```bash
 claude marketplace add https://github.com/anthropics/life-sciences.git
@@ -70,14 +14,78 @@ claude plugin install life-sciences benchling-mcp
 claude plugin install life-sciences 10x-genomics
 ```
 
-### Individual Installation
+For servers requiring authentication (all except PubMed), configure credentials after installation:
+1. Type `/plugin` in Claude Code
+2. Select "Manage plugins"
+3. Find your installed server
+4. Select "Configure"
+5. Enter required credentials
+6. Restart Claude Code
 
-1. **Add the marketplace** (one time):
+## Available Servers
+
+### Remote MCP Servers
+
+#### PubMed
+**Plugin ID**: `pubmed@life-sciences`
+
+Search and access biomedical literature and research articles from PubMed.
+
+**Requirements**: None - accessible to all users
+
+#### BioRender
+**Plugin ID**: `biorender@life-sciences`
+
+Create and access scientific illustrations and diagrams.
+
+**Requirements**: Free BioRender account (https://www.biorender.com)
+
+#### Synapse.org
+**Plugin ID**: `synapse@life-sciences`
+
+Collaborative research data management platform by Sage Bionetworks.
+
+**Requirements**: Free Synapse account (https://www.synapse.org)
+
+#### Scholar Gateway (Wiley)
+**Plugin ID**: `wiley-scholar-gateway@life-sciences`
+
+Access academic research and publications from Wiley's Scholar Gateway.
+
+**Requirements**: Free Scholar Gateway account
+
+### Local MCP Servers (MCPB)
+
+#### Benchling
+**Plugin ID**: `benchling-mcp@life-sciences`
+
+Access Benchling notebooks, entries, schemas, and more.
+
+**Requirements**:
+- Benchling account with Benchling AI, API access, and "Ask" functionality enabled
+- API key (generate from Benchling Settings)
+- Benchling tenant URL
+
+#### 10x Genomics Cloud
+**Plugin ID**: `10x-genomics@life-sciences`
+
+Access 10x Genomics Cloud analysis data and workflows.
+
+**Requirements**:
+- 10x Genomics Cloud account (https://www.10xgenomics.com/products/cloud-analysis)
+- Access token (generate from: https://cloud.10xgenomics.com/account/security)
+- Note: Only useful if you have analysis data in your account
+
+## Detailed Installation
+
+### 1. Add the marketplace (one time)
+
 ```bash
 claude marketplace add https://github.com/anthropics/life-sciences.git
 ```
 
-2. **Install specific servers**:
+### 2. Install specific servers
+
 ```bash
 # Remote servers (no configuration needed for PubMed)
 claude plugin install life-sciences pubmed
@@ -90,9 +98,9 @@ claude plugin install life-sciences benchling-mcp
 claude plugin install life-sciences 10x-genomics
 ```
 
-3. **Configure credentials** (for servers requiring authentication):
+### 3. Configure credentials (if needed)
 
-After installation, configure your credentials via the `/plugin` menu:
+For servers requiring authentication, use the `/plugin` menu:
 1. Type `/plugin` in Claude Code
 2. Select "Manage plugins"
 3. Find your installed server
@@ -101,11 +109,11 @@ After installation, configure your credentials via the `/plugin` menu:
 
 Or authenticate through the server's web interface when prompted.
 
-4. **Restart Claude Code** to activate the MCP servers
+### 4. Restart Claude Code
 
-## Server Details
+Restart to activate the MCP servers.
 
-### Authentication Requirements
+## Authentication Requirements
 
 - **No authentication**: PubMed
 - **Free account required**: BioRender, Synapse, Wiley Scholar Gateway

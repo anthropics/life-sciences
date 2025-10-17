@@ -1,0 +1,15 @@
+{
+  "name": "synapse",
+  "version": "1.0.0",
+  "description": "Synapse.org MCP server by Sage Bionetworks for collaborative research data management",
+  "author": {
+    "name": "Sage Bionetworks",
+    "url": "https://sagebionetworks.org"
+  },
+  "mcpServers": {
+    "Synapse.org": {
+      "type": "http",
+      "url": "https://mcp.synapse.org/mcp"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "biorender",
+  "version": "1.0.0",
+  "description": "BioRender MCP server for creating and accessing scientific illustrations",
+  "author": {
+    "name": "BioRender",
+    "url": "https://www.biorender.com"
+  },
+  "mcpServers": {
+    "BioRender": {
+      "type": "http",
+      "url": "https://mcp.services.biorender.com/mcp"
+    }
+  }
+}

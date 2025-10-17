@@ -1,0 +1,15 @@
+{
+  "name": "pubmed",
+  "version": "1.0.0",
+  "description": "PubMed MCP server for searching biomedical literature and research articles",
+  "author": {
+    "name": "Anthropic",
+    "url": "https://www.anthropic.com"
+  },
+  "mcpServers": {
+    "PubMed": {
+      "type": "http",
+      "url": "https://pubmed.mcp.claude.com/mcp"
+    }
+  }
+}

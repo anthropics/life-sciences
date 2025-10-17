@@ -1,0 +1,10 @@
+{
+  "name": "10x-genomics",
+  "version": "1.0.0",
+  "description": "10x Genomics Cloud MCP server for accessing analysis data and workflows",
+  "author": {
+    "name": "10x Genomics, Inc.",
+    "url": "https://www.10xgenomics.com"
+  },
+  "mcpServers": "./txg-node.mcpb"
+}

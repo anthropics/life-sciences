@@ -1,0 +1,15 @@
+{
+  "name": "wiley-scholar-gateway",
+  "version": "1.0.0",
+  "description": "Scholar Gateway MCP server by Wiley for accessing academic research and publications",
+  "author": {
+    "name": "John Wiley & Sons, Inc.",
+    "url": "https://www.wiley.com"
+  },
+  "mcpServers": {
+    "Scholar Gateway": {
+      "type": "http",
+      "url": "https://connector.scholargateway.ai/mcp"
+    }
+  }
+}

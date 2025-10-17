@@ -1,0 +1,10 @@
+{
+  "name": "benchling-mcp",
+  "version": "1.0.0",
+  "description": "Benchling MCP server for accessing Benchling notebooks, entries, schemas, and more",
+  "author": {
+    "name": "Benchling, Inc.",
+    "url": "https://www.benchling.com"
+  },
+  "mcpServers": "./benchling.mcpb"
+}

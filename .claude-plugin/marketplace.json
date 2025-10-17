@@ -1,0 +1,55 @@
+{
+  "name": "life-sciences",
+  "owner": {
+    "name": "Anthropic",
+    "email": "support@anthropic.com"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "MCP servers for life sciences research tools including Benchling, 10x Genomics, PubMed, BioRender, Synapse, and Wiley Scholar Gateway"
+  },
+  "plugins": [
+    {
+      "name": "benchling-mcp",
+      "source": "./benchling",
+      "description": "Benchling MCP server for accessing notebooks, entries, schemas, and more",
+      "category": "life-sciences",
+      "tags": ["biotech", "research", "notebooks"]
+    },
+    {
+      "name": "10x-genomics",
+      "source": "./10x-genomics",
+      "description": "10x Genomics Cloud MCP server for accessing analysis data and workflows",
+      "category": "life-sciences",
+      "tags": ["genomics", "bioinformatics", "analysis"]
+    },
+    {
+      "name": "pubmed",
+      "source": "./pubmed",
+      "description": "PubMed MCP server for searching biomedical literature and research articles",
+      "category": "life-sciences",
+      "tags": ["research", "literature", "biomedical"]
+    },
+    {
+      "name": "biorender",
+      "source": "./biorender",
+      "description": "BioRender MCP server for creating and accessing scientific illustrations",
+      "category": "life-sciences",
+      "tags": ["visualization", "diagrams", "illustrations"]
+    },
+    {
+      "name": "synapse",
+      "source": "./synapse",
+      "description": "Synapse.org MCP server by Sage Bionetworks for collaborative research data management",
+      "category": "life-sciences",
+      "tags": ["research", "data-management", "collaboration"]
+    },
+    {
+      "name": "wiley-scholar-gateway",
+      "source": "./wiley-scholar-gateway",
+      "description": "Scholar Gateway MCP server by Wiley for accessing academic research and publications",
+      "category": "life-sciences",
+      "tags": ["research", "academic", "publications"]
+    }
+  ]
+}

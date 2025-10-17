@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "PubMed MCP server for searching biomedical literature and research articles",
   "author": {
-    "name": "Anthropic",
-    "url": "https://www.anthropic.com"
+    "name": "U.S. National Library of Medicine",
+    "url": "https://www.nlm.nih.gov"
   },
   "mcpServers": {
     "PubMed": {

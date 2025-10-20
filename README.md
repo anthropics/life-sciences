@@ -1,17 +1,27 @@
-# Life Sciences MCP Servers for Claude Code
+# Life Sciences Marketplace for Claude Code
 
-This marketplace provides MCP (Model Context Protocol) servers for life sciences tools. Install these plugins to access specialized research and analysis tools directly within Claude Code.
+This marketplace provides MCP (Model Context Protocol) servers and skills for life sciences tools. Install these plugins to access specialized research and analysis tools directly within Claude Code.
+
+**What's included:**
+- **MCP Servers**: Connect to external services like PubMed, BioRender, Benchling, and more
+- **Skills**: Domain-specific workflows and analysis capabilities that extend Claude's expertise
 
 ## Quick Start
 
 ```bash
+# Add the marketplace
 claude marketplace add https://github.com/anthropics/life-sciences.git
+
+# Install MCP servers
 claude plugin install pubmed@life-sciences
 claude plugin install biorender@life-sciences
 claude plugin install synapse@life-sciences
 claude plugin install wiley-scholar-gateway@life-sciences
 claude plugin install benchling-mcp@life-sciences
 claude plugin install 10x-genomics@life-sciences
+
+# Install skills
+claude plugin install single-cell-rna-qc@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -22,7 +32,7 @@ For servers requiring authentication (all except PubMed), configure credentials 
 5. Enter required credentials
 6. Restart Claude Code
 
-## Available Servers
+## Available Plugins
 
 ### Remote MCP Servers
 
@@ -76,6 +86,22 @@ Access 10x Genomics Cloud analysis data and workflows.
 - Access token (generate from: https://cloud.10xgenomics.com/account/security)
 - Note: Only useful if you have analysis data in your account
 
+### Skills
+
+#### Single-Cell RNA-seq Quality Control
+**Plugin ID**: `single-cell-rna-qc@life-sciences`
+
+Automated quality control workflow for single-cell RNA-seq data following scVerse best practices. Performs MAD-based filtering with comprehensive visualizations.
+
+**Requirements**:
+- Python packages: anndata, scanpy, scipy, matplotlib, seaborn, numpy
+- Input data: `.h5ad` (AnnData) or `.h5` (10X Genomics) files
+
+**Installation**:
+```bash
+claude plugin install single-cell-rna-qc@life-sciences
+```
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -84,18 +110,21 @@ Access 10x Genomics Cloud analysis data and workflows.
 claude marketplace add https://github.com/anthropics/life-sciences.git
 ```
 
-### 2. Install specific servers
+### 2. Install specific plugins
 
 ```bash
-# Remote servers (no configuration needed for PubMed)
+# Remote MCP servers (no configuration needed for PubMed)
 claude plugin install pubmed@life-sciences
 claude plugin install biorender@life-sciences
 claude plugin install synapse@life-sciences
 claude plugin install wiley-scholar-gateway@life-sciences
 
-# Local servers (require configuration)
+# Local MCP servers (require configuration)
 claude plugin install benchling-mcp@life-sciences
 claude plugin install 10x-genomics@life-sciences
+
+# Skills (no configuration needed)
+claude plugin install single-cell-rna-qc@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

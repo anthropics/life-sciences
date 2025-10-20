@@ -50,6 +50,17 @@
       "description": "Scholar Gateway MCP server by Wiley for accessing academic research and publications",
       "category": "life-sciences",
       "tags": ["research", "academic", "publications"]
+    },
+    {
+      "name": "single-cell-rna-qc",
+      "source": "./",
+      "description": "Single-cell RNA-seq quality control using scVerse best practices with MAD-based filtering",
+      "category": "life-sciences",
+      "tags": ["bioinformatics", "genomics", "qc", "single-cell"],
+      "strict": false,
+      "skills": [
+        "./single-cell-rna-qc"
+      ]
     }
   ]
 }

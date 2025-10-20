@@ -3,7 +3,7 @@
 Core utility functions for single-cell RNA-seq quality control.
 
 This module provides building blocks for metrics calculation and filtering
-while following scVerse best practices from:
+while following scverse best practices from:
 https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
 """
 

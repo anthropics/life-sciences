@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Quality Control Analysis for Single-Cell RNA-seq Data
-Following scVerse best practices from:
+Following scverse best practices from:
 https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
 
 This is a convenience script that runs a complete QC workflow using the

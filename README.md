@@ -10,18 +10,18 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 
 ```bash
 # Add the marketplace
-claude marketplace add https://github.com/anthropics/life-sciences.git
+/plugin marketplace add https://github.com/anthropics/life-sciences.git
 
 # Install MCP servers
-claude plugin install pubmed@life-sciences
-claude plugin install biorender@life-sciences
-claude plugin install synapse@life-sciences
-claude plugin install wiley-scholar-gateway@life-sciences
-claude plugin install benchling-mcp@life-sciences
-claude plugin install 10x-genomics@life-sciences
+/plugin install pubmed@life-sciences
+/plugin install biorender@life-sciences
+/plugin install synapse@life-sciences
+/plugin install wiley-scholar-gateway@life-sciences
+/plugin install benchling-mcp@life-sciences
+/plugin install 10x-genomics@life-sciences
 
 # Install skills
-claude plugin install single-cell-rna-qc@life-sciences
+/plugin install single-cell-rna-qc@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -99,7 +99,7 @@ Automated quality control workflow for single-cell RNA-seq data following scvers
 
 **Installation**:
 ```bash
-claude plugin install single-cell-rna-qc@life-sciences
+/plugin install single-cell-rna-qc@life-sciences
 ```
 
 ## Detailed Installation
@@ -107,24 +107,24 @@ claude plugin install single-cell-rna-qc@life-sciences
 ### 1. Add the marketplace (one time)
 
 ```bash
-claude marketplace add https://github.com/anthropics/life-sciences.git
+/plugin marketplace add https://github.com/anthropics/life-sciences.git
 ```
 
 ### 2. Install specific plugins
 
 ```bash
 # Remote MCP servers (no configuration needed for PubMed)
-claude plugin install pubmed@life-sciences
-claude plugin install biorender@life-sciences
-claude plugin install synapse@life-sciences
-claude plugin install wiley-scholar-gateway@life-sciences
+/plugin install pubmed@life-sciences
+/plugin install biorender@life-sciences
+/plugin install synapse@life-sciences
+/plugin install wiley-scholar-gateway@life-sciences
 
 # Local MCP servers (require configuration)
-claude plugin install benchling-mcp@life-sciences
-claude plugin install 10x-genomics@life-sciences
+/plugin install benchling-mcp@life-sciences
+/plugin install 10x-genomics@life-sciences
 
 # Skills (no configuration needed)
-claude plugin install single-cell-rna-qc@life-sciences
+/plugin install single-cell-rna-qc@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

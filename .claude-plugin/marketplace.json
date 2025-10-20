@@ -54,9 +54,9 @@
     {
       "name": "single-cell-rna-qc",
       "source": "./",
-      "description": "Single-cell RNA-seq quality control using scVerse best practices with MAD-based filtering",
+      "description": "Quality control for single-cell RNA-seq data following scVerse best practices",
       "category": "life-sciences",
-      "tags": ["bioinformatics", "genomics", "qc", "single-cell"],
+      "tags": ["bioinformatics", "genomics", "single-cell", "quality-control", "qc"],
       "strict": false,
       "skills": [
         "./single-cell-rna-qc"

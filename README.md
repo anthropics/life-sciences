@@ -91,7 +91,7 @@ Access 10x Genomics Cloud analysis data and workflows.
 #### Single-Cell RNA-seq Quality Control
 **Plugin ID**: `single-cell-rna-qc@life-sciences`
 
-Automated quality control workflow for single-cell RNA-seq data following scVerse best practices. Performs MAD-based filtering with comprehensive visualizations.
+Automated quality control workflow for single-cell RNA-seq data following scverse best practices. Performs MAD-based filtering with comprehensive visualizations.
 
 **Requirements**:
 - Python packages: anndata, scanpy, scipy, matplotlib, seaborn, numpy

@@ -6,5 +6,5 @@
     "name": "10x Genomics, Inc.",
     "url": "https://www.10xgenomics.com"
   },
-  "mcpServers": "https://s3-frontend.infra.ant.dev/anthropic-serve/life-sciences/txg-node.mcpb"
+  "mcpServers": "https://github.com/10XGenomics/txg-mcp/releases/latest/download/txg-node.mcpb"
 }

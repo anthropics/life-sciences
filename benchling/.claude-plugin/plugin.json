@@ -5,5 +5,6 @@
   "author": {
     "name": "Benchling, Inc.",
     "url": "https://www.benchling.com"
-  }
+  },
+  "mcpServers": "https://benchling-mcp.s3.us-east-1.amazonaws.com/benchling-local-mcp.mcpb"
 }

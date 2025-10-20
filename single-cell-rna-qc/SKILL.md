@@ -1,11 +1,11 @@
 ---
 name: single-cell-rna-qc
-description: Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scVerse best practices with MAD-based filtering and comprehensive visualizations. Use when users request QC analysis, filtering low-quality cells, assessing data quality, or following scVerse/Scanpy best practices for single-cell analysis.
+description: Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based filtering and comprehensive visualizations. Use when users request QC analysis, filtering low-quality cells, assessing data quality, or following scverse/scanpy best practices for single-cell analysis.
 ---
 
 # Single-Cell RNA-seq Quality Control
 
-Automated QC workflow for single-cell RNA-seq data following scVerse best practices.
+Automated QC workflow for single-cell RNA-seq data following scverse best practices.
 
 ## When to Use This Skill
 
@@ -13,7 +13,7 @@ Use when users:
 - Request quality control or QC on single-cell RNA-seq data
 - Want to filter low-quality cells or assess data quality
 - Need QC visualizations or metrics
-- Ask to follow scVerse/Scanpy best practices
+- Ask to follow scverse/scanpy best practices
 - Request MAD-based filtering or outlier detection
 
 **Supported input formats:**
@@ -24,7 +24,7 @@ Use when users:
 
 ## Approach 1: Complete QC Pipeline (Recommended for Standard Workflows)
 
-For standard QC following scVerse best practices, use the convenience script `scripts/qc_analysis.py`:
+For standard QC following scverse best practices, use the convenience script `scripts/qc_analysis.py`:
 
 ```bash
 python3 scripts/qc_analysis.py input.h5ad

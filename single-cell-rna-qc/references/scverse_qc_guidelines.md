@@ -1,6 +1,6 @@
-# scVerse Quality Control Guidelines
+# scverse Quality Control Guidelines
 
-This document provides detailed information about quality control best practices for single-cell RNA-seq data, following the scVerse ecosystem recommendations.
+This document provides detailed information about quality control best practices for single-cell RNA-seq data, following the scverse ecosystem recommendations.
 
 ## Quality Control Metrics
 
@@ -55,7 +55,7 @@ Outlier bounds = median ± n_MADs × MAD
 
 ### Recommended MAD Thresholds
 
-Following scVerse best practices (deliberately permissive):
+Following scverse best practices (deliberately permissive):
 
 **5 MADs for count depth (log-transformed)**
 - Very permissive to retain rare cell populations
@@ -169,7 +169,7 @@ Consider adjusting filtering thresholds when:
 - Effect: Identifies and removes multiplets (2+ cells in one droplet)
 
 **Cell cycle scoring**
-- Tool: Scanpy's score_genes_cell_cycle
+- Tool: scanpy's score_genes_cell_cycle
 - When: Cell cycle effects confound biological signal
 - Effect: Allows regressing out or accounting for cell cycle phase
 
@@ -180,7 +180,7 @@ Consider adjusting filtering thresholds when:
 
 ## References
 
-- scVerse Best Practices: https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
+- scverse Best Practices: https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html
 - Luecken & Theis (2019): Current best practices in single-cell RNA-seq analysis
 - Osorio & Cai (2021): Systematic determination of the mitochondrial proportion in human and mouse genomes
 - Germain et al. (2020): Doublet identification in single-cell sequencing data using scDblFinder

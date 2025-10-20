@@ -93,15 +93,6 @@ Access 10x Genomics Cloud analysis data and workflows.
 
 Automated quality control workflow for single-cell RNA-seq data following scverse best practices. Performs MAD-based filtering with comprehensive visualizations.
 
-**Requirements**:
-- Python packages: anndata, scanpy, scipy, matplotlib, seaborn, numpy
-- Input data: `.h5ad` (AnnData) or `.h5` (10X Genomics) files
-
-**Installation**:
-```bash
-/plugin install single-cell-rna-qc@life-sciences
-```
-
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)

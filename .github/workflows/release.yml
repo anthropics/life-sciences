@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create skill zip file
+        run: |
+          cd single-cell-rna-qc
+          zip -r ../single-cell-rna-qc-${GITHUB_REF_NAME}.zip .
+          cd ..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: single-cell-rna-qc-*.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false

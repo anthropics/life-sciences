@@ -26,5 +26,5 @@ jobs:
         with:
           files: single-cell-rna-qc-*.zip
           generate_release_notes: true
-          draft: false
+          draft: true
           prerelease: false

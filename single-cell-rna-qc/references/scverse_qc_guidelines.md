@@ -169,7 +169,7 @@ Consider adjusting filtering thresholds when:
 - Effect: Identifies and removes multiplets (2+ cells in one droplet)
 
 **Cell cycle scoring**
-- Tool: Scanpy's score_genes_cell_cycle
+- Tool: scanpy's score_genes_cell_cycle
 - When: Cell cycle effects confound biological signal
 - Effect: Allows regressing out or accounting for cell cycle phase
 

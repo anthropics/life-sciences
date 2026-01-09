@@ -95,6 +95,8 @@ Triple Modality (RNA + Protein + ATAC):
 | Map to CITE-Seq atlas | TotalVI Reference | Transferred labels, imputed proteins |
 | Multiome (paired/unpaired) | MultiVI | Unified embedding, imputed modalities |
 
+**For multi-stage pipelines and method chaining**: See `references/navigators/multimodal_pipelines.md`
+
 ---
 
 ## Spatial Transcriptomics Analysis
@@ -132,6 +134,8 @@ SPOT-BASED (Visium, Slide-seq):
 | Visium proportions + states | DestVI | Proportions + gamma (cell states) |
 | Visium cell counts | Cell2location | Absolute abundances |
 | Visium gene imputation | Tangram | Imputed genes |
+
+**For multi-stage pipelines and method chaining**: See `references/navigators/spatial_pipelines.md`
 
 **Comparing Deconvolution Methods:**
 

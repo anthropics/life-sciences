@@ -1,6 +1,6 @@
 ---
 name: scvi
-description: Deep learning for single-cell analysis using scvi-tools. This skill should be used when users need (1) batch integration/correction with scVI/scANVI, (2) label transfer with scANVI or seed labeling, (3) reference mapping with scArches, (4) multi-sample analysis with MrVI, (5) CITE-seq/multimodal analysis with TotalVI/MultiVI, (6) ATAC-seq analysis with PeakVI, (7) spatial transcriptomics deconvolution with DestVI/Stereoscope/Cell2location/Tangram, (8) spatial denoising with ResolVI, (9) microenvironment modeling with scVIVA, or (10) any deep learning-based single-cell method. Triggers include mentions of scVI, scANVI, TotalVI, PeakVI, MultiVI, DestVI, MrVI, Stereoscope, Cell2location, Tangram, ResolVI, scVIVA, scArches, variational autoencoder, VAE, batch correction, data integration, multi-modal, CITE-seq, multiome, spatial deconvolution, reference mapping, label transfer, latent space.
+description: Deep learning for single-cell analysis using scvi-tools. This skill should be used when users need (1) batch integration/correction with scVI/scANVI, (2) cross-technology integration with sysVI, (3) label transfer with scANVI or seed labeling, (4) reference mapping with scArches, (5) multi-sample analysis with MrVI, (6) CITE-seq/multimodal analysis with TotalVI/MultiVI, (7) ATAC-seq analysis with PeakVI, (8) RNA velocity with veloVI, (9) spatial transcriptomics deconvolution with DestVI/Stereoscope/Cell2location/Tangram, (10) spatial denoising with ResolVI, (11) microenvironment modeling with scVIVA, or (12) any deep learning-based single-cell method. Triggers include mentions of scVI, scANVI, sysVI, veloVI, TotalVI, PeakVI, MultiVI, DestVI, MrVI, Stereoscope, Cell2location, Tangram, ResolVI, scVIVA, scArches, variational autoencoder, VAE, batch correction, data integration, cross-technology, RNA velocity, velocyto, scVelo, multi-modal, CITE-seq, multiome, spatial deconvolution, reference mapping, label transfer, latent space.
 ---
 
 # scvi-tools Deep Learning Skill
@@ -20,6 +20,7 @@ This skill provides guidance for deep learning-based single-cell analysis using 
 | Data Type | Model | Reference File |
 |-----------|-------|----------------|
 | scRNA-seq | **scVI/scANVI** | `references/workflows/scvi_integration.md` |
+| scRNA-seq cross-technology | **sysVI** | `references/workflows/sysvi_integration.md` |
 | scRNA-seq + labels | **scANVI** | `references/workflows/scanvi_label_transfer.md` |
 | scRNA-seq + marker signatures | **scANVI seed** | `references/workflows/scanvi_seed_labeling.md` |
 | Query to reference | **scArches** | `references/workflows/scarches_reference_mapping.md` |
@@ -29,6 +30,7 @@ This skill provides guidance for deep learning-based single-cell analysis using 
 | CITE-seq + RNA-only | **TotalVI** | `references/workflows/citeseq_rna_integration.md` |
 | Multiome (RNA+ATAC) | **MultiVI** | `references/workflows/multivi_multimodal.md` |
 | scATAC-seq | **PeakVI** | `references/workflows/peakvi_accessibility.md` |
+| RNA velocity | **veloVI** | `references/workflows/velovi_velocity.md` |
 | Spatial + scRNA ref | **DestVI** | `references/workflows/destvi_deconvolution.md` |
 | Spatial proportions | **Stereoscope** | `references/workflows/stereoscope_deconvolution.md` |
 | Spatial cell counts | **Cell2location** | `references/workflows/cell2location_mapping.md` |
@@ -40,9 +42,10 @@ This skill provides guidance for deep learning-based single-cell analysis using 
 
 ```
 Need to integrate scRNA-seq data?
+├── Cross-technology (10x vs Smart-seq2, cross-study)? → sysVI (sysvi_integration.md)
 ├── Have cell type labels? → scANVI (scanvi_label_transfer.md)
 ├── Have marker gene signatures? → scANVI seed labeling (scanvi_seed_labeling.md)
-└── No labels? → scVI (scvi_integration.md)
+└── No labels, same technology? → scVI (scvi_integration.md)
 
 Need reference mapping?
 ├── Map query to scVI/scANVI reference? → scArches (scarches_reference_mapping.md)
@@ -50,6 +53,9 @@ Need reference mapping?
 
 Have multi-sample data?
 └── Compare samples, differential abundance? → MrVI (mrvi_multisample.md)
+
+Need RNA velocity analysis?
+└── Trajectory inference from spliced/unspliced → veloVI (velovi_velocity.md)
 
 Have multi-modal data? → See Multimodal section below
 

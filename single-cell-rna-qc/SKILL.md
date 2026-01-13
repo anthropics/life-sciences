@@ -40,7 +40,7 @@ The script automatically detects the file format and loads it appropriately.
 - Quick exploratory analysis
 - User wants the "just works" solution
 
-**Requirements:** anndata, scanpy, scipy, matplotlib, seaborn, numpy
+**Requirements:** anndata, scanpy, scipy, matplotlib, seaborn, numpy, pandas
 
 **Parameters:**
 

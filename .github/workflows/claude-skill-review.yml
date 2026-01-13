@@ -6,7 +6,7 @@ on:
 
 jobs:
   skill-review:
-    uses: anthropics/healthcare/.github/workflows/claude-skill-review.yml@feature/reusable-skill-review
+    uses: anthropics/healthcare/.github/workflows/claude-skill-review.yml@main
     permissions:
       contents: read
       pull-requests: write

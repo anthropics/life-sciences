@@ -1,0 +1,71 @@
+{
+  "name": "medical-mcps",
+  "version": "0.1.17",
+  "description": "Comprehensive biological and medical research data integration server providing unified access to 13+ specialized databases including Reactome (pathways), KEGG (pathways/diseases), UniProt (proteins), ChEMBL (drug discovery), PubMed (literature), GWAS Catalog (genetic associations), ClinicalTrials.gov (clinical trials), OpenFDA (drug safety), Pathway Commons (pathway data), Gene Ontology (gene functions), OMIM (genetic disorders), NCI Thesaurus (cancer terminology), OpenTargets (disease-target associations), and CTG (gene-disease). Offers 100+ tools through both a unified endpoint (all databases via single connection) and individual API endpoints. Features RFC 9111 compliant HTTP caching with 30-day TTL for optimal performance.",
+  "author": {
+    "name": "Curiloo",
+    "url": "https://curiloo.com"
+  },
+  "mcpServers": {
+    "Medical MCPs (Unified)": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/unified/mcp"
+    },
+    "Reactome": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/reactome/mcp"
+    },
+    "KEGG": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/kegg/mcp"
+    },
+    "UniProt": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/uniprot/mcp"
+    },
+    "ChEMBL": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/chembl/mcp"
+    },
+    "PubMed": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/pubmed/mcp"
+    },
+    "GWAS Catalog": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/gwas/mcp"
+    },
+    "ClinicalTrials.gov": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/clinical_trials/mcp"
+    },
+    "OpenFDA": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/openfda/mcp"
+    },
+    "Pathway Commons": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/pathway_commons/mcp"
+    },
+    "Gene Ontology": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/gene_ontology/mcp"
+    },
+    "OMIM": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/omim/mcp"
+    },
+    "NCI Thesaurus": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/nci/mcp"
+    },
+    "OpenTargets": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/opentargets/mcp"
+    },
+    "CTG (CTD Gene)": {
+      "type": "http",
+      "url": "https://mcp.cloud.curiloo.com/tools/ctg/mcp"
+    }
+  }
+}

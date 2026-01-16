@@ -41,46 +41,46 @@ Code of Federal Regulations (CFR)
 - [21 CFR Part 56: Institutional Review Boards](https://www.ecfr.gov/cgi-bin/text-idx?SID=64724709940d94a34270c77fdb8d307f&mc=true&node=pt21.1.56&rgn=div5)
 
 
-- [21 CFR Part 58: Good Laboratory Practice for Nonclinical Laboratory Studies](http://www.ecfr.gov/cgi-bin/text-idx?SID=90f8b344173d4c43e0c515d0a0cbc4de&mc=true&node=pt21.1.58&rgn=div5)
+- [21 CFR Part 58: Good Laboratory Practice for Nonclinical Laboratory Studies](https://www.ecfr.gov/cgi-bin/text-idx?SID=90f8b344173d4c43e0c515d0a0cbc4de&mc=true&node=pt21.1.58&rgn=div5)
 
-- [21 CFR Part 210: Current Good Manufacturing Practice In Manufacturing, Processing, Packing, Or Holding Of Drugs; General](http://www.ecfr.gov/cgi-bin/text-idx?SID=90f8b344173d4c43e0c515d0a0cbc4de&mc=true&node=pt21.4.210&rgn=div5)
+- [21 CFR Part 210: Current Good Manufacturing Practice In Manufacturing, Processing, Packing, Or Holding Of Drugs; General](https://www.ecfr.gov/cgi-bin/text-idx?SID=90f8b344173d4c43e0c515d0a0cbc4de&mc=true&node=pt21.4.210&rgn=div5)
 
-- [21 CFR Part 211: Current Good Manufacturing Practice For Finished Pharmaceuticals](http://www.ecfr.gov/cgi-bin/text-idx?SID=90f8b344173d4c43e0c515d0a0cbc4de&mc=true&node=pt21.4.211&rgn=div5)
+- [21 CFR Part 211: Current Good Manufacturing Practice For Finished Pharmaceuticals](https://www.ecfr.gov/cgi-bin/text-idx?SID=90f8b344173d4c43e0c515d0a0cbc4de&mc=true&node=pt21.4.211&rgn=div5)
 - [21 CFR Part 312: Investigational New Drug Application](https://www.ecfr.gov/cgi-bin/text-idx?SID=27a0c0825d11663283856731fb14c8d2&mc=true&node=pt21.5.312&rgn=div5)
 
 - [21 CFR Part 812: Investigational Device Exemptions](https://www.ecfr.gov/cgi-bin/text-idx?SID=0f8fa3b740966b3d21d5501233e2b493&mc=true&node=pt21.8.812&rgn=div5)
 
 - [42 CFR Part 11: Clinical Trial Registration and Results Information Submission](https://www.gpo.gov/fdsys/pkg/CFR-2016-title42-vol1/pdf/CFR-2016-title42-vol1-part11.pdf)
 
-- [45 CFR Part 46: Protection of Human Subjects Research](http://www.hhs.gov/ohrp/humansubjects/guidance/45cfr46.html)
+- [45 CFR Part 46: Protection of Human Subjects Research](https://www.hhs.gov/ohrp/humansubjects/guidance/45cfr46.html)
 
 Food and Drug Administration (FDA)
 
-- [Compliance Actions and Activities](http://www.fda.gov/ICECI/EnforcementActions/default.htm)
+- [Compliance Actions and Activities](https://www.fda.gov/ICECI/EnforcementActions/default.htm)
 
-- [FDA Regulations Relating to Good Clinical Practice and Clinical Trials](http://www.fda.gov/ScienceResearch/SpecialTopics/RunningClinicalTrials/ucm155713.htm)
+- [FDA Regulations Relating to Good Clinical Practice and Clinical Trials](https://www.fda.gov/ScienceResearch/SpecialTopics/RunningClinicalTrials/ucm155713.htm)
 
-- [Guidance for Clinical Investigators, Sponsors, and IRBs Adverse Event Reporting to IRBs -- Improving Human Subject Protection](http://www.fda.gov/downloads/RegulatoryInformation/Guidances/UCM126572.pdf)
+- [Guidance for Clinical Investigators, Sponsors, and IRBs Adverse Event Reporting to IRBs -- Improving Human Subject Protection](https://www.fda.gov/downloads/RegulatoryInformation/Guidances/UCM126572.pdf)
 
-- [Guidance for Clinical Trial Sponsors: Establishment and Operation of Clinical Trial Data Monitoring Committees](http://www.fda.gov/downloads/RegulatoryInformation/Guidances/ucm127073.pdf)
+- [Guidance for Clinical Trial Sponsors: Establishment and Operation of Clinical Trial Data Monitoring Committees](https://www.fda.gov/downloads/RegulatoryInformation/Guidances/ucm127073.pdf)
 
 - [Guidance for Industry: E6 Good Clinical Practice: Consolidated Guidance](https://www.fda.gov/downloads/Drugs/.../Guidances/ucm073122.pdf)
 
-- [Guidance for Industry: Electronic Source Data in Clinical Investigations](http://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm328691.pdf)
+- [Guidance for Industry: Electronic Source Data in Clinical Investigations](https://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm328691.pdf)
 
 - [Guidance for Industry: Multiple Endpoints in Clinical Trials](https://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM536750.pdf)
 
-- [Guidance for Industry: Oversight of Clinical Investigations -- A Risk-Based Approach to Monitoring](http://www.fda.gov/downloads/Drugs/Guidances/UCM269919.pdf)
+- [Guidance for Industry: Oversight of Clinical Investigations -- A Risk-Based Approach to Monitoring](https://www.fda.gov/downloads/Drugs/Guidances/UCM269919.pdf)
 
-- [Guidance for Industry: Providing Regulatory Submissions in Electronic Format - Human Pharmaceutical Product Applications and Related Submissions Using the eCTD Specifications](http://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM333969.pdf)
+- [Guidance for Industry: Providing Regulatory Submissions in Electronic Format - Human Pharmaceutical Product Applications and Related Submissions Using the eCTD Specifications](https://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM333969.pdf)
 
-- [Guidance for Industry: Providing Regulatory Submissions in Electronic Format --- Standardized Study Data](http://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM292334.pdf)
+- [Guidance for Industry: Providing Regulatory Submissions in Electronic Format --- Standardized Study Data](https://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM292334.pdf)
 
-- [Guidance for Industry: Safety Assessment for IND Safety Reporting](http://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm477584.pdf)
+- [Guidance for Industry: Safety Assessment for IND Safety Reporting](https://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm477584.pdf)
 
 Department of Health and Human Services (HHS)
 
-- [The HIPAA Privacy Rule](http://www.hhs.gov/hipaa/for-professionals/privacy/)
+- [The HIPAA Privacy Rule](https://www.hhs.gov/hipaa/for-professionals/privacy/)
 
 
 [HIPAA Privacy Rule: Information for Researchers](https://www.hhs.gov/hipaa/for-professionals/special-topics/research/index.html)
@@ -88,12 +88,12 @@ Department of Health and Human Services (HHS)
 International Conference on Harmonisation of Technical Requirements for Registration of Pharmaceuticals for Human Use (ICH)
 
 
-- [Guidance for Industry, E6 (R2) Good Clinical Practice: Consolidated Guidance](http://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM464506.pdf)
-- [Guidance for Industry, M3(R2) Nonclinical Safety Studies for the Conduct of Human Clinical Trials and Marketing Authorization for Pharmaceuticals](http://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm073246.pdf)
+- [Guidance for Industry, E6 (R2) Good Clinical Practice: Consolidated Guidance](https://www.fda.gov/downloads/Drugs/GuidanceComplianceRegulatoryInformation/Guidances/UCM464506.pdf)
+- [Guidance for Industry, M3(R2) Nonclinical Safety Studies for the Conduct of Human Clinical Trials and Marketing Authorization for Pharmaceuticals](https://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm073246.pdf)
 
-- [Guideline for Industry, E3 Structure and Content of Clinical Reports](http://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm073113.pdf)
+- [Guideline for Industry, E3 Structure and Content of Clinical Reports](https://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm073113.pdf)
 
-- [Guidance for Industry, E9 Statistical Principles for Clinical Trials](http://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm073137.pdf)
+- [Guidance for Industry, E9 Statistical Principles for Clinical Trials](https://www.fda.gov/downloads/drugs/guidancecomplianceregulatoryinformation/guidances/ucm073137.pdf)
 
 - [Final Concept Paper E9(R1): Addendum to Statistical Principles for Clinical Trials on Choosing Appropriate Estimands and Defining Sensitivity Analyses in Clinical Trials](http://www.ich.org/fileadmin/Public_Web_Site/ICH_Products/Guidelines/Efficacy/E9/E9__R1__Final_Concept_Paper_October_23_2014.pdf)
 
@@ -131,19 +131,19 @@ National Institutes of Health (NIH)
 
 Office for Human Research Protections (OHRP)
 
-- [Human Subject Regulations Decision Charts](http://www.hhs.gov/ohrp/policy/checklists/decisioncharts.html)
+- [Human Subject Regulations Decision Charts](https://www.hhs.gov/ohrp/policy/checklists/decisioncharts.html)
 
-- [Informed Consent Checklist](http://www.hhs.gov/ohrp/policy/consentckls.html)
+- [Informed Consent Checklist](https://www.hhs.gov/ohrp/policy/consentckls.html)
 
-- [Informed Consent Tips](http://www.hhs.gov/ohrp/policy/ictips.html)
+- [Informed Consent Tips](https://www.hhs.gov/ohrp/policy/ictips.html)
 
-- [IRBs and Assurances](http://www.hhs.gov/ohrp/assurances/)
+- [IRBs and Assurances](https://www.hhs.gov/ohrp/assurances/)
 
-- [Regulations & Policy Index](http://www.hhs.gov/ohrp/regulations-and-policy/index.html)
+- [Regulations & Policy Index](https://www.hhs.gov/ohrp/regulations-and-policy/index.html)
 
-- [Unanticipated Problems Involving Risks and Adverse Events Guidance](http://www.hhs.gov/ohrp/regulations-and-policy/guidance/reviewing-unanticipated-problems/index.html)
+- [Unanticipated Problems Involving Risks and Adverse Events Guidance](https://www.hhs.gov/ohrp/regulations-and-policy/guidance/reviewing-unanticipated-problems/index.html)
 
-- [Vulnerable Populations](http://www.hhs.gov/ohrp/regulations-and-policy/guidance/vulnerable-populations/)
+- [Vulnerable Populations](https://www.hhs.gov/ohrp/regulations-and-policy/guidance/vulnerable-populations/)
 
 Other
 

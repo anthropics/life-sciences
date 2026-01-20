@@ -3,8 +3,8 @@
   "version": "0.1.17",
   "description": "Comprehensive biological and medical research data integration server providing unified access to 13+ specialized databases including Reactome (pathways), KEGG (pathways/diseases), UniProt (proteins), ChEMBL (drug discovery), PubMed (literature), GWAS Catalog (genetic associations), ClinicalTrials.gov (clinical trials), OpenFDA (drug safety), Pathway Commons (pathway data), Gene Ontology (gene functions), OMIM (genetic disorders), NCI Thesaurus (cancer terminology), OpenTargets (disease-target associations), and CTG (gene-disease). Offers 100+ tools through both a unified endpoint (all databases via single connection) and individual API endpoints. Features RFC 9111 compliant HTTP caching with 30-day TTL for optimal performance.",
   "author": {
-    "name": "Curiloo",
-    "url": "https://curiloo.com"
+    "name": "Pascal Brokmeier",
+    "url": "https://github.com/pascalwhoop/medical-mcps"
   },
   "mcpServers": {
     "Medical MCPs (Unified)": {

@@ -18,6 +18,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install synapse@life-sciences
 /plugin install wiley-scholar-gateway@life-sciences
 /plugin install 10x-genomics@life-sciences
+/plugin install encode-toolkit@life-sciences
 
 # Install skills
 /plugin install single-cell-rna-qc@life-sciences
@@ -78,6 +79,19 @@ Access 10x Genomics Cloud analysis data and workflows.
 - Access token (generate from: https://cloud.10xgenomics.com/account/security)
 - Note: Only useful if you have analysis data in your account
 
+#### ENCODE Toolkit
+**Plugin ID**: `encode-toolkit@life-sciences`
+
+MCP server for the ENCODE Project (encodeproject.org) — the largest public catalog of functional genomic elements. Provides 20 tools to search experiments, download files with MD5 verification, track provenance, and cross-reference 14 databases.
+
+**Features:**
+- Search across 15 assay types (ChIP-seq, ATAC-seq, RNA-seq, WGBS, Hi-C, CUT&RUN, and more)
+- Download files with automatic MD5 verification
+- 48 expert skills including 7 Nextflow pipelines
+- Cross-references PubMed, GTEx, ClinVar, GWAS Catalog, gnomAD, Ensembl, UCSC, JASPAR, CellxGene
+
+**Requirements**: Python 3.10+ and Node.js 16+ (installed via npx)
+
 ### Skills
 
 #### Single-Cell RNA-seq Quality Control
@@ -132,6 +146,7 @@ Deep learning toolkit for single-cell omics analysis using scvi-tools. Includes 
 
 # Local MCP servers (require configuration)
 /plugin install 10x-genomics@life-sciences
+/plugin install encode-toolkit@life-sciences
 
 # Skills (no configuration needed)
 /plugin install single-cell-rna-qc@life-sciences

@@ -1,0 +1,16 @@
+{
+  "name": "encode-toolkit",
+  "version": "0.3.0",
+  "description": "ENCODE Project genomics research infrastructure. 20 MCP tools for searching experiments, downloading files with MD5 verification, and tracking data across the ENCODE consortium (encodeproject.org). Cross-references 14 databases including PubMed, GTEx, ClinVar, GWAS Catalog, gnomAD, Ensembl, UCSC, JASPAR, and CellxGene. Includes 48 expert skills covering 15 assay types and 7 Nextflow pipelines.",
+  "author": {
+    "name": "Dr. Alex M. Mawla, PhD",
+    "url": "https://github.com/ammawla/encode-toolkit"
+  },
+  "mcpServers": {
+    "ENCODE Toolkit": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "encode-toolkit@latest"]
+    }
+  }
+}

@@ -147,6 +147,13 @@
       "description": "Medidata's MCP Connector for Claude with Platform Help and Predictive Site Ranking for clinical trials",
       "category": "life-sciences",
       "tags": ["clinical-trials", "site-ranking", "trial-planning", "medidata"]
+    },
+    {
+      "name": "encode-toolkit",
+      "source": "./encode-toolkit",
+      "description": "ENCODE Project genomics research infrastructure with 20 MCP tools, 48 skills, and 14 database cross-references for searching experiments, downloading files, and running pipelines",
+      "category": "life-sciences",
+      "tags": ["genomics", "bioinformatics", "encode", "epigenomics", "chip-seq", "atac-seq", "rna-seq", "pipelines", "data-download", "provenance"]
     }
   ]
 }

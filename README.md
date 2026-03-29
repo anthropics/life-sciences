@@ -24,6 +24,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install instrument-data-to-allotrope@life-sciences
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
+/plugin install crispr-os@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -113,6 +114,13 @@ Run nf-core bioinformatics pipelines (rnaseq, sarek, atacseq) on local or public
 
 Deep learning toolkit for single-cell omics analysis using scvi-tools. Includes model selection guidance, training workflows, and integration pipelines for scVI, scANVI, totalVI, PeakVI, MultiVI, and more.
 
+#### CRISPR OS
+**Plugin ID**: `crispr-os@life-sciences`
+
+Evidence-first CRISPR experiment design skill for guide RNA design, off-target review, validation planning, and provenance-tracked experiment compilation across knockout, base editing, CRISPRa/i, and prime editing workflows.
+
+**Requirements**: For executable workflows, clone `Hordago-Labs/crispr-os` locally. This marketplace entry packages the skill guidance, references, and worked examples used to drive the upstream deterministic runtime.
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -138,6 +146,7 @@ Deep learning toolkit for single-cell omics analysis using scvi-tools. Includes 
 /plugin install instrument-data-to-allotrope@life-sciences
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
+/plugin install crispr-os@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

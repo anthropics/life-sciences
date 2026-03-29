@@ -124,6 +124,17 @@
       ]
     },
     {
+      "name": "crispr-os",
+      "source": "./",
+      "description": "Evidence-first CRISPR experiment design for guide selection, off-target review, validation planning, and provenance-tracked reporting",
+      "category": "life-sciences",
+      "tags": ["crispr", "gene-editing", "genomics", "experiment-design", "synthetic-biology"],
+      "strict": false,
+      "skills": [
+        "./crispr-os"
+      ]
+    },
+    {
       "name": "clinical-trial-protocol",
       "source": "./",
       "description": "Generate FDA/NIH-compliant clinical trial protocols for medical devices or drugs",

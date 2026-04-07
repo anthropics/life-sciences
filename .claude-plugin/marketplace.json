@@ -147,6 +147,17 @@
       "description": "Medidata's MCP Connector for Claude with Platform Help and Predictive Site Ranking for clinical trials",
       "category": "life-sciences",
       "tags": ["clinical-trials", "site-ranking", "trial-planning", "medidata"]
+    },
+    {
+      "name": "analyze-fasta",
+      "source": "./",
+      "description": "Analyze FASTA files (nucleotide or protein) with automatic type detection, bioinformatics metrics, and biological interpretation",
+      "category": "life-sciences",
+      "tags": ["bioinformatics", "genomics", "proteomics", "fasta", "sequence-analysis"],
+      "strict": false,
+      "skills": [
+        "./analyze-fasta"
+      ]
     }
   ]
 }

@@ -147,6 +147,13 @@
       "description": "Medidata's MCP Connector for Claude with Platform Help and Predictive Site Ranking for clinical trials",
       "category": "life-sciences",
       "tags": ["clinical-trials", "site-ranking", "trial-planning", "medidata"]
+    },
+    {
+      "name": "msds-chain",
+      "source": "./msds-chain",
+      "description": "Chemical safety intelligence — compatibility checks, hazard analysis, PPE, storage, waste disposal, mixing order, regulatory compliance, and signed audit reports",
+      "category": "life-sciences",
+      "tags": ["chemistry", "safety", "msds", "sds", "ghs", "compliance", "ehs", "lab-automation"]
     }
   ]
 }

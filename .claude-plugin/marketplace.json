@@ -158,6 +158,28 @@
       "description": "Medidata's MCP Connector for Claude with Platform Help and Predictive Site Ranking for clinical trials",
       "category": "life-sciences",
       "tags": ["clinical-trials", "site-ranking", "trial-planning", "medidata"]
+    },
+    {
+      "name": "medical-mcps",
+      "source": "./medical-mcps",
+      "description": "Unified access to 13+ biological and medical databases (Reactome, KEGG, UniProt, ChEMBL, PubMed, GWAS, ClinicalTrials.gov, OpenFDA, Pathway Commons, Gene Ontology, OMIM, NCI Thesaurus, OpenTargets, CTG) with 100+ tools, HTTP caching, and flexible endpoint options",
+      "category": "life-sciences",
+      "tags": [
+        "biology",
+        "medicine",
+        "research",
+        "pathways",
+        "proteins",
+        "genomics",
+        "drug-discovery",
+        "clinical-trials",
+        "literature",
+        "genetics",
+        "diseases",
+        "biomedical",
+        "pharmaceutical",
+        "cancer"
+      ]
     }
   ]
 }

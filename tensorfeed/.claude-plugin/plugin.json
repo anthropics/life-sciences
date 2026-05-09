@@ -1,0 +1,15 @@
+{
+  "name": "tensorfeed",
+  "version": "1.0.0",
+  "description": "FDA regulatory + safety data for life sciences agents. Query FDA FAERS adverse events, SPL drug labels, drug enforcement reports (recalls), food recalls, and MAUDE medical device events through openFDA. Also exposes adjacent agent tools: SEC EDGAR full-text search and submissions for life-sciences company filings, BLS/FRED macroeconomic indicators, MITRE CVE / CISA KEV / FIRST.org EPSS / OSV.dev for biotech IT security, and live AI news + model pricing across providers.",
+  "author": {
+    "name": "TensorFeed",
+    "url": "https://tensorfeed.ai"
+  },
+  "mcpServers": {
+    "TensorFeed": {
+      "type": "http",
+      "url": "https://tensorfeed.ai/api/mcp"
+    }
+  }
+}

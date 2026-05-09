@@ -179,6 +179,13 @@
       "description": "AdisInsight MCP server by Springer Nature for drug development pipeline, clinical trials, and deals intelligence",
       "category": "life-sciences",
       "tags": ["drug-development", "pipeline", "clinical-trials", "deals"]
+    },
+    {
+      "name": "tensorfeed",
+      "source": "./tensorfeed",
+      "description": "FDA regulatory + safety data: FAERS adverse events, SPL drug labels, drug enforcement reports (recalls), food recalls, MAUDE medical device events. Plus adjacent agent tools across SEC EDGAR, BLS/FRED macro indicators, MITRE CVE/CISA KEV/EPSS/OSV.dev for biotech IT, and live AI news + model pricing.",
+      "category": "life-sciences",
+      "tags": ["fda", "regulatory", "safety", "adverse-events", "recalls", "openfda"]
     }
   ]
 }

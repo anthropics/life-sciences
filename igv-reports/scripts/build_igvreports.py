@@ -46,6 +46,7 @@ import os
 import shutil
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -644,6 +645,18 @@ def main() -> None:
              "back to <out_dir>/logs/ when the sibling is unwritable.",
     )
     ap.add_argument(
+        "--jobs",
+        "-j",
+        type=int,
+        default=1,
+        help="Number of parallel per-sample builds in cohort (--samplesheet) "
+             "mode. Each worker invokes create_report in a subprocess, so the "
+             "win comes from running multiple slicers concurrently against "
+             "different BAMs. I/O-bound on the BAM-slice step, so threads "
+             "scale well to ~min(N_samples, N_cores). Default 1 (sequential, "
+             "preserves prior behavior). Has no effect in single-sample mode.",
+    )
+    ap.add_argument(
         "--verify",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -790,11 +803,19 @@ def main() -> None:
         )
     else:
         rows = parse_samplesheet(Path(args.samplesheet))
-        log.info(f"cohort: {len(rows)} samples from {args.samplesheet}")
+        n_jobs = max(1, args.jobs)
+        n_workers = min(n_jobs, len(rows)) if rows else 1
+        mode = "sequential" if n_workers == 1 else f"parallel ({n_workers} workers)"
+        log.info(f"cohort: {len(rows)} samples from {args.samplesheet} — {mode}")
         report_paths: dict[str, Path] = {}
-        for row in rows:
+        failures: list[tuple[str, str]] = []  # (sample, error_message)
+
+        def _build_row(row: dict) -> tuple[str, Path]:
+            """Build one sample. Runs in a worker thread when --jobs > 1.
+
+            Returns (sample, out_html). Raises on build failure — caught by
+            the executor and surfaced via future.exception() in the caller."""
             sample = row["sample"]
-            log.info(f"=== {sample} ===")
             sites = Path(row["sites_bed"])
             bams = [Path(row[k]) for k in ("bam_tumor", "bam_normal") if row.get(k)]
             vcf = Path(row["vcf"]) if row.get("vcf") else None
@@ -803,6 +824,7 @@ def main() -> None:
                 sample_extras += [Path(p.strip()) for p in row["extra_tracks"].split(",") if p.strip()]
             out_html = out_dir / f"{sample}.{genome}.html"
             title = args.title or f"{sample} ({genome})"
+            log.info(f"=== {sample} ===")
             build_one(
                 sites=sites, bams=bams, vcf=vcf, extra_tracks=sample_extras,
                 fasta=fasta, default_tracks=default_tracks,
@@ -812,7 +834,48 @@ def main() -> None:
                 info_columns=args.info_columns,
                 use_apptainer=args.apptainer,
             )
-            report_paths[sample] = out_html
+            return sample, out_html
+
+        # ThreadPoolExecutor is the right primitive here: build_one() spends
+        # nearly all its wall time inside subprocess.run(create_report), which
+        # releases the GIL — so threads scale linearly to the number of
+        # concurrent create_report processes the host can support. Don't use
+        # ProcessPoolExecutor: build_one() captures a non-picklable logger.
+        if n_workers == 1:
+            for row in rows:
+                try:
+                    sample, out_html = _build_row(row)
+                    report_paths[sample] = out_html
+                except SystemExit as exc:
+                    failures.append((row.get("sample", "?"), f"exit={exc.code}"))
+                except Exception as exc:
+                    failures.append((row.get("sample", "?"), f"{type(exc).__name__}: {exc}"))
+        else:
+            with ThreadPoolExecutor(max_workers=n_workers) as pool:
+                future_to_sample = {
+                    pool.submit(_build_row, row): row.get("sample", "?") for row in rows
+                }
+                # as_completed lets failures surface immediately while other
+                # samples continue building. We collect all errors and decide
+                # whether to fail the whole run at the end.
+                for fut in as_completed(future_to_sample):
+                    sample_name = future_to_sample[fut]
+                    try:
+                        sample, out_html = fut.result()
+                        report_paths[sample] = out_html
+                    except SystemExit as exc:
+                        failures.append((sample_name, f"exit={exc.code}"))
+                    except Exception as exc:
+                        failures.append((sample_name, f"{type(exc).__name__}: {exc}"))
+
+        if failures:
+            log.error(f"cohort: {len(failures)} of {len(rows)} samples FAILED:")
+            for s, err in failures:
+                log.error(f"  - {s}: {err}")
+            # Always raise on build failures — these aren't verifier soft-fails,
+            # they're missing HTMLs. --fail-on-fail is for verifier behavior.
+            raise SystemExit(1)
+
         idx = write_index(report_paths, out_dir / "index.html", f"igv-reports cohort ({genome})")
         log.info(f"Wrote cohort index: {idx}")
 

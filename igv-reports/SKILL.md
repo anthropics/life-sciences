@@ -526,6 +526,40 @@ python scripts/build_igvreports.py \
     --output results/<run>/methylation_report.hg38.html
 ```
 
+### Annotation shortcuts in the YAML
+
+The default `--tracks` path (SV/variant viewers) auto-resolves CpG islands,
+gencode, and RepeatMasker from a databases YAML when you pass
+`--genome hg38`. On the `--track-config` (methylation) path you used to
+have to hand-paste those paths into the YAML. As of the methylation-polish
+round, you can use a `default:` shortcut for the same resolution:
+
+```yaml
+genome: hg38
+
+annotation:
+  # SHORTCUT — resolved from the databases YAML for the genome above.
+  # Gets an Okabe-Ito color + sensible displayMode you can override per entry.
+  - default: gencode
+  - default: cgi
+  - default: repmasker
+  - default: epdnew_coding         # hg38 only
+  - default: epdnew_noncoding      # hg38 only
+
+  # Mix with EXPLICIT entries when needed (e.g. a pre-sliced custom track):
+  - name: "My custom peak set"
+    url: peaks/promoter_slices.bed
+    format: bed
+```
+
+Valid `default:` keys: `cgi`, `gencode`, `repmasker`, `epdnew_coding`,
+`epdnew_noncoding`. Mixing both forms is supported; order is preserved.
+Override the canned `name`/`color`/`displayMode` per entry by adding the
+field alongside `default:`. The shortcut needs a top-level `genome:` in
+the spec, plus a databases YAML on `--db-config PATH` or
+`$IGV_REPORTS_DB_CONFIG` (see `references/databases_config_paths.md` for
+the schema).
+
 Key methylation-specific defaults:
 - `--flanking 0` (sites BED already encodes the window — promoter/gene span).
 - `--info-columns name` (surface the BED `name` column in the variant table).

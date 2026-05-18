@@ -56,6 +56,9 @@ run standalone too):
       --out results/<run>/reports/cohort_verify.tsv \\
       --summary results/<run>/reports/cohort_verify.summary.md \\
       --fail-on-fail
+
+Skill location:
+  <repo-root>/
 """
 
 from __future__ import annotations
@@ -335,6 +338,133 @@ def check_sample_id_embedded(sample: str, html_path: Path) -> CohortCheck:
 # Allow-list (default tracks resolved from databases_config.yaml)
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# PNG-side checks (opt-in, only fire when a manifest exists alongside the HTML)
+# ---------------------------------------------------------------------------
+
+def find_png_manifest(reports_dir: Path, sample: str, genome: str) -> Path | None:
+    """Return the manifest path written by `build_pngs_with_igver` if the
+    sample was built with --also-png, else None.
+
+    Convention from build_igvreports.py:
+      <reports_dir>/png_<sample>.<genome>/manifest.tsv
+    """
+    candidate = reports_dir / f"png_{sample}.{genome}" / "manifest.tsv"
+    return candidate if candidate.exists() else None
+
+
+def _parse_png_manifest(manifest: Path) -> list[dict]:
+    """Read the manifest into a list of dicts. Schema is fixed at write time
+    (see build_igvreports.py:build_pngs_with_igver) so we use the file's `#`
+    header line for column names."""
+    rows: list[dict] = []
+    with manifest.open() as fh:
+        header_line = fh.readline().lstrip("#").rstrip("\n")
+        cols = header_line.split("\t")
+        for line in fh:
+            line = line.rstrip("\n")
+            if not line or line.startswith("#"):
+                continue
+            vals = line.split("\t")
+            if len(vals) != len(cols):
+                continue
+            rows.append(dict(zip(cols, vals)))
+    return rows
+
+
+def check_png_count_matches_bed(
+    sample: str, manifest: Path, sites_path: Path,
+) -> CohortCheck:
+    """P1 — manifest row count must equal the data-row count in the sites BED.
+    Catches a partial igver run (e.g. SIGKILL mid-way), filename collisions
+    that overwrite earlier PNGs, or a stale manifest from a previous build."""
+    try:
+        rows = _parse_png_manifest(manifest)
+    except Exception as e:
+        return CohortCheck(sample, "png_count_matches_bed", "FAIL",
+                           details=f"manifest unreadable: {e}")
+    try:
+        bed_rows = bir._read_sites_bed_rows(sites_path)
+    except Exception as e:
+        return CohortCheck(sample, "png_count_matches_bed", "FAIL",
+                           details=f"sites BED unreadable: {e}")
+    if len(rows) == len(bed_rows):
+        return CohortCheck(sample, "png_count_matches_bed", "PASS",
+                           observed=str(len(rows)), expected=str(len(bed_rows)))
+    return CohortCheck(sample, "png_count_matches_bed", "FAIL",
+                       observed=str(len(rows)), expected=str(len(bed_rows)),
+                       details="manifest row count != sites BED data row count")
+
+
+def check_pngs_exist_and_nonempty(
+    sample: str, manifest: Path, min_size_kb: float = 10.0,
+) -> CohortCheck:
+    """P2 — every PNG path in the manifest must exist and be larger than the
+    threshold. igver can produce a near-empty file on a region with no data
+    in any track; we want those flagged rather than silently shipped."""
+    try:
+        rows = _parse_png_manifest(manifest)
+    except Exception as e:
+        return CohortCheck(sample, "pngs_exist_and_nonempty", "FAIL",
+                           details=f"manifest unreadable: {e}")
+    missing: list[str] = []
+    tiny: list[str] = []
+    for r in rows:
+        p = Path(r.get("png_path", ""))
+        if not p.exists():
+            missing.append(p.name)
+            continue
+        if p.stat().st_size < min_size_kb * 1024:
+            tiny.append(f"{p.name} ({p.stat().st_size} B)")
+    if not missing and not tiny:
+        return CohortCheck(sample, "pngs_exist_and_nonempty", "PASS",
+                           observed=f"{len(rows)} pngs all present and >= {min_size_kb:.1f} kB")
+    parts = []
+    if missing:
+        parts.append(f"missing: {missing[:3]}{'...' if len(missing) > 3 else ''}")
+    if tiny:
+        parts.append(f"below threshold: {tiny[:3]}{'...' if len(tiny) > 3 else ''}")
+    return CohortCheck(sample, "pngs_exist_and_nonempty", "FAIL",
+                       observed=f"missing={len(missing)} tiny={len(tiny)}",
+                       expected="all PNGs present, >= 10 kB",
+                       details="; ".join(parts))
+
+
+def check_png_html_row_alignment(
+    sample: str, manifest: Path, html_path: Path,
+) -> CohortCheck:
+    """P3 — every manifest row references the matching HTML, and html_table_row
+    indices form a contiguous 1..N sequence (no skips, no duplicates). This is
+    the audit-trail check: a user clicking row N in the HTML should be able to
+    find the PNG named in manifest row N."""
+    try:
+        rows = _parse_png_manifest(manifest)
+    except Exception as e:
+        return CohortCheck(sample, "png_html_row_alignment", "FAIL",
+                           details=f"manifest unreadable: {e}")
+    if not rows:
+        return CohortCheck(sample, "png_html_row_alignment", "FAIL",
+                           details="manifest has no data rows")
+    html_resolved = str(html_path.resolve())
+    wrong_html = [r for r in rows if r.get("html_path") != html_resolved]
+    try:
+        indices = [int(r["html_table_row"]) for r in rows]
+    except (KeyError, ValueError) as e:
+        return CohortCheck(sample, "png_html_row_alignment", "FAIL",
+                           details=f"manifest html_table_row malformed: {e}")
+    expected_indices = list(range(1, len(rows) + 1))
+    if wrong_html:
+        return CohortCheck(sample, "png_html_row_alignment", "FAIL",
+                           details=f"{len(wrong_html)} manifest rows reference a different HTML")
+    if indices != expected_indices:
+        return CohortCheck(sample, "png_html_row_alignment", "FAIL",
+                           observed=f"{indices[:5]}{'...' if len(indices) > 5 else ''}",
+                           expected=f"contiguous 1..{len(rows)}",
+                           details="html_table_row indices not contiguous")
+    return CohortCheck(sample, "png_html_row_alignment", "PASS",
+                       observed=f"{len(rows)} aligned rows")
+
+
 def resolve_default_track_labels(db_config: Path, genome: str) -> set[str]:
     """Reuse the driver's logic so the allow-list stays in sync with what was
     actually loaded. Returns Path.stem of each default track (matches igv-
@@ -414,13 +544,20 @@ def main() -> None:
     ap.add_argument("--samplesheet", required=True, help="TSV that drove the cohort build (same one passed to build_igvreports.py --samplesheet)")
     ap.add_argument("--reports-dir", required=True, help="dir containing <sample>.<genome>.html files (and optional index.html)")
     ap.add_argument("--genome", required=True, help="genome tag (hg38 | mm10 | mm39 | t2t | GRCh37)")
-    ap.add_argument("--db-config", default=(str(DEFAULT_DBCONFIG) if DEFAULT_DBCONFIG else None), help="databases_config.yaml to resolve default-track allow-list (optional)")
+    ap.add_argument("--db-config", default=str(DEFAULT_DBCONFIG) if DEFAULT_DBCONFIG else None,
+                    help="databases_config.yaml to resolve default-track allow-list. "
+                         "Defaults to $IGV_REPORTS_DB_CONFIG; the allow-list check is skipped "
+                         "if neither is set.")
     ap.add_argument(
         "--track-columns", nargs="*", default=DEFAULT_TRACK_COLUMNS,
         help=f"samplesheet columns containing track paths (default: {DEFAULT_TRACK_COLUMNS}). "
              "`extra_tracks` is parsed comma-separated if present.",
     )
     ap.add_argument("--min-size-mb", type=float, default=0.5, help="per-sample HTML min size (passed through to verify_report)")
+    ap.add_argument("--png-min-size-kb", type=float, default=10.0,
+                    help="PNG min size threshold (only used when --also-png manifests are present). "
+                         "Defaults to 10 KB — empty IGV screenshots are typically <2 KB, "
+                         "useful ones >= 50 KB.")
     ap.add_argument("--out", help="write the TSV report here in addition to stdout")
     ap.add_argument("--summary", help="write a one-page markdown rollup here")
     ap.add_argument("--fail-on-fail", action="store_true", help="exit nonzero if any check is FAIL")
@@ -437,10 +574,11 @@ def main() -> None:
     if not rows:
         raise SystemExit(f"ERROR: samplesheet has no data rows: {samplesheet}")
 
-    allow_list = (
-        resolve_default_track_labels(Path(args.db_config), args.genome)
-        if args.db_config else set()
-    )
+    # When neither --db-config nor $IGV_REPORTS_DB_CONFIG is set, skip the
+    # contamination allow-list (no false positives, no false negatives — we
+    # just can't claim a track is a "known annotation" without the YAML).
+    allow_list = (resolve_default_track_labels(Path(args.db_config), args.genome)
+                  if args.db_config else set())
 
     # Pre-compute track-label sets per sample for the contamination check.
     # Labels are Path.stem of each track path, matching igv-reports's auto-
@@ -468,6 +606,15 @@ def main() -> None:
         other_labels = all_labels - this_labels
         checks.append(check_no_cross_sample_contamination(sample, html_path, this_labels, other_labels, allow_list))
         checks.append(check_sample_id_embedded(sample, html_path))
+
+        # PNG-side checks fire only when build_igvreports.py was run with
+        # --also-png (detected via the per-sample manifest). Cohorts without
+        # PNGs see no extra rows; cohorts with PNGs get three more checks.
+        manifest = find_png_manifest(reports_dir, sample, args.genome)
+        if manifest is not None:
+            checks.append(check_png_count_matches_bed(sample, manifest, sites_path))
+            checks.append(check_pngs_exist_and_nonempty(sample, manifest, args.png_min_size_kb))
+            checks.append(check_png_html_row_alignment(sample, manifest, html_path))
 
     # C5 index_consistency
     checks.append(check_index_consistency(rows, reports_dir))

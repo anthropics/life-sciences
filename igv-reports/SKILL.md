@@ -582,6 +582,107 @@ decision lands in the run log.
 Full recipe and rationale: `references/methylation_ont.md`. Worked
 example with real data: `examples/methylation_ont/`.
 
+## Exporting HTML and PNG side-by-side (`--also-png`)
+
+The HTML report is the deep-dive view; sometimes you also need static
+PNGs you can email, drop in a Slack channel, or paste into slides. The
+driver's `--also-png` flag invokes the sister `igver` tool against the
+**same sites BED and same track list** that drove `create_report`, so
+both artifacts cover identical regions with matching content.
+
+```bash
+python scripts/build_igvreports.py \
+    --samplesheet samplesheet.tsv \
+    --genome hg38 \
+    --output-dir results/run/reports/ \
+    --jobs 6 \
+    --also-png \
+    --png-dpi 600 --png-display-mode collapse
+```
+
+Output layout per sample:
+
+```
+results/run/reports/
+├── <sample>.hg38.html              # interactive
+├── png_<sample>.hg38/
+│   ├── igver_regions.bed           # flanked BED with UIDs (igver -r)
+│   ├── igver_input.txt             # track paths, one per line (igver -i)
+│   ├── manifest.tsv                # bridge: BED row ↔ PNG ↔ HTML row
+│   └── png/
+│       ├── chr1-100-500.alpha.png  # one PNG per region
+│       └── chr2-0-700.beta.png
+└── index.html
+```
+
+### How consistency is guaranteed — five levers
+
+1. **Single sites BED with `--flanking` baked in.** The driver writes
+   `igver_regions.bed` with `start − flanking` and `end + flanking`
+   already applied (clamped to 0 on the low side); igver sees the same
+   coordinates create_report's igv.js viewer slices to.
+2. **Single resolved track list.** On the default (positional) path the
+   exact `[BAMs, VCF, extras, defaults]` list passed to `create_report` is
+   also written to `igver_input.txt`. On the `--track-config` path the
+   local-path `url:` entries from the JSON are extracted (http(s) URLs are
+   skipped — igver can't consume them).
+3. **Matched display mode.** Default is `--png-display-mode collapse` to
+   line up with the HTML's `BAM_DEFAULTS displayMode: COLLAPSED`. Override
+   to `expand` for per-read SV inspection on both artifacts.
+4. **UID-based filenames.** The BED's `name` column (auto-assigned
+   `region_<idx>` when missing) becomes both the HTML table label (via
+   `--info-columns name`) and the PNG filename suffix
+   (`<chr-start-end>.<uid>.png`). A user finds the same region in either
+   artifact by the same string.
+5. **`manifest.tsv` audit trail.** Per-sample TSV with columns:
+   `bed_row_idx, uid, chrom, start_orig, end_orig, start_flanked,
+   end_flanked, region, png_path, html_path, html_table_row`. One row
+   per region in BED order. `verify_cohort.py` reads this to run three
+   PNG-side checks (count matches, exist + non-empty, html-row contiguity).
+
+### Resolution of the `igver` invocation
+
+Order, first match wins:
+1. `--igver-cmd '...'` (split on whitespace — supports `apptainer exec ... igver`).
+2. `$IGVER_CMD` env var (same shape).
+3. `igver` on PATH.
+
+If none resolve, the build exits before invoking create_report so you
+don't pay the HTML cost before finding out PNGs are unavailable. Install
+with `pip install igver` or pull a pre-built SIF and point `--igver-cmd`
+at it.
+
+### Methylation caveat (bigwig vs bedGraph)
+
+The HTML methylation path uses **bedGraph** tracks (igv.js consumes
+those directly); igver's per-read methylation view uses **BAMs** with
+`--color-by BASE_MODIFICATION`, and igver's cross-sample comparison view
+uses **bigwig** tracks. Content can be made identical only if both
+formats trace back to the same `modkit pileup` output (`modkit bedmethyl
+tobigwig` of the same bedGraph). The driver's `--also-png` passes the
+JSON's `url:` entries through verbatim, so if your YAML lists bedGraphs
+they'll go to igver as-is — igver will render them but the result may
+look different from the HTML's color-coded per-read view. For
+publication-quality methylation PNGs, supply a parallel `tracks.json`
+that lists bigwigs and run `igver` separately.
+
+For SV/variant viewers this caveat doesn't apply — both render the
+identical BAMs and the result is content-equivalent.
+
+### Cross-artifact verification
+
+When `--also-png` is set the driver automatically writes the manifest;
+`verify_cohort.py` then runs three additional checks per sample:
+
+| Check | Catches |
+|---|---|
+| `png_count_matches_bed` | partial igver run (SIGKILL mid-batch), stale manifest from a previous build, filename collisions |
+| `pngs_exist_and_nonempty` | empty IGV screenshots (< 10 KB threshold; useful screenshots are typically ≥ 50 KB) |
+| `png_html_row_alignment` | manifest rows referencing a different HTML, html_table_row not contiguous 1..N |
+
+`--png-min-size-kb 5.0` lowers the threshold if you have legitimate
+no-data regions where igver produces a near-empty PNG.
+
 ## See also
 
 - `references/best_practices.md` — full create_report flag reference,

@@ -1,0 +1,11 @@
+# pytest + Python cache directories
+__pycache__/
+.pytest_cache/
+
+# Integration scratch outputs (per scenarios.sh trap cleanup, these only
+# linger on test failure or when KEEP_REPORTS=1)
+integration/*/reports/
+integration/*/samplesheet*.tsv
+integration/*/sites*.bed
+integration/*/anchors*.tsv
+integration/*/logs/

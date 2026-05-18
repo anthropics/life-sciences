@@ -146,6 +146,17 @@
       ]
     },
     {
+      "name": "igv-reports",
+      "source": "./",
+      "description": "Build self-contained, offline HTML genomic-region reports with igv-reports (create_report). Cohort-aware driver + post-render structural and content verifiers. Includes ONT 5mC/5hmC methylation viewer presets.",
+      "category": "life-sciences",
+      "tags": ["bioinformatics", "genomics", "visualization", "variant-validation", "structural-variants", "ont", "nanopore", "methylation", "igv", "html-report"],
+      "strict": false,
+      "skills": [
+        "./igv-reports"
+      ]
+    },
+    {
       "name": "tooluniverse",
       "source": "./tooluniverse",
       "description": "Democratizing AI scientists with ToolUniverse - AI agents and tools for scientific discovery and automation",

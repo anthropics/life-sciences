@@ -25,6 +25,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install igv-reports@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -146,6 +147,19 @@ Systematic framework for scientific problem selection and strategic research dec
 - Navigate decision trees in active projects
 - Strategic research planning and problem choice
 
+#### igv-reports
+**Plugin ID**: `igv-reports@life-sciences`
+
+Build self-contained, offline HTML genomic-region reports with [igv-reports](https://github.com/igvteam/igv-reports) (`create_report`). Cohort-aware driver + post-render structural and content verifiers on top of the upstream Python package. Includes ONT 5mC/5hmC methylation viewer presets.
+
+**Use cases:**
+- Generate per-sample HTML viewers for SV breakpoints, viral integrations, variants, fusion junctions, ChIP peaks, or ROIs
+- Build cohort-wide report bundles (one HTML per sample + index)
+- Per-read ONT 5mC/5hmC methylation views at promoters / gene bodies / DMRs
+- Auto-verify rendered HTML structure and (opt-in) read-count anchors so cohort builds gate on correctness, not just exit code
+
+**Requirements**: `pip install -U 'igv-reports>=1.16.0'` (upstream engine)
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -172,6 +186,7 @@ Systematic framework for scientific problem selection and strategic research dec
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install igv-reports@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

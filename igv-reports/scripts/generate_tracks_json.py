@@ -129,6 +129,8 @@ def main() -> None:
     ap.add_argument("--spec", required=True, help="YAML spec (see tracks_spec.example.yaml)")
     ap.add_argument("--run-dir", required=True, help="dir that relative urls in spec are resolved against")
     ap.add_argument("--out", required=True, help="output tracks.json path")
+    ap.add_argument("--force", action="store_true",
+                    help="overwrite --out if it already exists (default: refuse and exit 2 so hand-edits aren't clobbered)")
     args = ap.parse_args()
 
     spec_path = Path(args.spec)
@@ -144,6 +146,11 @@ def main() -> None:
     tracks = build_annotation_tracks(spec, run_dir) + build_sample_tracks(spec, run_dir)
 
     out_path = Path(args.out)
+    if out_path.exists() and not args.force:
+        raise SystemExit(
+            f"ERROR: {out_path} already exists. A user may have hand-edited it after generation.\n"
+            "       Pass --force to overwrite, or move the existing file aside and rerun."
+        )
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w") as fh:
         json.dump(tracks, fh, indent=2)

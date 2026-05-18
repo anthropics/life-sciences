@@ -123,8 +123,34 @@ chr2   25227855 25342590 DNMT3A_full_gene
 Tab-separated. The `name` becomes the row label in the report's variant
 table — make it specific enough to identify the site after deduping.
 
+By default `create_report` shows only the chr/start/end position columns
+in the clickable table. To surface the `name` (or any extra columns from
+a 5+ column BED), pass `--info-columns <colname>` to the driver:
+
+```bash
+python scripts/build_igvreports.py ... --info-columns name
+python scripts/build_igvreports.py ... --info-columns gene_name,score
+```
+
+Column names are matched by header (so a `#chrom\tstart\tend\tname\tscore`
+header works). For positional BED without a header, the convention is the
+4th column = `name`, 5th = `score`, 6th = `strand`.
+
 The project's `enforce-genome-tag.sh` hook requires a genome tag in the BED
 filename: use `sites.hg38.bed`, not `sites.bed`.
+
+### `--type` for BED-style sites
+
+When the sites input is a BED (not a VCF), pass `--type mutation` to
+`create_report` (or the driver). This gives the right viewer behavior at
+each row — one locus per row, no split-screen, table on top. Without it,
+some BED layouts trigger create_report's split-screen junction view by
+heuristic. Use `--type variant` for VCF sites, or omit for create_report's
+auto-detection (only safe with a VCF).
+
+```bash
+python scripts/build_igvreports.py ... --type mutation --info-columns name
+```
 
 ## Pitfalls (the skill should encode and/or detect these)
 
@@ -169,8 +195,11 @@ The driver:
 For multi-sample cohorts, use `--samplesheet samplesheet.tsv` instead of
 `--bam/--vcf`. Samplesheet format: `sample, bam_tumor, bam_normal, vcf, sites_bed`.
 The driver emits one HTML per sample plus a top-level `index.html` that lists
-all samples with links. Layout matches the ATLL viral-integration reference
-implementation:
+all samples with links. Pass `--jobs N` to build the per-sample HTMLs in
+parallel via `ThreadPoolExecutor` (each `create_report` call is I/O-bound on
+BAM slicing, so threading scales well; `--jobs 6` for a 6-patient cohort
+roughly 1/Nx wall-clock vs sequential). Default is `--jobs 1`. Layout matches
+the ATLL viral-integration reference implementation:
 
 ```
 results/<run>/
@@ -183,23 +212,41 @@ results/<run>/
 ## prep-track — fixing a non-bgzip track
 
 If a GFF3/GTF/BED.gz is plain-gzip rather than bgzip, igv-reports fails
-silently or with an obscure error. Convert in place with backup:
+silently or with an obscure error. Two modes:
+
+**In-place** (with `.bak.original_gzip` backup) — replaces the original:
 
 ```bash
 bash scripts/prep_track.sh /path/to/track.gff3.gz
 ```
 
-The script:
-1. Backs up the original to `<name>.bak.original_gzip`.
+**Sibling file** (non-destructive — original untouched) — write the
+bgzipped+indexed track to a new path. Use this when other pipelines point
+at the original `.gff3.gz` and you can't risk a brief window where the
+file is replaced:
+
+```bash
+bash scripts/prep_track.sh /path/to/track.gff3.gz \
+    --out /path/to/track.bgz.gff3.gz
+```
+
+The script (both modes):
+1. Backs up the original to `<name>.bak.original_gzip` (in-place mode only).
 2. `gunzip -c`s the file.
 3. Sorts by `chr` then numeric `pos` (`sort -k1,1 -k4,4n`).
    (Gencode delivers records interleaved by feature type at the same locus —
    tabix requires pos-sorted.)
-4. `bgzip`s in place.
+4. `bgzip`s to target.
 5. `tabix -p <gff|gtf|bed>`s.
 6. Verifies a sample tabix query returns rows.
 
 Requires `bgzip` and `tabix` from htslib on PATH.
+
+**Diagnostic** — `file <name>` for distinguishing the two formats:
+- Plain gzip: `gzip compressed data, from Unix, original size <N>`
+- bgzip:      `Blocked GNU Zip Format (BGZF; gzipped file with extra field)`
+
+The `extra field` keyword is the bgzip giveaway.
 
 ## When generating an answer.md / run.sh for the user
 

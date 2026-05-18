@@ -216,6 +216,26 @@ def fasta_for(cfg: dict, genome: str) -> str:
     return fasta
 
 
+def validate_bams(bams: list[Path]) -> None:
+    """Sanity-check BAMs have a coindex sibling (.bai or .csi).
+
+    `create_report` needs a random-access index to slice BAMs at each region;
+    a BAM with no sibling index produces an obscure pysam error several
+    layers in. Catch it up front with an actionable message."""
+    for bam in bams:
+        if not bam.exists():
+            raise SystemExit(f"ERROR: BAM not found: {bam}")
+        if not (bam.with_suffix(bam.suffix + ".bai").exists()
+                or bam.with_suffix(bam.suffix + ".csi").exists()
+                or bam.with_suffix(".bai").exists()
+                or bam.with_suffix(".csi").exists()):
+            raise SystemExit(
+                f"ERROR: BAM index missing for {bam} — create_report cannot slice it.\n"
+                f"       Fix: samtools index {bam}\n"
+                f"       (or `samtools index -c {bam}` for a .csi index on contigs >512 Mb)"
+            )
+
+
 def validate_sites_bed(bed: Path) -> None:
     """Sanity-check the sites BED before invoking create_report.
 
@@ -330,6 +350,11 @@ def build_one(
         tracks, per-track color/min/max/colorBy/displayMode).
     """
     validate_sites_bed(sites)
+    # Only validate BAMs on the positional --tracks path. The --track-config
+    # JSON has its own track-resolution semantics and may reference BAMs by
+    # arbitrary url:; create_report itself will fail loudly there if needed.
+    if track_config is None:
+        validate_bams(bams)
     output.parent.mkdir(parents=True, exist_ok=True)
 
     create_report_cmd = (

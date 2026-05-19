@@ -123,7 +123,7 @@ echo
 
 # --- 5. Scenario A: tolerance violation ----------------------------------------
 echo "=== scenario A: corrupt expected count outside tolerance — FAIL on diff_ratio ==="
-awk -F'\t' 'BEGIN{OFS="\t"} /^#/{print; next} NR==2 {$6=9999; print; next} {print}' "${ANCHORS_TSV}" > "${EX_DIR}/anchors.corrupted.tsv"
+awk -F'\t' 'BEGIN{OFS="\t"} /^#/{print; next} NR==2 {$7=9999; print; next} {print}' "${ANCHORS_TSV}" > "${EX_DIR}/anchors.corrupted.tsv"
 python "${ANCHORS}" verify-cohort \
     --samplesheet "${SHEET}" \
     --reports-dir "${OUTDIR}" \
@@ -136,7 +136,7 @@ echo
 
 # --- 6. Scenario B: min/max bound violation ------------------------------------
 echo "=== scenario B: anchor min=1000 (real count ~56) — FAIL on min ==="
-awk -F'\t' 'BEGIN{OFS="\t"} /^#/{print; next} NR==2 {$8=1000; print; next} {print}' "${ANCHORS_TSV}" > "${EX_DIR}/anchors.min.tsv"
+awk -F'\t' 'BEGIN{OFS="\t"} /^#/{print; next} NR==2 {$9=1000; print; next} {print}' "${ANCHORS_TSV}" > "${EX_DIR}/anchors.min.tsv"
 python "${ANCHORS}" verify-cohort \
     --samplesheet "${SHEET}" \
     --reports-dir "${OUTDIR}" \
@@ -169,7 +169,7 @@ echo
 
 # --- 8. Scenario D: anchor missing for a (sample, region) — SKIP not FAIL ------
 echo "=== scenario D: drop sample_1's chr2 anchor — that region SKIPs, others PASS ==="
-awk -F'\t' 'BEGIN{OFS="\t"} /^#/{print; next} !($1=="sample_1" && $3=="chr2"){print}' "${ANCHORS_TSV}" > "${EX_DIR}/anchors.subset.tsv"
+awk -F'\t' 'BEGIN{OFS="\t"} /^#/{print; next} !($1=="sample_1" && $4=="chr2"){print}' "${ANCHORS_TSV}" > "${EX_DIR}/anchors.subset.tsv"
 python "${ANCHORS}" verify-cohort \
     --samplesheet "${SHEET}" \
     --reports-dir "${OUTDIR}" \

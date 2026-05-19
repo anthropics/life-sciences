@@ -481,6 +481,40 @@ def build_pngs_with_igver(
             )
 
     log.info(f"  png manifest: {manifest} ({len(rows)} rows)")
+
+    # Inline existence check — igver exits 0 even when it fails to render
+    # (silent exit-0 failure documented in the upstream skill's notes).
+    # We can't trust the exit code, so verify every expected PNG path is
+    # on disk and non-empty before returning. Without this a "successful"
+    # build silently ships an empty png/ dir.
+    missing: list[str] = []
+    empty: list[str] = []
+    for r in rows:
+        start_f = max(0, r["start"] - flanking)
+        end_f = r["end"] + flanking
+        fname = f"{r['chrom']}-{start_f}-{end_f}.{r['name']}.{ext}"
+        p = png_dir / fname
+        if not p.exists():
+            missing.append(fname)
+        elif p.stat().st_size == 0:
+            empty.append(fname)
+    if missing or empty:
+        log.error(
+            f"igver returned exit 0 but {len(missing)} expected PNG(s) are missing "
+            f"and {len(empty)} are zero-byte (out of {len(rows)} regions). "
+            "This is a documented silent-failure mode of igver."
+        )
+        if missing:
+            log.error(f"  missing: {missing[:5]}{'...' if len(missing) > 5 else ''}")
+        if empty:
+            log.error(f"  empty:   {empty[:5]}{'...' if len(empty) > 5 else ''}")
+        raise SystemExit(
+            f"ERROR: igver produced {len(rows) - len(missing) - len(empty)} of "
+            f"{len(rows)} PNGs (silent exit-0 failure). Check the igver install "
+            "path — `pip install igver` egg-link lacks the IGV Java binary; use "
+            "an apptainer SIF via --igver-cmd or $IGVER_CMD."
+        )
+
     return manifest
 
 

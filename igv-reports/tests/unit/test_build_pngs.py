@@ -156,8 +156,29 @@ def test_resolve_igver_cmd_raises_when_not_found(monkeypatch):
 # ----- build_pngs_with_igver — mocked subprocess -----
 
 
+def _fake_igver_run(cmd, **kwargs):
+    """Stand-in for subprocess.run that mimics a successful igver invocation:
+    parses the regions BED out of `-r`, parses the output dir out of `-o`,
+    and writes a non-empty fake PNG at each expected filename — same
+    `<chr>-<start>-<end>.<uid>.<ext>` convention real igver uses."""
+    import subprocess
+    out_dir = Path(cmd[cmd.index("-o") + 1])
+    out_dir.mkdir(parents=True, exist_ok=True)
+    regions_bed = Path(cmd[cmd.index("-r") + 1])
+    fmt = cmd[cmd.index("-f") + 1] if "-f" in cmd else "png"
+    ext = "svg" if fmt in ("svg", "pdf") else fmt
+    for line in regions_bed.read_text().splitlines():
+        if not line or line.startswith("#"):
+            continue
+        chrom, start, end, name = line.split("\t")[:4]
+        (out_dir / f"{chrom}-{start}-{end}.{name}.{ext}").write_bytes(b"PNG\x00" * 4096)
+    return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+
+
 def test_build_pngs_with_igver_writes_manifest_and_inputs(tmp_path, monkeypatch):
-    # Set up a synthetic sites BED + tracks list + mock igver.
+    # Set up a synthetic sites BED + tracks list + mock igver that actually
+    # writes the expected output files (the inline existence check rejects
+    # an igver run that produces zero PNGs).
     bed = tmp_path / "sites.hg38.bed"
     _write_bed(bed, [
         ("chr1", 100, 200, "alpha"),
@@ -169,9 +190,9 @@ def test_build_pngs_with_igver_writes_manifest_and_inputs(tmp_path, monkeypatch)
     out_dir = tmp_path / "png_sample.hg38"
     log = logging.getLogger("test")
 
-    # Force the resolver to return a stub so the test doesn't need igver.
     monkeypatch.setenv("IGVER_CMD", "/usr/bin/true")
-    with patch.object(b.shutil, "which", return_value="/usr/bin/true"):
+    with patch.object(b.shutil, "which", return_value="/usr/bin/true"), \
+         patch.object(b.subprocess, "run", side_effect=_fake_igver_run):
         manifest = b.build_pngs_with_igver(
             sites=bed,
             tracks=tracks,
@@ -212,6 +233,78 @@ def test_build_pngs_with_igver_writes_manifest_and_inputs(tmp_path, monkeypatch)
     assert cols0[8].endswith("/png/chr1-0-500.alpha.png"), cols0[8]
     assert cols0[9].endswith("/sample.hg38.html"), cols0[9]
     assert cols0[10] == "1"             # html_table_row matches bed_row_idx
+
+
+def test_build_pngs_with_igver_detects_silent_exit_0_failure(tmp_path, monkeypatch):
+    # The motivating bug: igver via `pip install` egg-link prints
+    # `[ERROR] Failed to generate all PNG files after 2 iterations.` then
+    # exits 0 with an empty output dir. proc.returncode != 0 misses it.
+    # Inline check must catch this regardless of exit code.
+    bed = tmp_path / "sites.hg38.bed"
+    _write_bed(bed, [("chr1", 100, 200, "alpha"), ("chr2", 300, 400, "beta")])
+    html_path = tmp_path / "sample.hg38.html"; html_path.write_text("<html/>")
+    log = logging.getLogger("test")
+
+    # /usr/bin/true returns 0 but creates no files — the exact failure mode.
+    monkeypatch.setenv("IGVER_CMD", "/usr/bin/true")
+    with patch.object(b.shutil, "which", return_value="/usr/bin/true"):
+        with pytest.raises(SystemExit, match="silent exit-0 failure"):
+            b.build_pngs_with_igver(
+                sites=bed, tracks=["/data/sample.bam"], genome="hg38",
+                flanking=0, out_dir=tmp_path / "out", log=log, html_path=html_path,
+            )
+
+
+def test_build_pngs_with_igver_detects_partial_silent_failure(tmp_path, monkeypatch):
+    # Mid-batch failure: 1 of 2 PNGs produced, 1 missing, exit 0. Inline
+    # check must fail because the manifest would otherwise reference a
+    # non-existent PNG.
+    bed = tmp_path / "sites.hg38.bed"
+    _write_bed(bed, [("chr1", 100, 200, "alpha"), ("chr2", 300, 400, "beta")])
+    html_path = tmp_path / "sample.hg38.html"; html_path.write_text("<html/>")
+    log = logging.getLogger("test")
+
+    def partial_run(cmd, **kwargs):
+        # Write only the first region's PNG, skip the second.
+        import subprocess
+        out_dir = Path(cmd[cmd.index("-o") + 1])
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "chr1-100-200.alpha.png").write_bytes(b"PNG\x00" * 4096)
+        return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+
+    monkeypatch.setenv("IGVER_CMD", "/usr/bin/true")
+    with patch.object(b.shutil, "which", return_value="/usr/bin/true"), \
+         patch.object(b.subprocess, "run", side_effect=partial_run):
+        with pytest.raises(SystemExit, match="silent exit-0 failure"):
+            b.build_pngs_with_igver(
+                sites=bed, tracks=["/data/sample.bam"], genome="hg38",
+                flanking=0, out_dir=tmp_path / "out", log=log, html_path=html_path,
+            )
+
+
+def test_build_pngs_with_igver_detects_zero_byte_png(tmp_path, monkeypatch):
+    # Disk-full / truncated-write: PNG exists but is empty. Inline check
+    # must fail because the file is on disk but unusable.
+    bed = tmp_path / "sites.hg38.bed"
+    _write_bed(bed, [("chr1", 100, 200, "alpha")])
+    html_path = tmp_path / "sample.hg38.html"; html_path.write_text("<html/>")
+    log = logging.getLogger("test")
+
+    def zero_byte_run(cmd, **kwargs):
+        import subprocess
+        out_dir = Path(cmd[cmd.index("-o") + 1])
+        out_dir.mkdir(parents=True, exist_ok=True)
+        (out_dir / "chr1-100-200.alpha.png").write_bytes(b"")  # zero-byte
+        return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+
+    monkeypatch.setenv("IGVER_CMD", "/usr/bin/true")
+    with patch.object(b.shutil, "which", return_value="/usr/bin/true"), \
+         patch.object(b.subprocess, "run", side_effect=zero_byte_run):
+        with pytest.raises(SystemExit, match="silent exit-0 failure"):
+            b.build_pngs_with_igver(
+                sites=bed, tracks=["/data/sample.bam"], genome="hg38",
+                flanking=0, out_dir=tmp_path / "out", log=log, html_path=html_path,
+            )
 
 
 def test_build_pngs_with_igver_propagates_igver_failure(tmp_path, monkeypatch):

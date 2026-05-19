@@ -671,8 +671,14 @@ identical BAMs and the result is content-equivalent.
 
 ### Cross-artifact verification
 
-When `--also-png` is set the driver automatically writes the manifest;
-`verify_cohort.py` then runs three additional checks per sample:
+The driver runs an **inline existence check** right after igver returns:
+walks each expected PNG path (`<chr>-<start>-<end>.<uid>.<ext>` derived
+from the manifest) and fails the build with an actionable message if
+any are missing or zero-byte. This catches igver's documented
+silent-exit-0 failure mode (egg-link install without the IGV Java
+binary) — `proc.returncode != 0` alone misses it.
+
+In addition, `verify_cohort.py` then runs three checks per sample:
 
 | Check | Catches |
 |---|---|

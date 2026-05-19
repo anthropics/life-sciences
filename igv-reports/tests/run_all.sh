@@ -9,7 +9,7 @@
 #   3. integration      — full cohort build + verify-cohort + verify-anchors
 #                          end-to-end; bash scenarios.sh under each demo.
 #                          Skipped (exit 77) when the IGV_REPORTS_TEST_BAM_*
-#                          env vars are unset
+#                          env vars are unset AND the MSKCC default paths
 #                          don't exist.
 #
 # Usage:
@@ -47,10 +47,13 @@ for arg in "$@"; do
     esac
 done
 
-# Pick a Python with pytest. Honor $IGV_REPORTS_PY if set; else PATH python3.
+# Pick a Python with pytest. Prefer the snakemake conda env (where all
+# project tooling lives); fall back to PATH `python3`.
 PY="${IGV_REPORTS_PY:-}"
 if [[ -z "${PY}" ]]; then
-    if command -v python3 >/dev/null 2>&1; then
+    if [[ -x /home/ahunos/miniforge3/envs/snakemake/bin/python ]]; then
+        PY=/home/ahunos/miniforge3/envs/snakemake/bin/python
+    elif command -v python3 >/dev/null 2>&1; then
         PY=$(command -v python3)
     else
         echo "ERROR: no python3 available. Set IGV_REPORTS_PY=<path-to-python>" >&2
@@ -96,6 +99,9 @@ fi
 # Each scenarios.sh exits 77 if its required BAMs aren't available; we treat
 # that as a skip rather than a failure so the suite is portable.
 if [[ $RUN_INTEGRATION -eq 1 ]]; then
+    # end_to_end: uses the committed tiny_colo829 fixture (~30 s, runs in CI).
+    run_layer "integration / end_to_end" "full pipeline against committed fixture" \
+        bash "${TESTS_DIR}/integration/end_to_end/scenarios.sh"
     run_layer "integration / cohort_verify" "cohort structural verifier scenarios" \
         bash "${TESTS_DIR}/integration/cohort_verify/scenarios.sh"
     run_layer "integration / anchor_verify" "anchor content verifier scenarios" \

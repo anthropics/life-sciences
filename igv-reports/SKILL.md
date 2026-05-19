@@ -412,16 +412,39 @@ python scripts/build_igvreports.py --samplesheet ... --anchors-mode verify \
 Anchors TSV schema (`#`-prefixed header per lab BED convention):
 
 ```
-#sample	track_name	chrom	start	end	expected	tolerance	min	max	notes
+#sample	track_name	track_type	chrom	start	end	expected	tolerance	min	max	notes
 ```
+
+`track_type` is one of:
+- `bam` — `expected` is the count from `samtools view -c -F 1536` against
+  the source BAM at generate time, and the same count against the
+  embedded BAM slice at verify time. Default when the column is absent
+  (backwards compat — pre-2026-05-19 anchor files keep working).
+- `bedgraph` — `expected` is the number of data rows in the source
+  bedGraph overlapping the region (CpG count for methylation data,
+  peak count for ChIP coverage). Verify-time count comes from the
+  wig/bedGraph slice embedded by igv-reports in the HTML — gzip-decoded
+  in-memory, no samtools needed.
+
+bedGraph tracks come from the samplesheet's `extra_tracks` column.
+Anchors for them are generated automatically alongside BAM anchors when
+you run `verify_anchors.py generate` against a samplesheet that includes
+bedGraph entries (e.g. `*.5mC.bedgraph`, `*.5hmC.bg`, plain or `.gz`).
 
 `tolerance` is a ratio (default 5%). `min`/`max` are absolute bounds that
 override tolerance when set — useful for known-positive sites like
-"this integration must have ≥20 reads".
+"this integration must have ≥20 reads" or "this promoter must have ≥10 CpGs".
 
 samtools is resolved in this order: `--samtools-sif PATH` → `$SAMTOOLS_SIF`
 → `$SAMTOOLS_SIF_DEFAULT` → PATH `samtools`. On HPC, prefer a SIF to avoid
-the NFS conda cold-start tax.
+the NFS conda cold-start tax. bedGraph anchors don't require samtools.
+
+**Why this matters for methylation viewers**: the silent-failure mode for
+methylation reports is "region rendered, slice has 0 CpGs" — an empty
+bedGraph slice because the source had no calls in that window, or
+because the slice extraction silently dropped them. Pure structural
+verification confirms the bedGraph track is in the HTML but can't tell
+whether it's empty. The bedgraph-anchor mode closes this gap.
 
 **Why opt-in and not default:** the verify step shells out to samtools per
 (sample × region) and indexes each slice — ~1 s/anchor. For a 6-sample

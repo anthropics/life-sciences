@@ -3,8 +3,8 @@
 Author: Samuel Ahuno
 Purpose:
   Fast pytest suite covering the pure-Python parsing/decision logic in
-  verify_anchors.py. No subprocess, no real BAM, no external dependencies.
-  Runs in ~1 s on any machine with pytest.
+  verify_anchors.py. No subprocess, no real BAM, no shared-storage
+  dependency. Runs in ~1 s on any machine with pytest.
 
   These tests catch the parser regressions that bit during the original
   iteration: status-taxonomy conflation between SKIP and FAIL, mis-tabbed
@@ -12,7 +12,7 @@ Purpose:
   with notes when columns are out of order.
 
 Run:
-  cd <plugin-root>/igv-reports
+  cd claude/skills/igv-reports
   pytest tests/unit/ -v
 """
 
@@ -352,3 +352,183 @@ def test_write_load_round_trip(tmp_path):
     assert rows[0].notes == "hi"
     assert rows[1].min_count == "3"
     assert rows[1].max_count == "20"
+
+
+# ---------------------------------------------------------------------------
+# bedGraph / wig anchors (methylation-aware path added 2026-05-19)
+# ---------------------------------------------------------------------------
+
+def _write_bedgraph(path: Path, rows: list[tuple]) -> Path:
+    """Write a 4-col bedGraph (chrom/start/end/value), no header."""
+    path.write_text("".join(f"{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\n" for r in rows))
+    return path
+
+
+def test_is_wig_data_line():
+    assert va._is_wig_data_line("chr1\t100\t101\t0.5") is True
+    assert va._is_wig_data_line("track name=meth") is False
+    assert va._is_wig_data_line("browser dense") is False
+    assert va._is_wig_data_line("fixedStep chrom=chr1 start=1 step=1") is False
+    assert va._is_wig_data_line("variableStep chrom=chr1") is False
+    assert va._is_wig_data_line("# comment") is False
+    assert va._is_wig_data_line("") is False
+    assert va._is_wig_data_line("   ") is False
+
+
+def test_bedgraph_count_source_plain_text_in_region(tmp_path):
+    # 3 of 4 rows overlap [100, 200); the 4th is on a different chrom.
+    bg = _write_bedgraph(tmp_path / "sample.hg38.bedgraph", [
+        ("chr1", 100, 101, 0.5),
+        ("chr1", 150, 151, 0.8),
+        ("chr1", 199, 200, 0.3),  # r_end > q_start? 200 > 100 yes; r_start < q_end? 199 < 200 yes
+        ("chr2", 100, 101, 0.9),  # different chrom
+    ])
+    assert va.bedgraph_count_source(bg, "chr1", 100, 200) == 3
+
+
+def test_bedgraph_count_source_excludes_out_of_region(tmp_path):
+    # Rows must overlap [start, end). Boundary cases.
+    bg = _write_bedgraph(tmp_path / "sample.hg38.bedgraph", [
+        ("chr1", 50, 100, 0.1),    # r_end == q_start -> doesn't overlap (half-open)
+        ("chr1", 100, 150, 0.2),   # r_start == q_start -> overlaps
+        ("chr1", 195, 200, 0.3),   # r_start < q_end == 200 -> overlaps
+        ("chr1", 200, 250, 0.4),   # r_start == q_end -> doesn't overlap (half-open)
+        ("chr1", 1000, 1001, 0.5), # way out
+    ])
+    assert va.bedgraph_count_source(bg, "chr1", 100, 200) == 2
+
+
+def test_bedgraph_count_source_skips_headers_and_comments(tmp_path):
+    bg = tmp_path / "sample.hg38.bedgraph"
+    bg.write_text(
+        "#header comment\n"
+        "track name=test\n"
+        "browser dense\n"
+        "chr1\t100\t101\t0.5\n"
+        "chr1\t150\t151\t0.6\n"
+    )
+    assert va.bedgraph_count_source(bg, "chr1", 0, 1000) == 2
+
+
+def test_bedgraph_count_source_handles_gzipped_input(tmp_path):
+    # Plain-gzip (not bgzip+tabix). Linear-scan path.
+    import gzip
+    bg = tmp_path / "sample.hg38.bedgraph.gz"
+    with gzip.open(bg, "wt") as fh:
+        fh.write("chr3\t100\t101\t0.5\n")
+        fh.write("chr3\t150\t151\t0.6\n")
+        fh.write("chr3\t999\t1000\t0.7\n")
+    assert va.bedgraph_count_source(bg, "chr3", 100, 200) == 2
+    assert va.bedgraph_count_source(bg, "chr3", 0, 10000) == 3
+    assert va.bedgraph_count_source(bg, "chr4", 0, 10000) == 0
+
+
+def test_bedgraph_count_source_missing_file_raises(tmp_path):
+    with pytest.raises(FileNotFoundError, match="bedGraph track not found"):
+        va.bedgraph_count_source(tmp_path / "does_not_exist.bg", "chr1", 0, 100)
+
+
+def test_bedgraph_count_slice_decodes_gzipped_payload():
+    # Mimics how igv_reports/datauri.py encodes a wig/bedGraph slice:
+    # gzip(text) base64-encoded. verify_anchors only sees the gzipped
+    # bytes after base64 decoding, so we test the bytes-in entry point.
+    text = (
+        "track name=meth\n"
+        "chr1\t100\t101\t0.5\n"
+        "chr1\t150\t151\t0.6\n"
+        "chr1\t200\t201\t0.7\n"
+    )
+    assert va.bedgraph_count_slice(gzip.compress(text.encode())) == 3
+
+
+def test_bedgraph_count_slice_falls_back_to_uncompressed():
+    # Some create_report versions write small wig slices uncompressed —
+    # the fallback path must accept raw text bytes.
+    text = "chr1\t100\t101\t0.5\nchr1\t200\t201\t0.6\n"
+    assert va.bedgraph_count_slice(text.encode()) == 2
+
+
+def test_bedgraph_count_slice_zero_when_empty():
+    # No data rows in the slice = silent empty-methylation-slice failure.
+    # Caller (verify_one_html) compares to expected via decide_status.
+    assert va.bedgraph_count_slice(gzip.compress(b"track name=meth\n")) == 0
+    assert va.bedgraph_count_slice(b"") == 0
+
+
+# ---------------------------------------------------------------------------
+# Anchor schema: track_type column with backwards compat
+# ---------------------------------------------------------------------------
+
+def test_load_anchors_legacy_no_track_type_defaults_to_bam(tmp_path):
+    # Pre-2026-05-19 anchor files lack the track_type column. Loader must
+    # accept them and default each row to track_type='bam'.
+    p = _write_tsv(tmp_path, (
+        "#sample\ttrack_name\tchrom\tstart\tend\texpected\ttolerance\tmin\tmax\tnotes\n"
+        "s1\ttumor\tchr2\t100\t200\t42\t\t\t\t\n"
+    ))
+    rows = va.load_anchors(p)
+    assert rows[0].track_type == "bam"
+
+
+def test_load_anchors_with_track_type_bedgraph(tmp_path):
+    p = _write_tsv(tmp_path, (
+        "#sample\ttrack_name\ttrack_type\tchrom\tstart\tend\texpected\ttolerance\tmin\tmax\tnotes\n"
+        "s1\tmeth_track\tbedgraph\tchr2\t100\t200\t8\t\t\t\tDNMT3A_CpGs\n"
+    ))
+    rows = va.load_anchors(p)
+    assert rows[0].track_type == "bedgraph"
+    assert rows[0].expected == 8
+    assert rows[0].notes == "DNMT3A_CpGs"
+
+
+def test_load_anchors_rejects_unknown_track_type(tmp_path):
+    p = _write_tsv(tmp_path, (
+        "#sample\ttrack_name\ttrack_type\tchrom\tstart\tend\texpected\ttolerance\tmin\tmax\tnotes\n"
+        "s1\tt1\tcraaam\tchr1\t0\t100\t5\t\t\t\t\n"
+    ))
+    with pytest.raises(SystemExit, match="unknown track_type 'craaam'"):
+        va.load_anchors(p)
+
+
+def test_write_load_round_trip_preserves_track_type(tmp_path):
+    anchors_in = [
+        va.AnchorRow(sample="s1", track_name="tumor", track_type="bam",
+                     chrom="chr1", start=0, end=100, expected=42),
+        va.AnchorRow(sample="s1", track_name="tumor.5mC", track_type="bedgraph",
+                     chrom="chr1", start=0, end=100, expected=12),
+    ]
+    out = tmp_path / "anchors.tsv"
+    va.write_anchors(anchors_in, out)
+    rows = va.load_anchors(out)
+    assert [r.track_type for r in rows] == ["bam", "bedgraph"]
+
+
+# ---------------------------------------------------------------------------
+# sample_bedgraph_paths: samplesheet → (track_name, bedgraph_path) iteration
+# ---------------------------------------------------------------------------
+
+def test_sample_bedgraph_paths_picks_bedgraph_from_extras():
+    row = {"sample": "s1", "extra_tracks": "/data/x.5mC.bedgraph,/data/x.5hmC.bg"}
+    pairs = va.sample_bedgraph_paths(row)
+    assert pairs == [("x.5mC", Path("/data/x.5mC.bedgraph")),
+                     ("x.5hmC", Path("/data/x.5hmC.bg"))]
+
+
+def test_sample_bedgraph_paths_strips_gz_suffix_from_track_name():
+    # Path.stem of foo.bedgraph.gz is "foo.bedgraph"; igv-reports renders
+    # it as just "foo", so we strip one more level.
+    row = {"sample": "s1", "extra_tracks": "/data/foo.bedgraph.gz"}
+    pairs = va.sample_bedgraph_paths(row)
+    assert pairs[0][0] == "foo"
+
+
+def test_sample_bedgraph_paths_skips_non_bedgraph_extras():
+    # bam/vcf in extra_tracks are NOT bedgraphs — sample_bam_paths handles them.
+    row = {"sample": "s1", "extra_tracks": "/data/x.5mC.bedgraph,/data/y.bam,/data/z.vcf"}
+    pairs = va.sample_bedgraph_paths(row)
+    assert pairs == [("x.5mC", Path("/data/x.5mC.bedgraph"))]
+
+
+def test_sample_bedgraph_paths_empty_when_no_extras():
+    assert va.sample_bedgraph_paths({"sample": "s1"}) == []
+    assert va.sample_bedgraph_paths({"sample": "s1", "extra_tracks": ""}) == []

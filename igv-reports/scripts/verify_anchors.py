@@ -106,9 +106,13 @@ def _apptainer_bind_args() -> list[str]:
 EXCLUDE_FLAGS = "1536"
 DEFAULT_TOLERANCE = 0.05
 ANCHOR_HEADER = [
-    "sample", "track_name", "chrom", "start", "end",
+    "sample", "track_name", "track_type", "chrom", "start", "end",
     "expected", "tolerance", "min", "max", "notes",
 ]
+# Supported track_type values. `bam` = samtools-view read count;
+# `bedgraph` = data row count in the wig/bedGraph slice (CpG count for
+# methylation, peak count for ChIP coverage, etc.).
+VALID_TRACK_TYPES = {"bam", "bedgraph"}
 
 
 @dataclasses.dataclass
@@ -119,9 +123,10 @@ class AnchorRow:
     start: int
     end: int
     expected: int
-    tolerance: str = ""   # blank => fall back to --tolerance flag
-    min_count: str = ""   # blank => not used
-    max_count: str = ""   # blank => not used
+    track_type: str = "bam"   # bam | bedgraph; bam keeps backwards compat
+    tolerance: str = ""       # blank => fall back to --tolerance flag
+    min_count: str = ""       # blank => not used
+    max_count: str = ""       # blank => not used
     notes: str = ""
 
     @property
@@ -148,9 +153,8 @@ def resolve_samtools(sif: Path | None) -> list[str]:
     """Return a samtools command prefix (list of argv tokens).
 
     Priority: --samtools-sif → $SAMTOOLS_SIF → $SAMTOOLS_SIF_DEFAULT → PATH.
-    Falling back to PATH is fine for non-HPC use; on HPC, prefer a SIF to
-    avoid the NFS conda cold-start tax.
-    """
+    Falling back to PATH emits a warning (SIF preferred on shared HPC
+    storage where conda envs on NFS pay a cold-start cost)."""
     candidate = sif
     if candidate is None:
         env = os.environ.get("SAMTOOLS_SIF")
@@ -206,6 +210,100 @@ def samtools_index(samtools_cmd: list[str], bam: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# bedGraph / wig counting
+# ---------------------------------------------------------------------------
+
+# A line in a wig/bedGraph file is either a header (track/fixedStep/
+# variableStep/browser/#) or a data row. We count data rows only.
+_WIG_HEADER_PREFIXES = ("track", "browser", "fixedStep", "variableStep", "#")
+
+
+def _is_wig_data_line(line: str) -> bool:
+    """True iff `line` is a non-empty wig/bedGraph data row (not header,
+    not comment, not blank)."""
+    s = line.strip()
+    if not s:
+        return False
+    if s.startswith(_WIG_HEADER_PREFIXES):
+        return False
+    return True
+
+
+def bedgraph_count_source(track_path: Path, chrom: str, start: int, end: int) -> int:
+    """Count data rows in `track_path` (bedGraph or wig) overlapping the
+    region [start, end) on `chrom`.
+
+    Handles three input shapes:
+      - bgzip+tabix indexed (`.bg.gz` / `.bedgraph.gz` + sibling `.tbi`):
+        delegate to `tabix` for O(log N) lookup.
+      - Plain gzip: stream-decompress, linear scan filtering on chrom + overlap.
+      - Plain text: linear scan filtering on chrom + overlap.
+
+    Overlap rule matches IGV/igv-reports: row [r_start, r_end) overlaps
+    query [q_start, q_end) iff r_start < q_end AND r_end > q_start.
+
+    Raises FileNotFoundError if `track_path` is absent. Returns 0 for a
+    region with no overlapping rows."""
+    import gzip
+    if not track_path.exists():
+        raise FileNotFoundError(f"bedGraph track not found: {track_path}")
+
+    tbi = track_path.with_suffix(track_path.suffix + ".tbi")
+    if track_path.suffix == ".gz" and tbi.exists() and shutil.which("tabix"):
+        # Fast path — tabix-indexed bgzip. Tabix already handles overlap and
+        # comment-line skipping; we count the lines it emits.
+        proc = subprocess.run(
+            ["tabix", str(track_path), f"{chrom}:{start}-{end}"],
+            capture_output=True, text=True,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f"tabix failed for {track_path} {chrom}:{start}-{end}: {proc.stderr.strip()}"
+            )
+        return sum(1 for ln in proc.stdout.splitlines() if _is_wig_data_line(ln))
+
+    # Slow path — linear scan. Open with gzip if .gz, else text. Filter on
+    # chrom first (cheap) before parsing positions.
+    opener = gzip.open if track_path.suffix == ".gz" else open
+    count = 0
+    with opener(track_path, "rt") as fh:
+        for line in fh:
+            if not _is_wig_data_line(line):
+                continue
+            cols = line.rstrip("\n").split("\t")
+            if len(cols) < 3:
+                continue
+            if cols[0] != chrom:
+                continue
+            try:
+                r_start = int(cols[1])
+                r_end = int(cols[2])
+            except ValueError:
+                continue
+            if r_start < end and r_end > start:
+                count += 1
+    return count
+
+
+def bedgraph_count_slice(slice_bytes: bytes) -> int:
+    """Count data rows in a wig/bedGraph slice that was extracted from an
+    igv-reports HTML via decode_track_slice().
+
+    igv-reports stores wig slices as `data:application/gzip;base64,<...>`
+    where the decoded bytes are gzipped wig text (per
+    igv_reports/datauri.py:get_data_uri). We gunzip in-memory and count
+    data rows."""
+    import gzip
+    try:
+        text = gzip.decompress(slice_bytes).decode("utf-8", errors="replace")
+    except (OSError, gzip.BadGzipFile):
+        # Some create_report versions write the wig slice uncompressed for
+        # small payloads. Fall back to raw bytes interpreted as text.
+        text = slice_bytes.decode("utf-8", errors="replace")
+    return sum(1 for ln in text.splitlines() if _is_wig_data_line(ln))
+
+
+# ---------------------------------------------------------------------------
 # anchors.tsv I/O
 # ---------------------------------------------------------------------------
 
@@ -214,7 +312,8 @@ def write_anchors(anchors: list[AnchorRow], out: Path) -> None:
     lines = ["#" + "\t".join(ANCHOR_HEADER)]
     for a in anchors:
         lines.append("\t".join([
-            a.sample, a.track_name, a.chrom, str(a.start), str(a.end),
+            a.sample, a.track_name, a.track_type,
+            a.chrom, str(a.start), str(a.end),
             str(a.expected), a.tolerance, a.min_count, a.max_count, a.notes,
         ]))
     out.write_text("\n".join(lines) + "\n")
@@ -253,9 +352,17 @@ def load_anchors(path: Path) -> list[AnchorRow]:
                 max_count = (d.get("max", "") or "").strip()
                 if max_count:
                     int(max_count)
+                # track_type was added 2026-05-19; older anchor files
+                # without the column default to "bam" so they keep working.
+                track_type = (d.get("track_type", "") or "bam").strip() or "bam"
+                if track_type not in VALID_TRACK_TYPES:
+                    raise ValueError(
+                        f"unknown track_type '{track_type}' (valid: {sorted(VALID_TRACK_TYPES)})"
+                    )
                 rows.append(AnchorRow(
                     sample=d["sample"],
                     track_name=d["track_name"],
+                    track_type=track_type,
                     chrom=d["chrom"],
                     start=int(d["start"]),
                     end=int(d["end"]),
@@ -310,6 +417,41 @@ def sample_bam_paths(row: dict) -> list[tuple[str, Path]]:
         if entry.endswith(".bam") or entry.endswith(".cram"):
             p = Path(entry)
             out.append((p.stem, p))
+    return out
+
+
+# wig/bedGraph extensions that we count rows for. .wig included because
+# igv-reports treats both as "wig" format under the hood (tracks.py:60-61).
+_BEDGRAPH_EXTS = (".bedgraph", ".bedgraph.gz", ".bg", ".bg.gz", ".wig", ".wig.gz")
+
+
+def _is_bedgraph(path: str) -> bool:
+    p = path.lower()
+    return any(p.endswith(ext) for ext in _BEDGRAPH_EXTS)
+
+
+def sample_bedgraph_paths(row: dict) -> list[tuple[str, Path]]:
+    """Return [(track_name, bedgraph_path), ...] for the bedGraph/wig
+    entries in a row's `extra_tracks` (comma-separated, mirrors the
+    build_igvreports samplesheet schema). track_name = Path.stem after
+    stripping a trailing `.gz` — matches igv-reports' positional auto-
+    naming (a `foo.bedgraph.gz` becomes `foo.bedgraph` in the track table,
+    then the verifier's structural check strips the format suffix; we
+    keep the format suffix here so the anchor row pairs unambiguously
+    with the source file)."""
+    out: list[tuple[str, Path]] = []
+    extras = row.get("extra_tracks") or ""
+    for entry in extras.split(","):
+        entry = entry.strip()
+        if not _is_bedgraph(entry):
+            continue
+        p = Path(entry)
+        stem = p.stem
+        if stem.endswith(".bedgraph") or stem.endswith(".wig") or stem.endswith(".bg"):
+            # foo.bedgraph.gz -> Path.stem = 'foo.bedgraph'; strip one
+            # more level so the track_name matches what igv-reports renders.
+            stem = stem.rsplit(".", 1)[0]
+        out.append((stem, p))
     return out
 
 
@@ -421,9 +563,11 @@ def cmd_generate(args: argparse.Namespace) -> None:
     for row in rows:
         sample = row["sample"]
         bams = sample_bam_paths(row)
-        if not bams:
-            sys.stderr.write(f"[generate] {sample}: no BAM tracks in row — skipping\n")
+        bgs = sample_bedgraph_paths(row)
+        if not bams and not bgs:
+            sys.stderr.write(f"[generate] {sample}: no BAM or bedGraph tracks in row — skipping\n")
             continue
+        # BAM anchors (read count via samtools).
         for track_name, bam in bams:
             if not bam.exists():
                 sys.stderr.write(f"[generate] {sample}/{track_name}: BAM missing: {bam}\n")
@@ -436,11 +580,28 @@ def cmd_generate(args: argparse.Namespace) -> None:
                     sys.stderr.write(f"[generate] {sample}/{track_name} {region}: {e}\n")
                     continue
                 anchors.append(AnchorRow(
-                    sample=sample, track_name=track_name,
+                    sample=sample, track_name=track_name, track_type="bam",
                     chrom=b["chrom"], start=b["start"], end=b["end"],
                     expected=count, notes=b["name"] or "",
                 ))
-                sys.stderr.write(f"[generate] {sample}/{track_name} {region}: {count}\n")
+                sys.stderr.write(f"[generate] {sample}/{track_name} {region}: {count} reads\n")
+        # bedGraph / wig anchors (data row count = CpG count for methylation).
+        for track_name, bg in bgs:
+            if not bg.exists():
+                sys.stderr.write(f"[generate] {sample}/{track_name}: bedGraph missing: {bg}\n")
+                continue
+            for b in bed_rows:
+                try:
+                    count = bedgraph_count_source(bg, b["chrom"], b["start"], b["end"])
+                except (FileNotFoundError, RuntimeError) as e:
+                    sys.stderr.write(f"[generate] {sample}/{track_name} {b['chrom']}:{b['start']}-{b['end']}: {e}\n")
+                    continue
+                anchors.append(AnchorRow(
+                    sample=sample, track_name=track_name, track_type="bedgraph",
+                    chrom=b["chrom"], start=b["start"], end=b["end"],
+                    expected=count, notes=b["name"] or "",
+                ))
+                sys.stderr.write(f"[generate] {sample}/{track_name} {b['chrom']}:{b['start']}-{b['end']}: {count} rows\n")
 
     out = Path(args.out)
     write_anchors(anchors, out)
@@ -504,18 +665,37 @@ def verify_one_html(
                 ))
                 continue
             url = track.get("url", "")
-            slice_path = tmp / f"{a.sample}__{a.track_name}__{a.chrom}_{a.start}_{a.end}.bam"
-            try:
-                decode_track_slice(url, slice_path)
-                samtools_index(samtools_cmd, slice_path)
-                observed = samtools_count(samtools_cmd, slice_path, a.region)
-            except (ValueError, RuntimeError) as e:
-                checks.append(AnchorCheck(
-                    a.sample, a.track_name, a.region, "FAIL",
-                    expected=str(a.expected),
-                    details=f"slice decode/count failed: {e}",
-                ))
-                continue
+            if a.track_type == "bedgraph":
+                # wig/bedGraph slices are gzip(text) base64-encoded by
+                # igv_reports/datauri.py. Count data rows in the embedded
+                # slice; no samtools needed.
+                try:
+                    m = _DATA_URL_RE.match(url)
+                    if not m:
+                        raise ValueError("track url is not a data: base64 URL")
+                    raw = base64.b64decode(m.group(1))
+                    observed = bedgraph_count_slice(raw)
+                except (ValueError, RuntimeError) as e:
+                    checks.append(AnchorCheck(
+                        a.sample, a.track_name, a.region, "FAIL",
+                        expected=str(a.expected),
+                        details=f"bedGraph slice decode/count failed: {e}",
+                    ))
+                    continue
+            else:
+                # BAM (default).
+                slice_path = tmp / f"{a.sample}__{a.track_name}__{a.chrom}_{a.start}_{a.end}.bam"
+                try:
+                    decode_track_slice(url, slice_path)
+                    samtools_index(samtools_cmd, slice_path)
+                    observed = samtools_count(samtools_cmd, slice_path, a.region)
+                except (ValueError, RuntimeError) as e:
+                    checks.append(AnchorCheck(
+                        a.sample, a.track_name, a.region, "FAIL",
+                        expected=str(a.expected),
+                        details=f"slice decode/count failed: {e}",
+                    ))
+                    continue
             status, details = decide_status(a, observed, default_tol)
             checks.append(AnchorCheck(
                 a.sample, a.track_name, a.region, status,

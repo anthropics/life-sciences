@@ -1,15 +1,15 @@
 {
   "name": "msds-chain",
   "version": "1.0.0",
-  "description": "Chemical safety intelligence for AI-assisted experiment design. MSDS Chain provides 18 tools for pairwise compatibility checks, GHS hazard analysis, PPE recommendations, storage guidance, waste disposal, mixing order safety, occupational exposure limits, transport classification, multi-region regulatory compliance (EU/US/CN/JP/KR/CA/AU/TW), safer chemical alternatives, protocol text parsing, SDS section lookup, and signed audit reports with Ed25519 receipts.",
+  "description": "Chemical safety intelligence for AI-assisted experiment design. MSDS Chain provides 21 tools for pairwise compatibility checks, GHS hazard analysis, PPE recommendations, storage guidance, waste disposal, mixing order safety, occupational exposure limits, transport classification, multi-region regulatory compliance (23 watch lists across 11 regions), safer chemical alternatives, protocol text parsing, SDS section lookup, batch safety audits, and signed audit reports with Ed25519 receipts. Every tool carries full MCP annotations and returns structuredContent.",
   "author": {
     "name": "LAgentBot Pte. Ltd.",
     "url": "https://msdschain.lagentbot.com"
   },
   "mcpServers": {
     "msds-chain": {
-      "type": "http",
-      "url": "https://mcp.lagentbot.com/mcp"
+      "type": "sse",
+      "url": "https://mcp.lagentbot.com/sse"
     }
   }
 }

@@ -1,0 +1,23 @@
+# Python dependencies for the leakage-aware-splitting skill.
+# Pin exact versions in your own environment: clustering and fingerprint results
+# shift across releases, and the provenance manifest records what was used.
+
+# Core (pure-Python split logic, metrics, baselines, calibration)
+numpy>=1.24
+scikit-learn>=1.3
+
+# Small-molecule modality
+rdkit>=2024.3.1
+
+# Test suite
+pytest>=7.4
+hypothesis>=6.90
+
+# External binaries (NOT pip-installable; install separately and pin the version).
+# For a one-command setup of everything below, use the conda env: `conda env create
+# -f environment.yml` (provides MMseqs2 + Foldseek so their test paths actually run).
+#   MMseqs2  -> sequence clustering        (Bioconda `mmseqs2`, or static binary from mmseqs.com)
+#   Foldseek -> structural clustering       (Bioconda `foldseek`)
+#   DataSAIL -> protein-ligand 2D splits    (optional; greedy fallback included)
+#   Graph-Part -> homology partitioning     (optional golden-reference comparator)
+# Do NOT depend on thin pip MMseqs2 wrappers for reproducible splits.

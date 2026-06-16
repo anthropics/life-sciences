@@ -25,6 +25,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install leakage-aware-splitting@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -146,6 +147,19 @@ Systematic framework for scientific problem selection and strategic research dec
 - Navigate decision trees in active projects
 - Strategic research planning and problem choice
 
+#### Leakage-Aware Splitting
+**Plugin ID**: `leakage-aware-splitting@life-sciences`
+
+Create leakage-aware train/validation/test splits for biological ML data so benchmarks reflect real generalization instead of memorized similarity. Clusters the dataset by similarity (and/or shared metadata groups) and assigns whole clusters to a single split, then reports honest diagnostics: realized split ratios, the train↔test nearest-neighbour similarity distribution, a kNN baseline, and a provenance manifest. Designed to fail in neither direction — catching real leakage without manufacturing false alarms on genuinely diverse data.
+
+**Modalities:**
+- **sequence** (MMseqs2): protein/nucleotide identity clustering
+- **structure** (Foldseek): structural/fold similarity
+- **small_molecule** (RDKit): Bemis-Murcko scaffolds, ECFP4/Butina
+- **protein_ligand**: greedy double-cold (cold-drug + cold-target)
+- **temporal**: deposition-date split with post-cutoff leakage check
+- **metadata/grouped**: patient/plate/site group-aware splitting
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -172,6 +186,7 @@ Systematic framework for scientific problem selection and strategic research dec
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install leakage-aware-splitting@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

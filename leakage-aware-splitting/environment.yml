@@ -1,0 +1,24 @@
+# Reproducible conda environment for the leakage-aware-splitting skill.
+#   conda env create -f environment.yml
+#   conda activate leakage-aware-splitting
+#   pytest tests/ -q
+#
+# Python deps come from conda-forge; the external clustering binaries (MMseqs2,
+# Foldseek) come from bioconda. The test suite skips the binary-backed paths when a
+# binary is absent, so this file is what makes those paths actually run.
+name: leakage-aware-splitting
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12
+  - numpy>=1.24
+  - scikit-learn>=1.3
+  - rdkit>=2024.3.1
+  - pandas
+  - pytest>=7.4
+  - pytest-cov
+  - hypothesis>=6.90
+  # External binaries (not pip-installable):
+  - mmseqs2
+  - foldseek

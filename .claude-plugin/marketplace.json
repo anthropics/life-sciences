@@ -179,6 +179,15 @@
       "description": "AdisInsight MCP server by Springer Nature for drug development pipeline, clinical trials, and deals intelligence",
       "category": "life-sciences",
       "tags": ["drug-development", "pipeline", "clinical-trials", "deals"]
+    },
+    {
+      "name": "leakage-aware-splitting",
+      "source": "./",
+      "description": "Create leakage-aware train/val/test splits for proteins, structures, molecules, and drug-target data so benchmarks reflect real generalization instead of memorized similarity",
+      "category": "life-sciences",
+      "tags": ["bioinformatics", "machine-learning", "data-splitting", "data-leakage", "benchmarking", "cheminformatics", "drug-discovery"],
+      "strict": false,
+      "skills": ["./leakage-aware-splitting"]
     }
   ]
 }

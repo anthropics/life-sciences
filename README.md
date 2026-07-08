@@ -14,6 +14,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 
 # Install MCP servers
 /plugin install pubmed@life-sciences
+/plugin install genomic-intelligence@life-sciences
 /plugin install biorender@life-sciences
 /plugin install synapse@life-sciences
 /plugin install wiley-scholar-gateway@life-sciences
@@ -87,6 +88,13 @@ Global drug regulatory intelligence covering submissions, approvals, and guidanc
 Drug development pipeline, clinical trials, safety, and deals intelligence.
 
 **Requirements**: AdisInsight subscription (https://adisinsight.springer.com)
+
+#### Genomic Intelligence
+**Plugin ID**: `genomic-intelligence@life-sciences`
+
+DNA sequence analysis with transformer language models: promoter, splice, enhancer, chromatin, expression, and gene annotation prediction, plus Ensembl sequence acquisition. For research and development use, not clinical or diagnostic decisions.
+
+**Requirements**: None - accessible to all users (a free demo tier; contact contact@genomicintelligence.ai for a dedicated key for high-volume or latency-sensitive use)
 
 ### Local MCP Servers (MCPB)
 
@@ -191,7 +199,7 @@ Restart to activate the MCP servers.
 
 ## Authentication Requirements
 
-- **No authentication**: PubMed
+- **No authentication**: PubMed, Genomic Intelligence
 - **Free account required**: BioRender, Synapse, Wiley Scholar Gateway, Consensus
 - **Paid/institutional account**: 10x Genomics (requires data in account to be useful), Cortellis, AdisInsight
 

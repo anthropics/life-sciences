@@ -13,78 +13,212 @@
       "name": "10x-genomics",
       "source": "./10x-genomics",
       "description": "10x Genomics Cloud MCP server for accessing analysis data and workflows",
+      "classification": {
+        "object_acted_on": [
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["genomics", "bioinformatics", "analysis"]
+      "tags": [
+        "genomics",
+        "bioinformatics",
+        "analysis"
+      ]
     },
     {
       "name": "pubmed",
       "source": "./pubmed",
       "description": "PubMed MCP server for searching biomedical literature and research articles",
+      "classification": {
+        "object_acted_on": [
+          "papers-articles"
+        ],
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["research", "literature", "biomedical"]
+      "tags": [
+        "research",
+        "literature",
+        "biomedical"
+      ]
     },
     {
       "name": "biorender",
       "source": "./biorender",
       "description": "BioRender MCP server for creating and accessing scientific illustrations",
+      "classification": {
+        "object_acted_on": [
+          "designs-media"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["visualization", "diagrams", "illustrations"]
+      "tags": [
+        "visualization",
+        "diagrams",
+        "illustrations"
+      ]
     },
     {
       "name": "synapse",
       "source": "./synapse",
       "description": "Synapse.org MCP server by Sage Bionetworks for collaborative research data management",
+      "classification": {
+        "object_acted_on": [
+          "data",
+          "files-documents"
+        ],
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["research", "data-management", "collaboration"]
+      "tags": [
+        "research",
+        "data-management",
+        "collaboration"
+      ]
     },
     {
       "name": "wiley-scholar-gateway",
       "source": "./wiley-scholar-gateway",
       "description": "Scholar Gateway MCP server by Wiley for accessing academic research and publications",
+      "classification": {
+        "object_acted_on": [
+          "papers-articles"
+        ],
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["research", "academic", "publications"]
+      "tags": [
+        "research",
+        "academic",
+        "publications"
+      ]
     },
     {
       "name": "biorxiv",
       "source": "./biorxiv",
       "description": "Access to bioRxiv and medRxiv preprint data",
+      "classification": {
+        "object_acted_on": [
+          "papers-articles"
+        ],
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["research", "preprints", "biology", "medical"]
+      "tags": [
+        "research",
+        "preprints",
+        "biology",
+        "medical"
+      ]
     },
     {
       "name": "clinical-trials",
       "source": "./clinical-trials",
       "description": "Access ClinicalTrials.gov data",
+      "classification": {
+        "object_acted_on": [
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "medicine"
+      },
       "category": "life-sciences",
-      "tags": ["clinical-trials", "research", "medical", "fda"]
+      "tags": [
+        "clinical-trials",
+        "research",
+        "medical",
+        "fda"
+      ]
     },
     {
       "name": "chembl",
       "source": "./chembl",
       "description": "Access to the ChEMBL Database",
+      "classification": {
+        "object_acted_on": [
+          "databases",
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["drug-discovery", "chemistry", "bioactive-molecules", "bioactivity"]
+      "tags": [
+        "drug-discovery",
+        "chemistry",
+        "bioactive-molecules",
+        "bioactivity"
+      ]
     },
     {
       "name": "owkin",
       "source": "./owkin",
       "description": "Interact with AI agents built for biology",
+      "classification": {
+        "object_acted_on": [
+          "ai-models-agents"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["ai", "drug-discovery", "precision-medicine", "histopathology"]
+      "tags": [
+        "ai",
+        "drug-discovery",
+        "precision-medicine",
+        "histopathology"
+      ]
     },
     {
       "name": "open-targets",
       "source": "./open-targets",
       "description": "Drug target discovery and prioritisation platform",
+      "classification": {
+        "object_acted_on": [
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["drug-targets", "genomics", "research", "therapeutics"]
+      "tags": [
+        "drug-targets",
+        "genomics",
+        "research",
+        "therapeutics"
+      ]
     },
     {
       "name": "single-cell-rna-qc",
       "source": "./",
       "description": "Quality control for single-cell RNA-seq data following scverse best practices",
+      "classification": {
+        "object_acted_on": [
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["bioinformatics", "genomics", "single-cell", "quality-control", "qc"],
+      "tags": [
+        "bioinformatics",
+        "genomics",
+        "single-cell",
+        "quality-control",
+        "qc"
+      ],
       "strict": false,
       "skills": [
         "./single-cell-rna-qc"
@@ -94,8 +228,21 @@
       "name": "instrument-data-to-allotrope",
       "source": "./",
       "description": "Convert instrument data to Allotrope Simple Model (ASM) format",
+      "classification": {
+        "object_acted_on": [
+          "data",
+          "files-documents"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["data-conversion", "allotrope", "instruments", "standardization"],
+      "tags": [
+        "data-conversion",
+        "allotrope",
+        "instruments",
+        "standardization"
+      ],
       "strict": false,
       "skills": [
         "./instrument-data-to-allotrope"
@@ -105,8 +252,24 @@
       "name": "nextflow-development",
       "source": "./",
       "description": "Run nf-core bioinformatics pipelines (rnaseq, sarek, atacseq) on local or public GEO/SRA sequencing data",
+      "classification": {
+        "object_acted_on": [
+          "pipelines-jobs",
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["bioinformatics", "nextflow", "pipelines", "rna-seq", "variant-calling", "atac-seq", "genomics"],
+      "tags": [
+        "bioinformatics",
+        "nextflow",
+        "pipelines",
+        "rna-seq",
+        "variant-calling",
+        "atac-seq",
+        "genomics"
+      ],
       "strict": false,
       "skills": [
         "./nextflow-development"
@@ -116,8 +279,22 @@
       "name": "scvi-tools",
       "source": "./",
       "description": "Deep learning toolkit for single-cell omics analysis using scvi-tools",
+      "classification": {
+        "object_acted_on": [
+          "data",
+          "ai-models-agents"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["bioinformatics", "single-cell", "deep-learning", "scvi-tools", "integration"],
+      "tags": [
+        "bioinformatics",
+        "single-cell",
+        "deep-learning",
+        "scvi-tools",
+        "integration"
+      ],
       "strict": false,
       "skills": [
         "./scvi-tools"
@@ -127,8 +304,20 @@
       "name": "clinical-trial-protocol",
       "source": "./",
       "description": "Generate FDA/NIH-compliant clinical trial protocols for medical devices or drugs",
+      "classification": {
+        "object_acted_on": [
+          "files-documents"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "medicine"
+      },
       "category": "life-sciences",
-      "tags": ["clinical-trials", "fda", "protocol", "regulatory"],
+      "tags": [
+        "clinical-trials",
+        "fda",
+        "protocol",
+        "regulatory"
+      ],
       "strict": false,
       "skills": [
         "./clinical-trial-protocol-skill"
@@ -138,8 +327,18 @@
       "name": "scientific-problem-selection",
       "source": "./",
       "description": "Systematic framework for scientific problem selection and strategic research decisions based on Fischbach & Walsh methodology",
+      "classification": {
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["research-strategy", "problem-selection", "scientific-method", "project-planning"],
+      "tags": [
+        "research-strategy",
+        "problem-selection",
+        "scientific-method",
+        "project-planning"
+      ],
       "strict": false,
       "skills": [
         "./scientific-problem-selection"
@@ -149,36 +348,100 @@
       "name": "tooluniverse",
       "source": "./tooluniverse",
       "description": "Democratizing AI scientists with ToolUniverse - AI agents and tools for scientific discovery and automation",
+      "classification": {
+        "object_acted_on": [
+          "ai-models-agents"
+        ],
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["ai-agents", "science", "tool-use", "reasoning", "automation"]
+      "tags": [
+        "ai-agents",
+        "science",
+        "tool-use",
+        "reasoning",
+        "automation"
+      ]
     },
     {
       "name": "medidata",
       "source": "./medidata",
       "description": "Medidata's MCP Connector for Claude with Platform Help and Predictive Site Ranking for clinical trials",
+      "classification": {
+        "object_acted_on": [
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "medicine"
+      },
       "category": "life-sciences",
-      "tags": ["clinical-trials", "site-ranking", "trial-planning", "medidata"]
+      "tags": [
+        "clinical-trials",
+        "site-ranking",
+        "trial-planning",
+        "medidata"
+      ]
     },
     {
       "name": "consensus",
       "source": "./consensus",
       "description": "Consensus MCP server for AI-powered search across peer-reviewed scientific research papers",
+      "classification": {
+        "object_acted_on": [
+          "papers-articles"
+        ],
+        "industry": "health-life-sciences",
+        "life_area": "research",
+        "subject": "science"
+      },
       "category": "life-sciences",
-      "tags": ["research", "literature", "academic", "evidence-synthesis"]
+      "tags": [
+        "research",
+        "literature",
+        "academic",
+        "evidence-synthesis"
+      ]
     },
     {
       "name": "cortellis",
       "source": "./cortellis",
       "description": "Cortellis Regulatory Intelligence MCP server by Clarivate for global drug regulatory data and intelligence",
+      "classification": {
+        "object_acted_on": [
+          "reference-docs",
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "medicine"
+      },
       "category": "life-sciences",
-      "tags": ["regulatory", "drug-development", "intelligence", "compliance"]
+      "tags": [
+        "regulatory",
+        "drug-development",
+        "intelligence",
+        "compliance"
+      ]
     },
     {
       "name": "adisinsight",
       "source": "./adisinsight",
       "description": "AdisInsight MCP server by Springer Nature for drug development pipeline, clinical trials, and deals intelligence",
+      "classification": {
+        "object_acted_on": [
+          "data"
+        ],
+        "industry": "health-life-sciences",
+        "subject": "medicine"
+      },
       "category": "life-sciences",
-      "tags": ["drug-development", "pipeline", "clinical-trials", "deals"]
+      "tags": [
+        "drug-development",
+        "pipeline",
+        "clinical-trials",
+        "deals"
+      ]
     }
   ]
 }

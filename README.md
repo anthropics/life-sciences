@@ -92,9 +92,9 @@ Drug development pipeline, clinical trials, safety, and deals intelligence.
 #### Genomic Intelligence
 **Plugin ID**: `genomic-intelligence@life-sciences`
 
-DNA sequence analysis with transformer language models: promoter, splice, enhancer, chromatin, expression, and gene annotation prediction, plus Ensembl sequence acquisition. For research and development use, not clinical or diagnostic decisions.
+DNA sequence analysis with transformer models: promoter, splice, enhancer, chromatin, expression, and gene annotation prediction, plus Ensembl sequence acquisition. Research and development use. Not for clinical or diagnostic decisions.
 
-**Requirements**: None - accessible to all users (a free demo tier; contact contact@genomicintelligence.ai for a dedicated key for high-volume or latency-sensitive use)
+**Requirements**: None - accessible to all users. Contact contact@genomicintelligence.ai for a dedicated key for high-volume or latency-sensitive use.
 
 ### Local MCP Servers (MCPB)
 

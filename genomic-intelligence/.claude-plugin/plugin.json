@@ -1,7 +1,7 @@
 {
   "name": "genomic-intelligence",
   "version": "1.0.0",
-  "description": "Genomic Intelligence MCP server: DNA sequence analysis with transformer models — promoter, splice, enhancer, chromatin, expression, and gene annotation prediction, plus Ensembl sequence acquisition.",
+  "description": "Genomic Intelligence MCP server for DNA sequence analysis with transformer models: promoter, splice, enhancer, chromatin, expression, and gene annotation prediction, plus Ensembl sequence acquisition. Research and development use. Not for clinical or diagnostic decisions.",
   "author": {
     "name": "Genomic Intelligence",
     "url": "https://genomicintelligence.ai"

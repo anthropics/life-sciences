@@ -179,6 +179,13 @@
       "description": "AdisInsight MCP server by Springer Nature for drug development pipeline, clinical trials, and deals intelligence",
       "category": "life-sciences",
       "tags": ["drug-development", "pipeline", "clinical-trials", "deals"]
+    },
+    {
+      "name": "genomic-intelligence",
+      "source": "./genomic-intelligence",
+      "description": "Genomic Intelligence MCP server for DNA sequence analysis with transformer models: promoter, splice, enhancer, chromatin, expression, and gene annotation prediction. Research and development use. Not for clinical or diagnostic decisions.",
+      "category": "life-sciences",
+      "tags": ["genomics", "dna", "bioinformatics", "gene-expression", "annotation"]
     }
   ]
 }

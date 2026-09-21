@@ -1,0 +1,19 @@
+{
+  "name": "encode-toolkit",
+  "version": "0.3.4",
+  "description": "ENCODE Toolkit for the ENCODE Project (encodeproject.org), the largest public catalog of functional genomic elements. Includes an MCP server with 20 tools to search experiments and files, download data with MD5 verification, and track provenance, citations, and links to PubMed, bioRxiv, ClinicalTrials.gov, and GEO, plus 47 skills for quality assessment, data aggregation, external database annotation, and Nextflow pipelines for seven assays. The server runs locally via uv; public ENCODE data requires no account.",
+  "author": {
+    "name": "Dr. Alex M. Mawla, PhD",
+    "url": "https://github.com/ammawla/encode-toolkit"
+  },
+  "homepage": "https://github.com/ammawla/encode-toolkit",
+  "repository": "https://github.com/ammawla/encode-toolkit",
+  "license": "Apache-2.0",
+  "mcpServers": {
+    "ENCODE": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["encode-toolkit==0.3.4"]
+    }
+  }
+}

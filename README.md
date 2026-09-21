@@ -18,6 +18,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install synapse@life-sciences
 /plugin install wiley-scholar-gateway@life-sciences
 /plugin install 10x-genomics@life-sciences
+/plugin install encode-toolkit@life-sciences
 
 # Install skills
 /plugin install single-cell-rna-qc@life-sciences
@@ -27,7 +28,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install scientific-problem-selection@life-sciences
 ```
 
-For servers requiring authentication (all except PubMed), configure credentials after installation:
+For servers requiring authentication (all except PubMed and ENCODE Toolkit), configure credentials after installation:
 1. Type `/plugin` in Claude Code
 2. Select "Manage plugins"
 3. Find your installed server
@@ -100,6 +101,35 @@ Access 10x Genomics Cloud analysis data and workflows.
 - Access token (generate from: https://cloud.10xgenomics.com/account/security)
 - Note: Only useful if you have analysis data in your account
 
+### Local MCP Servers (stdio)
+
+#### ENCODE Toolkit
+**Plugin ID**: `encode-toolkit@life-sciences`
+
+Search, download, track, and analyze functional genomics data from the ENCODE Project (https://www.encodeproject.org), the largest public catalog of functional genomic elements. Installs a local MCP server (launched with `uvx encode-toolkit==0.3.4`) together with 47 bundled skills.
+
+**MCP server (20 tools):**
+- Search experiments and files by assay (ChIP-seq, ATAC-seq, RNA-seq, WGBS, Hi-C, CUT&RUN, and more), organism, organ, biosample, and target
+- Download files with automatic MD5 verification, with a dry-run preview for batch downloads
+- Track experiments, citations (BibTeX/RIS), and derived-file provenance in a local SQLite database
+- Link experiments to PubMed, bioRxiv, ClinicalTrials.gov, and GEO records for use alongside those MCP servers
+
+**Bundled skills (47):**
+- **Core**: setup, search, download, experiment tracking, cross-referencing
+- **Analysis**: quality assessment, integrative analysis, regulatory elements, epigenome profiling, biosample comparison, visualization, motif analysis, peak annotation, batch analysis, functional screens (CRISPR, MPRA, STARR-seq)
+- **Data aggregation**: histone marks, chromatin accessibility, Hi-C, DNA methylation
+- **External databases**: GTEx, ClinVar, gnomAD, Ensembl, UCSC Genome Browser, GEO, GWAS Catalog, JASPAR, CELLxGENE
+- **Workflows**: provenance, citations, variant annotation, single-cell, disease research, publication trust, tool installation, scientific writing, coordinate liftover, pipeline selection
+- **Pipelines**: Nextflow + Docker pipelines for ChIP-seq, ATAC-seq, RNA-seq, WGBS, Hi-C, DNase-seq, and CUT&RUN
+- **Meta-analysis**: scRNA-seq meta-analysis, multi-omics integration
+
+**Requirements**:
+- [uv](https://docs.astral.sh/uv/getting-started/installation/) installed locally (uv provisions Python 3.10+ automatically)
+- Docker and Nextflow only if you run the pipeline skills
+- No account needed for public ENCODE data; ENCODE access keys are optional and only used for unreleased or restricted datasets
+
+**License**: The skills and manifest in this repository are Apache-2.0 (see `encode-toolkit/LICENSE.txt`). The MCP server is installed from PyPI at a pinned version and is AGPL-3.0; source at https://github.com/ammawla/encode-toolkit
+
 ### Skills
 
 #### Single-Cell RNA-seq Quality Control
@@ -166,6 +196,9 @@ Systematic framework for scientific problem selection and strategic research dec
 # Local MCP servers (require configuration)
 /plugin install 10x-genomics@life-sciences
 
+# Local MCP servers (no configuration needed; requires uv)
+/plugin install encode-toolkit@life-sciences
+
 # Skills (no configuration needed)
 /plugin install single-cell-rna-qc@life-sciences
 /plugin install instrument-data-to-allotrope@life-sciences
@@ -191,7 +224,7 @@ Restart to activate the MCP servers.
 
 ## Authentication Requirements
 
-- **No authentication**: PubMed
+- **No authentication**: PubMed, ENCODE Toolkit
 - **Free account required**: BioRender, Synapse, Wiley Scholar Gateway, Consensus
 - **Paid/institutional account**: 10x Genomics (requires data in account to be useful), Cortellis, AdisInsight
 

@@ -1,0 +1,34 @@
+# ENCODE ATAC-seq Analysis Environment
+# Covers: chromatin accessibility profiling
+# Standards: Buenrostro et al. 2013, Corces et al. 2017
+# Usage: conda env create -f atacseq-env.yml
+name: encode-atacseq
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # IDR 2.0.4.2 is built for Python 3.10 and older on bioconda
+  - python=3.10
+  # Alignment
+  - bowtie2==2.5.4
+  # BAM processing
+  - samtools==1.19
+  - picard==3.1.1
+  # Peak calling
+  - macs2==2.2.9.1
+  # Replicate consistency
+  - idr==2.0.4.2
+  # Signal processing (alignmentSieve for Tn5 offset, bamCoverage for tracks)
+  - deeptools==3.5.5
+  # Interval operations
+  - bedtools==2.31.0
+  # QC and trimming
+  - fastqc==0.12.1
+  - trim-galore==0.6.10
+  - cutadapt==4.6  # run by Trim Galore; pinned to the version in the image
+  - openjdk=17  # FastQC (and Picard, Juicer tools) run on Java; the image has OpenJDK 17
+  - multiqc==1.21
+  # Signal format conversion
+  - ucsc-bedgraphtobigwig
+  # Utilities
+  - pigz

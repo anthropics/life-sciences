@@ -1,0 +1,30 @@
+# ENCODE WGBS (Whole-Genome Bisulfite Sequencing) Analysis Environment
+# Covers: DNA methylation profiling
+# Standards: Foox et al. 2021, Schultz et al. 2015
+# Usage: conda env create -f wgbs-env.yml
+name: encode-wgbs
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  # Bisulfite-aware alignment and methylation extraction
+  - bismark==0.24.2
+  # Fast methylation extraction
+  - methyldackel==0.6.1
+  # BAM processing
+  - samtools==1.19
+  # Interval operations
+  - bedtools==2.31.0
+  # Indexing and compression for methylation BED files
+  - htslib==1.19
+  # QC and trimming
+  - fastqc==0.12.1
+  - trim-galore==0.6.10
+  - cutadapt==4.6  # run by Trim Galore; pinned to the version in the image
+  - openjdk=17  # FastQC (and Picard, Juicer tools) run on Java; the image has OpenJDK 17
+  - multiqc==1.21
+  # Bowtie2 (required by Bismark as backend aligner)
+  - bowtie2==2.5.4
+  # Utilities
+  - pigz

@@ -1,0 +1,35 @@
+# ENCODE CUT&RUN / CUT&Tag Analysis Environment
+# Covers: antibody-targeted chromatin profiling
+# Standards: Skene & Henikoff 2017 (CUT&RUN), Kaya-Okur et al. 2019 (CUT&Tag)
+# Usage: conda env create -f cutandrun-env.yml
+name: encode-cutandrun
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  # Alignment
+  - bowtie2==2.5.4
+  # BAM processing
+  - samtools==1.19
+  - picard==3.1.1
+  # Peak calling
+  - macs2==2.2.9.1
+  # SEACR peak calling (shell script + R)
+  - r-base>=4.3
+  # Signal processing and spike-in normalization
+  - deeptools==3.5.5
+  # Interval operations (suspect list filtering)
+  - bedtools==2.31.0
+  # QC and trimming
+  - fastqc==0.12.1
+  - trim-galore==0.6.10
+  - cutadapt==4.6  # run by Trim Galore; pinned to the version in the image
+  - openjdk=17  # FastQC (and Picard, Juicer tools) run on Java; the image has OpenJDK 17
+  - multiqc==1.21
+  # Signal format conversion
+  - ucsc-bedgraphtobigwig
+  # Utilities
+  - pigz
+  - wget
+  - curl

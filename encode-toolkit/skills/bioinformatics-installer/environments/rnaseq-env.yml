@@ -1,0 +1,30 @@
+# ENCODE RNA-seq Analysis Environment
+# Covers: gene expression quantification (total RNA-seq, mRNA-seq)
+# Standards: Conesa et al. 2016, ENCODE Consortium 2020
+# Usage: conda env create -f rnaseq-env.yml
+name: encode-rnaseq
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  # Splice-aware alignment
+  - star==2.7.11b
+  # Transcript quantification
+  - rsem==1.3.3
+  - kallisto==0.50.1
+  - salmon==1.10.3
+  # Gene-level counting
+  - subread==2.0.6
+  # BAM processing
+  - samtools==1.19
+  # RNA-seq QC
+  - rseqc==5.0.3
+  # QC and trimming
+  - fastqc==0.12.1
+  - trim-galore==0.6.10
+  - cutadapt==4.6  # run by Trim Galore; pinned to the version in the image
+  - openjdk=17  # FastQC (and Picard, Juicer tools) run on Java; the image has OpenJDK 17
+  - multiqc==1.21
+  # Utilities
+  - pigz

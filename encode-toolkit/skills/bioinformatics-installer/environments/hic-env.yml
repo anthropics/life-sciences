@@ -1,0 +1,36 @@
+# ENCODE Hi-C Analysis Environment
+# Covers: chromatin conformation capture and 3D genome organization
+# Standards: Yardimci et al. 2019, Rao et al. 2014
+# Usage: conda env create -f hic-env.yml
+name: encode-hic
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  # Alignment (chimeric read handling)
+  - bwa==0.7.18
+  # Contact pair processing
+  - pairtools==1.1.2
+  # Contact matrix storage and balancing
+  - cooler==0.9.3
+  # BAM processing
+  - samtools==1.19
+  # Interval operations
+  - bedtools==2.31.0
+  # QC and trimming
+  - fastqc==0.12.1
+  - trim-galore==0.6.10
+  - cutadapt==4.6  # run by Trim Galore; pinned to the version in the image
+  - multiqc==1.21
+  # Java runtime for Juicer
+  - openjdk=17
+  # Python Hi-C packages
+  - pip
+  - pip:
+    - cooltools
+    - hic-straw
+    - pyGenomeTracks
+  # Utilities
+  - pigz
+  - pbgzip

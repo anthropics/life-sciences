@@ -1,0 +1,37 @@
+# ENCODE DNase-seq Analysis Environment
+# Covers: DNase I hypersensitive site mapping
+# Standards: Thurman et al. 2012, ENCODE Consortium 2020
+# Usage: conda env create -f dnaseseq-env.yml
+name: encode-dnaseseq
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  # Alignment
+  - bwa==0.7.18
+  # BAM processing
+  - samtools==1.19
+  - picard==3.1.1
+  # Hotspot detection: Hotspot2 and its modwt dependency are not packaged for conda.
+  # Build them from source (see pipeline-dnaseseq/scripts/Dockerfile) or use that image.
+  - bedops
+  # Interval operations
+  - bedtools==2.31.0
+  # QC and trimming
+  - fastqc==0.12.1
+  - trim-galore==0.6.10
+  - cutadapt==4.6  # run by Trim Galore; pinned to the version in the image
+  - openjdk=17  # FastQC (and Picard, Juicer tools) run on Java; the image has OpenJDK 17
+  - multiqc==1.21
+  # Signal format conversion
+  - ucsc-bedgraphtobigwig
+  # Utilities
+  - pigz
+  - pip
+  # bioconda only builds RGT for Python 3.7 and does not package F-Seq2, so both come from PyPI
+  - pip:
+      # Footprinting (HINT is part of RGT)
+      - RGT==1.0.2
+      # Feature density peak calling
+      - fseq2==2.0.3

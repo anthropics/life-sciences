@@ -179,6 +179,13 @@
       "description": "AdisInsight MCP server by Springer Nature for drug development pipeline, clinical trials, and deals intelligence",
       "category": "life-sciences",
       "tags": ["drug-development", "pipeline", "clinical-trials", "deals"]
+    },
+    {
+      "name": "encode-toolkit",
+      "source": "./encode-toolkit",
+      "description": "ENCODE Toolkit MCP server and 47 skills for searching, downloading, tracking, and analyzing functional genomics data from the ENCODE Project",
+      "category": "life-sciences",
+      "tags": ["genomics", "epigenomics", "functional-genomics", "encode", "bioinformatics", "pipelines"]
     }
   ]
 }

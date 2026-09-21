@@ -1,0 +1,39 @@
+# Direct dependencies installed by install-python-packages.sh, grouped by category.
+# Regenerate the lock with:
+#   uv pip compile --universal --python-version 3.10 requirements.in -o constraints.txt
+
+# --genomics
+numpy
+pandas
+scipy
+matplotlib
+seaborn
+scikit-learn
+statsmodels
+h5py
+loompy
+
+# --singlecell
+scanpy
+anndata
+scvi-tools
+scrublet
+scanorama
+bbknn
+harmony-pytorch
+leidenalg
+louvain
+umap-learn
+
+# --hic
+cooler
+cooltools
+hic-straw
+pyGenomeTracks
+bioframe
+
+# --deeptools
+deeptools
+pyBigWig
+pysam
+pybedtools

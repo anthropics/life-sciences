@@ -65,13 +65,7 @@ Write in the style of an industry-trained analyst presenting the facts clearly a
 
 ## Citation Quality Hierarchy
 
-When multiple sources are available, prefer in this order:
-
-1. **Primary regulatory sources** (FDA labels, approval packages, EMA summaries)
-2. **Peer-reviewed publications** (journal articles, especially pivotal trial results)
-3. **Official trial registries** (ClinicalTrials.gov for enrollment, endpoints, status)
-4. **Press releases** (company announcements, but verify with primary sources when possible)
-5. **News articles** (use only when primary sources unavailable; prefer specialist publications)
+Follow the source priority in `00-research-standards.md`, so research and writing resolve conflicts the same way.
 
 ## Handling Conflicting Sources
 
@@ -79,7 +73,7 @@ When sources disagree, cite both and explain:
 
 ```markdown
 The press release reports [200 patients](source1), while ClinicalTrials.gov shows [180 enrolled](source2).
-We use 180 (official registry).
+The registry figure of 180 is used.
 ```
 
 ## Clinical Trial Citations

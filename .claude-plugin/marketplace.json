@@ -26,6 +26,22 @@
       ]
     },
     {
+      "name": "opportunity-brief",
+      "source": "./",
+      "description": "Research a drug asset in an indication and write a cited brief covering the evidence, competition, key risks and open questions",
+      "category": "life-sciences",
+      "tags": [
+        "clinical-development",
+        "drug-development",
+        "research",
+        "due-diligence"
+      ],
+      "strict": false,
+      "skills": [
+        "./opportunity-brief"
+      ]
+    },
+    {
       "name": "scientific-problem-selection",
       "source": "./",
       "description": "Systematic framework for scientific problem selection and strategic research decisions based on Fischbach & Walsh methodology",

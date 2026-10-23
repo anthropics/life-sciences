@@ -25,6 +25,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install trial-powering@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -146,6 +147,13 @@ Systematic framework for scientific problem selection and strategic research dec
 - Navigate decision trees in active projects
 - Strategic research planning and problem choice
 
+#### Trial Powering
+**Plugin ID**: `trial-powering@life-sciences`
+
+Reconstruct a clinical trial's power calculation from public sources or supplied parameters, audit its assumptions against precedent, and stress-test the design with sensitivity analyses. Includes a calculator for binary, continuous, time-to-event and count endpoints.
+
+**Requirements**: Python 3 for the calculator (standard library only), and matplotlib for the charts. Works best with a clinical trials connector and a PubMed connector.
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -172,6 +180,7 @@ Systematic framework for scientific problem selection and strategic research dec
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install trial-powering@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

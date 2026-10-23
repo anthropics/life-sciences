@@ -11,6 +11,7 @@ This marketplace provides skills for life sciences research. Skills are domain-s
 # Install skills
 /plugin install clinical-trial-protocol@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install trial-powering@life-sciences
 
 
 

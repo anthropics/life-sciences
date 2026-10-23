@@ -40,6 +40,22 @@
       "skills": [
         "./scientific-problem-selection"
       ]
+    },
+    {
+      "name": "trial-powering",
+      "source": "./",
+      "description": "Reconstruct a clinical trial's power calculation, audit its assumptions against precedent, and run sensitivity analyses",
+      "category": "life-sciences",
+      "tags": [
+        "biostatistics",
+        "clinical-trials",
+        "sample-size",
+        "trial-design"
+      ],
+      "strict": false,
+      "skills": [
+        "./trial-powering"
+      ]
     }
   ]
 }

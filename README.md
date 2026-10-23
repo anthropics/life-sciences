@@ -198,12 +198,19 @@ Restart to activate the MCP servers.
 ## Support
 
 For issues with:
-- **Claude Code plugin system**: Report in #claude-cli-feedback on Anthropic Slack
+- **Claude Code plugin system**: Open an issue in [anthropics/claude-code](https://github.com/anthropics/claude-code/issues)
+- **Skills and plugin entries in this repository**: Open an issue in this repository
 - **Individual MCP servers**: Contact the respective provider's support
+
+To report a security issue, see [SECURITY.md](SECURITY.md).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-Individual MCP servers are licensed by their respective providers. See each provider's terms of service for details.
+Each skill is licensed under the `LICENSE.txt` in its directory. Individual MCP servers are licensed by their respective providers. See each provider's terms of service for details.
 
 ## Removed Plugins
 

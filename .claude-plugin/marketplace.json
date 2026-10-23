@@ -146,6 +146,17 @@
       ]
     },
     {
+      "name": "opportunity-brief",
+      "source": "./",
+      "description": "Research a drug asset in an indication and write a cited brief covering the evidence, competition, key risks and open questions",
+      "category": "life-sciences",
+      "tags": ["clinical-development", "drug-development", "research", "due-diligence"],
+      "strict": false,
+      "skills": [
+        "./opportunity-brief"
+      ]
+    },
+    {
       "name": "tooluniverse",
       "source": "./tooluniverse",
       "description": "Democratizing AI scientists with ToolUniverse - AI agents and tools for scientific discovery and automation",

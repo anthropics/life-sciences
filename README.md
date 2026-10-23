@@ -25,6 +25,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install indication-dossier@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -146,6 +147,13 @@ Systematic framework for scientific problem selection and strategic research dec
 - Navigate decision trees in active projects
 - Strategic research planning and problem choice
 
+#### Indication Dossier
+**Plugin ID**: `indication-dossier@life-sciences`
+
+Write a cited research dossier on a single therapeutic indication, framed as a patient population: epidemiology, disease biology, standard of care, regulatory path, and landmark trials. Runs in five phases with resumable waypoint files.
+
+**Works best with**: a clinical trials connector and a PubMed connector. Falls back to web search against the public sources.
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -172,6 +180,7 @@ Systematic framework for scientific problem selection and strategic research dec
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install indication-dossier@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

@@ -11,6 +11,12 @@ This marketplace provides skills for life sciences research. Skills are domain-s
 # Install skills
 /plugin install clinical-trial-protocol@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+```
 
+## Contributing
 
+See [CONTRIBUTING.md](CONTRIBUTING.md). To report a security issue, see [SECURITY.md](SECURITY.md).
 
+## License
+
+Each skill is licensed under the `LICENSE.txt` in its directory.

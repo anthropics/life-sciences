@@ -26,6 +26,22 @@
       ]
     },
     {
+      "name": "precedent-analysis",
+      "source": "./",
+      "description": "Find the closest historical precedents for a trial design or FDA submission pattern and compute a narrow base rate",
+      "category": "life-sciences",
+      "tags": [
+        "clinical-trials",
+        "regulatory",
+        "base-rates",
+        "clinical-development"
+      ],
+      "strict": false,
+      "skills": [
+        "./precedent-analysis"
+      ]
+    },
+    {
       "name": "scientific-problem-selection",
       "source": "./",
       "description": "Systematic framework for scientific problem selection and strategic research decisions based on Fischbach & Walsh methodology",

@@ -25,6 +25,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install precedent-analysis@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -146,6 +147,13 @@ Systematic framework for scientific problem selection and strategic research dec
 - Navigate decision trees in active projects
 - Strategic research planning and problem choice
 
+#### Precedent Analysis
+**Plugin ID**: `precedent-analysis@life-sciences`
+
+Find the closest historical precedents for a clinical trial design or FDA submission pattern, and compute a narrow base rate with its sample size and uncertainty. Counts trials stopped for failure, and reports how far cases with no public result could move the rate.
+
+**Works best with**: a clinical trials connector and a PubMed connector. Falls back to web search against the public sources.
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -172,6 +180,7 @@ Systematic framework for scientific problem selection and strategic research dec
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install precedent-analysis@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

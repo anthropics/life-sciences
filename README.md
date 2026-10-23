@@ -25,6 +25,7 @@ This marketplace provides MCP (Model Context Protocol) servers and skills for li
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install opportunity-brief@life-sciences
 ```
 
 For servers requiring authentication (all except PubMed), configure credentials after installation:
@@ -146,6 +147,13 @@ Systematic framework for scientific problem selection and strategic research dec
 - Navigate decision trees in active projects
 - Strategic research planning and problem choice
 
+#### Opportunity Brief
+**Plugin ID**: `opportunity-brief@life-sciences`
+
+Research a drug asset in an indication and write a cited brief: what it is, why it might work, the competition, the key risks and the open questions. Runs in phases, with checkpoints to review the research, choose a framing and agree an outline.
+
+**Works best with**: a clinical trials connector, a PubMed connector, and any licensed pipeline data source you have. Falls back to web search against the public sources.
+
 ## Detailed Installation
 
 ### 1. Add the marketplace (one time)
@@ -172,6 +180,7 @@ Systematic framework for scientific problem selection and strategic research dec
 /plugin install nextflow-development@life-sciences
 /plugin install scvi-tools@life-sciences
 /plugin install scientific-problem-selection@life-sciences
+/plugin install opportunity-brief@life-sciences
 ```
 
 ### 3. Configure credentials (if needed)

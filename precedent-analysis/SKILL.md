@@ -87,7 +87,9 @@ Build a hierarchy from narrow to broad.
 
 ## Phase 3: Find the precedents
 
-Search the sources in parallel where you can, with subagents if available. Give each subagent `references/00-research-standards.md` and its own output file, and merge them into `precedents.json` yourself.
+Search the sources in parallel where you can, with subagents if available. Give each subagent `references/00-research-standards.md`, the record format below and its own output file. Merge the files into `precedents.json` yourself and copy every source and quote across; a pointer to another file isn't a quote.
+
+**Bound the job.** If the user gives nothing to narrow the class, as often happens in regulatory mode, it may be too large to list in full. Say so, quote a published benchmark with its definition if one exists, and list every case in a dated window that you fix before searching and write into the inclusion rules. End the window early enough that most cases have resolved, because cases still pending at the end tend to be the slow ones, and the rate is drawn from the fast ones. Save a first report before you widen the window or add subagents.
 
 **Keep a search log.** Before the first search, write the run date and the Phase 2 inclusion rules to `search_log.md`. Then add one line per search: the source, the exact query and filters, and the number of hits. A reader needs this to judge whether cases were missed.
 
@@ -121,7 +123,7 @@ Classify every clinical case:
 
 **Counting rules.** The unit is the trial, and report how many distinct programs the cases come from, because trials in one program aren't independent.
 
-- **One trial, one case.** Count each trial once, however many registry records, papers or releases describe it, and remove duplicates by registry ID when you merge files. Two trials reported in one paper, or folded into one registry record, are two cases. Two registry records with one planned primary analysis across both are one case; list both IDs.
+- **One trial, one case.** Count each trial once, however many registry records, papers or releases describe it, and remove duplicates by registry ID when you merge files. Two trials reported in one paper, or folded into one registry record, are two cases. Two registry records with one planned primary analysis across both are one case; list both IDs. Check each name against the record for its ID, because twin trials are easy to swap.
 - **Extensions.** An extension or rollover study of a trial already in the class follows the same participants, so it isn't a new case. List it under Excluded Cases.
 - **Phase 2/3.** A trial registered as Phase 2/3 belongs in a Phase 3 class. Include that phase value in the search, because a filter on "Phase 3" alone can miss it.
 - **What `met` means.** The trial achieved what its own protocol required for success on the primary endpoint. If every co-primary endpoint had to succeed, all must be met. If either of two primary endpoints was enough, one is enough; say which one missed. If that isn't clear, use `no_results` and say why.
@@ -131,7 +133,7 @@ Classify every clinical case:
 - **Several arms.** Count the arm that matches the pattern. If more than one arm matches, it is still one case, judged by the trial's own rule for success.
 - **Doubtful stops.** If a stopped trial could be either `stopped_other` or `no_results`, use `no_results`, which widens the bounds instead of dropping the case.
 
-Classify regulatory cases by **FDA's action on the submission in the pattern**. The unit is one review cycle: an original application or one resubmission, and what FDA did with it. Report how many distinct applications the review cycles come from, because cycles of one application aren't independent.
+Classify regulatory cases by **FDA's action on the submission in the pattern**. The unit is one review cycle: an original application or one resubmission, and what FDA did with it. Report how many distinct applications the review cycles come from, because cycles of one application aren't independent. Name the unit with every count in the report: a count of review cycles isn't a count of applications.
 
 | Outcome | In the base rate? |
 |---|---|
@@ -140,6 +142,7 @@ Classify regulatory cases by **FDA's action on the submission in the pattern**. 
 | `refuse_to_file` (FDA declined to accept the application for review) | Yes, as a failure |
 | `withdrawn` (by the sponsor, before FDA acted) | No, but it sets the bounds below, counted both ways. A sponsor may withdraw because it expects a refusal, so the true rate is more likely to sit near the lower bound |
 | `pending` | No |
+| `undisclosed` (the submission is known to have been made, but no FDA action on it has been made public, and it isn't known to be under review) | No, but it sets the bounds below, counted with `withdrawn`. Don't label a case `crl` or `refuse_to_file` without a source that shows the letter |
 | `not_resubmitted` (the pattern starts from a CRL or a refusal to file, and the sponsor hasn't resubmitted within the period set in the inclusion rules) | No, but report the count |
 
 **Patterns that start from an earlier FDA action.** If the pattern is what happens after a CRL or a refusal to file, some sponsors never resubmit. Those applications have no later review cycle, so a rate per review cycle leaves them out and holds only for sponsors who resubmitted. Label them `not_resubmitted` and record the date of the earlier action, because a recent one may still be resubmitted. Say in the report that the rate is conditional on resubmission, and next to it give the eventual-approval rate per application, defined below, in which they count as failures. Before searching, write down in the inclusion rules how long a sponsor must have gone without resubmitting before an application counts as a failure, for example two years from the earlier action. Label newer ones `pending`, and give their count.
@@ -150,7 +153,40 @@ If the question is about eventual approval across all review cycles instead, say
 
 In regulatory mode, some failures can't be seen at all. FDA's published collection of CRLs began in 2025 and may not reach back to every earlier letter, and a refusal to file or a withdrawal may be public only if the sponsor disclosed it. Treat the base rate as an upper estimate, and don't rate confidence above medium.
 
-Record every candidate in `precedents.json`, including excluded ones, with its identifier, outcome, `source_url`, `source_type`, `quote`, the effect size where reported, any `anomaly_flags`, and the reason for any exclusion. For clinical cases, also record the registry status and, for a stopped trial, the stated reason for stopping, word for word. The registry's field for this is often empty. Before you label such a trial `no_results`, look for the reason in the rest of the registry record, the publication and the sponsor's release, and record where you found it.
+Record every candidate in `precedents.json`, in this shape in both modes:
+
+```json
+{
+  "run_date": "YYYY-MM-DD",
+  "mode": "clinical or regulatory",
+  "cases": [
+    {
+      "id": "registry ID or application number",
+      "name": "",
+      "drug": "",
+      "program": "",
+      "class": "the narrowest class it belongs to: narrowest, medium or broadest",
+      "outcome": "a label from the tables above",
+      "similarity": "high, medium or low",
+      "effect_size": "",
+      "registry_status": "clinical only",
+      "why_stopped": "clinical only, for a stopped trial",
+      "earlier_action_date": "regulatory only, if the pattern starts from an earlier FDA action",
+      "sources": [
+        {"fact": "outcome", "source_url": "", "source_type": "", "quote": "", "opened": true}
+      ],
+      "anomaly_flags": []
+    }
+  ],
+  "excluded": [
+    {"id": "", "name": "", "reason": "", "source_url": ""}
+  ]
+}
+```
+
+Give each fact its own entry in `sources`: the outcome and, in regulatory mode, the starting event and any later outcome. An `excluded` entry needs only the four fields shown; the quote rule in `references/00-research-standards.md` applies to each entry in `sources`. Each `quote` is word for word from its own `source_url`. Set `opened` to true only if you fetched the page itself during this run, and to false if you saw only a search excerpt, and open the page behind every outcome that enters the rate where you can. A label that says something hasn't happened (`ongoing`, `no_results`, `pending`, `undisclosed`, `not_resubmitted`) needs a source fetched during this run: the page you checked, quoting what it shows, such as the latest action or status listed.
+
+`why_stopped` is the stated reason, word for word. The registry's field for this is often empty. Before you label such a trial `no_results`, look for the reason in the rest of the registry record, the publication and the sponsor's release, and record where you found it.
 
 ## Phase 4: Score similarity and compute the base rate
 
@@ -174,8 +210,8 @@ For each reference class you can enumerate, report the figures below. The broade
 - **Base rate**: successes divided by resolved cases. If N is 0, report "No resolved cases"
 - **N**: the number of resolved cases, meaning the cases whose outcome is marked "Yes" in the classification tables above
 - **95% interval**: a Wilson score interval. With small N this will be wide, and that's the honest answer
-- **Bounds for missing results**: the rate if every `no_results` (or `withdrawn`) case were a failure, and the rate if every one were a success. Show these next to the headline rate, because the interval doesn't account for missing cases
-- **Confidence**: low if N<5 or the bounds are more than 20 points apart; high if N≥15, the class is tight and the cases span several programs; otherwise medium
+- **Bounds for missing results**: the rate if every `no_results` (or `withdrawn` or `undisclosed`) case were a failure, and the rate if every one were a success. Show these next to the headline rate, because the interval doesn't account for missing cases
+- **Confidence**: low if N<5 or the bounds are more than 20 points apart. Otherwise high if N≥15, the class is the narrowest one, and no two programs supply more than half of the resolved cases, and medium if not. In regulatory mode, no higher than medium (see above)
 
 Compute these with code rather than by hand. Use the Wilson formula below, not the simpler p ± 1.96 × SE interval, which shrinks to zero width at 0/N and N/N:
 
@@ -184,7 +220,7 @@ from math import sqrt
 
 def base_rate(successes, failures, missing=0):
     # failures: every outcome marked "Yes, as a failure"
-    # missing: the no_results (or withdrawn) cases
+    # missing: the no_results (or withdrawn or undisclosed) cases
     z = 1.959964  # 95%
     n = successes + failures  # resolved cases
     total = n + missing
@@ -210,7 +246,7 @@ Where the data supports it, also report conditional rates (for example, after a 
 
 ## Phase 5: Report
 
-Save this to `precedent_report.md`, citing every case per `references/01-writing-style.md`:
+Save this to `precedent_report.md`, citing every case per `references/01-writing-style.md`. Link each fact to the source that shows it: a row with a starting event, an outcome and a later outcome needs three links, each labeled with the fact it shows. Mark a link "(search excerpt)" if you didn't open the page:
 
 ```markdown
 ## Precedent Analysis: [Pattern]

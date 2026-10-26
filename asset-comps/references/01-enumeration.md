@@ -78,7 +78,6 @@ pipeline and competitor data.
 
 - "[indication] discontinued program" and "[target] trial terminated" for
   withdrawn and failed programs
-
 - "[indication] competitive landscape" for overview
 - "[indication] treatment guidelines" for SOC identification
 - "[target] inhibitor pipeline" for same-target programs

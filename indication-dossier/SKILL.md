@@ -79,8 +79,9 @@ phase. Then create `<workdir>/waypoints/` and `progress.json`, and update `progr
 The dossier is built in five phases. Only the main session writes waypoint
 files. The research for Phases 2-4 may run at the same time, but write the
 waypoints in order (2, 3, 4), because biomarkers (Phase 3) inform endpoints
-(Phase 4). Each time a waypoint is written: add every source tried in that
-phase to `sources_evaluated.json`, failures included; set `current_phase` in
+(Phase 4). Each time a waypoint is written: copy every URL that you or a subagent tried
+in that phase into `sources_evaluated.json` with its result, failures included (the log
+is the full list, not a selection); set `current_phase` in
 `progress.json` to the next phase; and give a ≤200-word summary of what you
 found and what's uncertain. Then go straight on.
 
@@ -139,5 +140,6 @@ in section 6 rather than filling it.
 
 If invoked with a `workdir` that already contains waypoints: list which phases
 are complete (waypoint file exists and is non-empty), show the meta summary,
-and ask the user which phase to run next. Never overwrite an existing waypoint
+and ask the user which phase to run next. If the session cannot receive a reply,
+resume from the first incomplete phase and say so. Never overwrite an existing waypoint
 without confirmation.

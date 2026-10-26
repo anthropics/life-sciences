@@ -32,7 +32,7 @@ This covers Sections 4 (Regulatory Path) and 5 (Key Trials).
 - List every Phase 3 trial found (and every pivotal Phase 2 where there is no Phase 3), with
   its status. Open the registry record of each and take the primary endpoint from it. If there
   are more than about 15, do this for those started in the last ten years and those named in
-  guidelines or among the landmark trials, and list the rest in section 6 under "Not followed up"
+  guidelines or among the landmark trials, and count the rest in section 6 under "Not followed up"
 - For each one that is completed, or active with enrolment closed, run one web search for its
   results (trial name or NCT ID plus "results"). A registry record can lag a conference or
   press-release readout by months
@@ -78,5 +78,5 @@ Follow the schema from `references/waypoint-schemas.md`. Include `trial_landscap
   one web search for regulatory news and one for trial results in this indication, each
   limited to the last 24 months
 - For failures: focus on mechanism-level lessons, not just "this drug didn't work"
-- Three source families side by side (subagents where available): web search site:fda.gov for guidance/approvals,
+- Three source families side by side, with subagents as SKILL.md sets out: web search site:fda.gov for guidance/approvals,
   the registry for trial patterns, the literature for reviews of trial history

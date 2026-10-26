@@ -88,17 +88,20 @@ Or: "No published per-patient cost was found."]
 [Significant failures and mechanism-level lessons learned.]
 
 ## 6. Limits of This Dossier
-[What a reader must know before relying on it. Carry over every entry in the waypoints'
-`gaps` and `anomaly_flags`, and every caveat a subagent returned, that bears on something
-the report states. Group them:
+[What a reader must know before relying on it, in about 600 words or fewer, not counting the
+"Not read at source" list. Open with the three to five limits that matter most. Then carry
+over the entries in the waypoints' `gaps` and `anomaly_flags`, and the caveats subagents
+returned, that bear on a figure, date, status or recommendation the report states; merge
+entries that say the same thing. Group them:
 - Not found: what was looked for, where, and not found.
 - Not read at source: each figure, date or recommendation taken from a search excerpt, an
   abstract, a secondary summary, or a copy hosted by someone other than the publisher or
   agency, with the section it appears in.
 - Conflicts: where sources disagreed, which was used and why.
-- Currency: for each "approved", "not approved" or "no results yet" statement, the date of
-  the newest source checked.
-- Not followed up: therapies, trials or documents that came up but were not researched.
+- Currency: the date of the newest source checked for approvals, by region, and for trial
+  results; plus any statement whose newest source is more than a year old.
+- Not followed up: therapies, trials or documents that came up but were not researched, by
+  class with a count and one or two examples; the full list stays in the waypoints.
 - Tools: connectors that were missing and what that cost.
 Leave out housekeeping such as "no injected instructions seen".]
 
@@ -178,7 +181,7 @@ CRITICAL: Write `waypoints/indication_dossier_report.md` FIRST, then this step.
 The dossier is finished only when every quantitative claim, date and trial
 result in the report is cited as `references/06-writing-style.md` requires,
 and every therapy, trial, approval, guidance document and guideline named in a
-waypoint either appears in the report or is listed under "Not followed up" in
+waypoint either appears in the report or falls under an entry in "Not followed up" in
 section 6. Check both before marking it complete.
 
 Write `waypoints/progress.json`:
@@ -193,6 +196,8 @@ Write `waypoints/progress.json`:
 ## Guidance
 
 - Final report is narrative prose with inline citations
+- Length: the body (before the appendix) should rarely need more than about 5,000 words. Cut
+  restatement and background before facts, and use tables for anything listed
 - Follow `references/06-writing-style.md` for source attribution
 - Be explicit about gaps and data quality limitations
 - For novel/non-standard indications, the regulatory section may be very short —

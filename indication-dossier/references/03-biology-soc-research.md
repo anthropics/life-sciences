@@ -64,6 +64,6 @@ Follow the schema from `references/waypoint-schemas.md`.
 - For pathophysiology: aim for a working understanding — key pathways and
   why they matter for therapy, not textbook depth
 - For biomarkers: explicitly connect to clinical trial utility
-- For approved therapies: focus on limitations — this is what creates the opportunity
-- Three source families side by side (subagents where available): literature for biology, web search for guidelines,
-  web search site:fda.gov for approvals
+- For approved therapies: focus on limitations — this is what defines the unmet need
+- Three source families side by side, with subagents as SKILL.md sets out: literature for biology, web search for
+  guidelines, web search site:fda.gov and site:ema.europa.eu for approvals

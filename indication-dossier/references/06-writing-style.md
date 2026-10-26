@@ -10,6 +10,12 @@ Cite every factual claim with an inline markdown link:
 when there is no natural claim text, use the source name and document type
 as the title.
 
+One claim per link: each number, date or status carries the link of the source
+that states it, and the linked words say no more than that source does. When a
+sentence combines facts from several sources, link each fact separately. Write
+an inference or calculation of your own as your own ("this implies…", "by our
+arithmetic…"), outside the link and not straight after it.
+
 Use numbered references `[1]` only when the same source is cited 5+ times or
 when citing several sources for one claim.
 

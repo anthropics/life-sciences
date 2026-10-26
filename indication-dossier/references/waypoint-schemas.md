@@ -15,7 +15,9 @@ far the source was read. Use exactly these key names:
 
 `quote` is a single string. If one source supports several findings, add one
 entry per quote; never put two quoted strings in one value. After writing a
-waypoint file, read it back and confirm that it is valid JSON.
+waypoint file, parse it if a shell is available (`python3 -m json.tool <file> > /dev/null`).
+If not, do not re-read the whole file: say under "Tools" in section 6 that the files
+were not validated.
 
 ## progress.json — Where the run has got to
 

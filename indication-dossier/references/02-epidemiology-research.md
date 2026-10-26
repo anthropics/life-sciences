@@ -43,4 +43,4 @@ Follow the schema from `references/waypoint-schemas.md`. For each subsection, no
 - For rare diseases, smaller studies are acceptable — note the evidence quality
 - If the indication is novel or non-standard, explicitly state that epidemiology
   data is limited and explain what proxy data exists
-- Literature and web side by side (subagents where available, otherwise one after the other)
+- Literature and web side by side, with subagents as SKILL.md sets out

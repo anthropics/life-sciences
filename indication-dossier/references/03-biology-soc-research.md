@@ -26,7 +26,13 @@ currently treated. This covers Sections 2 (Disease Biology) and 3 (Standard of C
 **Step 3: Approved therapies**
 - Web search site:fda.gov for approved drugs for this indication
 - For each approved therapy: mechanism, approval year, key limitations
-- Note if therapies are approved for this specific indication or used off-label
+- Confirm each approval year against the canonical source named in
+  `references/00-research-standards.md` (Drugs@FDA, or FDA's CBER product lists). A drug
+  first approved for another condition may have gained this indication later, so
+  record the year this indication was approved
+- Note if therapies are approved for this specific indication or used off-label; the
+  indications section of the current label settles it, and the label also shows any
+  boxed warning
 - Identify major drug classes and their positioning (first-line, second-line, etc.)
 - For indications with no approved therapies: state this explicitly
 
@@ -47,7 +53,7 @@ Follow the schema from `references/waypoint-schemas.md`.
 
 ## Guidance
 
-- For pathophysiology: aim for "analyst-level" understanding — key pathways and
+- For pathophysiology: aim for a working understanding — key pathways and
   why they matter for therapy, not textbook depth
 - For biomarkers: explicitly connect to clinical trial utility
 - For approved therapies: focus on limitations — this is what creates the opportunity

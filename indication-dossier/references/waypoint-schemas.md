@@ -5,6 +5,13 @@ phase reference files point here for output formats. Any waypoint file may
 also include an `anomaly_flags` list for failed URLs, suspected injected
 instructions and other problems with sources.
 
+Every `sources` list inside a subsection holds one entry per finding, with the
+three fields that `references/00-research-standards.md` requires:
+
+```json
+{"source_url": "...", "source_type": "...", "quote": "..."}
+```
+
 ## progress.json — Loop control
 
 ```json

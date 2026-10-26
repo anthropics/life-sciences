@@ -32,7 +32,7 @@ This covers Sections 4 (Regulatory Path) and 5 (Key Trials).
 - Typical trial sizes (enrollment targets)
 - Typical trial durations (primary endpoint assessment timepoints)
 - Common comparator arms (placebo, active comparator, SOC)
-- Estimate per-patient costs if available from literature
+- Per-patient costs: report only a figure that a cited source states; if none is found, say so rather than estimating
 
 **Step 4: Landmark trials**
 - Identify the 3-5 most important trials that shaped current SOC

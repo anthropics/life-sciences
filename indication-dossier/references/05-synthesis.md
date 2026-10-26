@@ -16,7 +16,7 @@ Also write `research_output.json` for downstream consumers.
 
 **Definition**: [one-sentence clinical definition]
 **ICD-10**: [codes, or "Not a standard diagnostic entity"]
-**Parent Indication**: [parent name, or "Root"]
+**Parent Indication**: [parent name, or "None"]
 
 ## 1. Population Definition & Epidemiology
 
@@ -59,14 +59,16 @@ Underserved populations.]
 
 ### 4.1 Accepted Endpoints
 [FDA/EMA accepted primary endpoints. Surrogate vs. clinical.
-Or: "No FDA guidance exists for this indication."]
+Or: "No FDA or EMA guidance specific to this indication was found."]
 
 ### 4.2 Regulatory Precedents
 [Key approvals, guidance documents, advisory committee discussions.]
 
 ### 4.3 Trial Design Parameters
-[Typical trial sizes, durations, comparators, per-patient costs.
-Based on Phase 3 trial patterns from ClinicalTrials.gov.]
+[Typical trial sizes, durations, comparators.
+Based on Phase 3 trial patterns from ClinicalTrials.gov.
+Per-patient cost only where a cited source states one.
+Or: "No published per-patient cost was found."]
 
 ## 5. Key Trials
 
@@ -119,6 +121,16 @@ future trial design.
 *Throughout*: Frame from the patient population perspective. Use the framing
 guidance from SKILL.md.
 
+*Figures*: Only generate a chart when it shows a relationship or
+distribution that prose cannot. Give each a one-line caption that names the
+data source. After rendering, open the image with the Read tool and answer:
+does this tell the reader something the surrounding prose does not? Are
+title, axes with units, and legend all present and legible? Do axis ticks
+and chart type match the data (no fractional ticks on years, counts, or
+categories; no misleading scales)? If any answer is no, or you cannot look at
+the image, delete the figure rather than regenerating; a table can carry the
+numbers.
+
 **Step 3: Write `waypoints/research_output.json`**
 ```json
 {
@@ -140,6 +152,10 @@ guidance from SKILL.md.
 **Step 4: Mark complete**
 
 CRITICAL: Write `waypoints/indication_dossier_report.md` FIRST, then this step.
+
+The dossier is finished only when every quantitative claim, date and trial
+result in the report is cited as `references/06-writing-style.md` requires.
+Check this before marking it complete.
 
 Write `waypoints/progress.json`:
 ```json

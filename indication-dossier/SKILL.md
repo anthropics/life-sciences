@@ -3,7 +3,9 @@ name: indication-dossier
 description: >
   Write a cited dossier on one therapeutic indication: its patients,
   epidemiology, biology, standard of care, regulatory path and key trials. Use
-  when assessing a disease area for drug development or trial design.
+  when assessing a disease area for drug development or trial design, or when
+  asked to "write an indication dossier", "get me up to speed on [indication]"
+  or "characterize this patient population". Input is an indication name.
 ---
 
 # Indication Dossier
@@ -37,6 +39,15 @@ regulatory path and trial design.
 - **`workdir`** (optional) — where the waypoints and the final report go.
   Defaults to `indication-dossier-<slug>/`.
 
+Example requests:
+
+- "Write an indication dossier on GLP-1 induced sarcopenia, with sarcopenia as
+  the parent indication." The parent goes in `additional_context`.
+- "Characterize the primary sclerosing cholangitis patient population."
+- "Get me up to speed on idiopathic pulmonary fibrosis, with most attention on
+  the endpoints regulators have accepted." The focus goes in
+  `additional_context`; the dossier still covers every section.
+
 ## Tools this skill expects
 
 | Purpose | Tool |
@@ -65,8 +76,7 @@ If a clinical trials or PubMed connector isn't available, say so and fall back t
 ```
 
 Schemas for every waypoint file are in `references/waypoint-schemas.md`.
-Waypoints are the resumable state. If the workdir already has waypoints, read
-them, summarize what's done, and ask which phase to resume from.
+Waypoints are the resumable state; see "Resuming" below.
 
 ## Before starting
 
@@ -78,7 +88,8 @@ phase. Then create `<workdir>/waypoints/` and `progress.json`, and update `progr
 
 The dossier is built in five phases. Only the main session writes waypoint
 files. After each phase, add every source consulted to
-`sources_evaluated.json`, write the waypoint file and give a ≤200-word summary of what you found and what's uncertain,
+`sources_evaluated.json`, write the waypoint file and give a ≤200-word summary
+of what you found and what's uncertain,
 then proceed directly to the next phase. The one exception is Phase 1: after
 writing `meta.json`, show the resolved indication identity and ask the user
 to **proceed**, **revise the identity** or **stop**, so a

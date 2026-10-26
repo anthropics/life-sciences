@@ -17,8 +17,8 @@ What the sponsor assumed vs what the evidence supports.
 
 Sources, in rough priority:
 - This asset's own Phase 1b/2 data in this indication (sponsor materials, conference abstracts, publications). Apply a **Phase 2 to Phase 3 shrinkage** expectation: open-label, single-arm, or biomarker-enriched Phase 2 effects routinely shrink 20-50% in randomized Phase 3. Say so explicitly.
-- Same-target / same-MOA assets in the same indication (the class effect). The `precedent-analysis` skill returns these. Otherwise use the `pubmed` MCP and `WebSearch` for "[target] [indication] phase 3 [endpoint]".
-- Meta-analyses of the class if they exist (`pubmed` MCP, `biorxiv` MCP for medRxiv preprints).
+- Same-target / same-MOA assets in the same indication (the class effect). The `precedent-analysis` skill returns these, if it is installed. Otherwise use a PubMed connector or `WebSearch` for "[target] [indication] phase 3 [endpoint]".
+- Meta-analyses of the class if they exist (a PubMed connector; a bioRxiv/medRxiv connector for preprints).
 
 Record as: `{sponsor_assumed, asset_prior_data, class_median, class_range, sources[]}`.
 
@@ -30,7 +30,7 @@ inflates in CNS / pain / derm. A control arm that outperforms the assumption
 shrinks the observable delta even if the drug works exactly as hoped.
 
 Sources:
-- Contemporary Phase 3 trials in the same line/population (last ~5 years). Pull the **observed control arm** result, not the assumption. `clinical_trials.analyze_endpoints` + PubMed.
+- Contemporary Phase 3 trials in the same line/population (last ~5 years). Pull the **observed control arm** result, not the assumption. Use results posted on ClinicalTrials.gov and PubMed.
 - Disease registries / natural history studies if the comparator is placebo / BSC.
 - For oncology TTE: recent control-arm medians in the same line, histology, biomarker subset.
 - For CNS/pain/derm continuous endpoints: recent placebo-arm change-from-baseline values (placebo response has trended up over time in many indications).

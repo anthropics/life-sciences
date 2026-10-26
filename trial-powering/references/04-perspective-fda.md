@@ -52,9 +52,8 @@ Pull these via `WebSearch site:fda.gov` and cite the specific section:
 - ICH E9(R1) Addendum on Estimands and Sensitivity Analysis
 - FDA Guidance: Multiple Endpoints in Clinical Trials (2022)
 - FDA Guidance: Adaptive Designs for Clinical Trials (2019)
-- ICH E20 Adaptive Designs for Clinical Trials (draft reached Step 2b June
-  2025, consultation closed December 2025, finalization expected 2026; cite
-  for confirmatory adaptive designs and check current status when used)
+- ICH E20 Adaptive Designs for Clinical Trials (for confirmatory adaptive
+  designs; check its current ICH step before citing)
 - FDA Guidance: Non-Inferiority Clinical Trials (2016)
 - FDA Guidance: Demonstrating Substantial Evidence of Effectiveness (2019 draft / updates)
 - Disease-specific guidance for the indication

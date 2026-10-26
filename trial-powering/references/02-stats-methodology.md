@@ -9,8 +9,8 @@ interpret the output correctly.
 For a superiority test, power, alpha, sample size, and effect size are four
 corners of one equation. Fix any three and the fourth is determined. Sponsors
 publish N and (usually) alpha and power, so the **implied effect size** falls
-out. That implied effect is the sponsor's bet, whether they say it out loud or
-not.
+out. That implied effect is what the sponsor is relying on, whether they say
+it out loud or not.
 
 Rule of thumb worth internalizing: required sample size scales roughly with
 the inverse square of the standardized effect. Halve the true effect and you
@@ -180,9 +180,12 @@ biased. High per-protocol power is deceptive, not reassuring.
 "Event within K years" plus staggered recruitment is really time-to-event
 with variable follow-up. Two-proportion formulas understate N vs
 survival-based methods (Lachin-Foulkes, Lakatos) because late enrollees
-contribute less information; in Wittes' worked example the gap is ~30-40%
-(3,300 vs ~2,400). Use tte mode with
-`--n-from-events --med-ctrl --accrual --followup` (a simplified
+contribute less information. Worked example with this calculator: a 12% vs 8%
+five-year event rate at 90% power (two-sided 0.05) needs about 2,360 patients
+by two proportions. With two years of uniform recruitment and three years of
+minimum follow-up, the same rates (HR 0.652 and a control median of 27.1
+years under exponential survival) need about 2,840, roughly 20% more. Use
+tte mode with `--n-from-events --med-ctrl --accrual --followup` (a simplified
 Lachin-Foulkes) whenever the pattern appears, and present the binary number
 only as a labeled lower bound.
 

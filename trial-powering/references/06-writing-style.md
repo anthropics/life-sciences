@@ -1,25 +1,22 @@
 # Writing Style
 
-Write in the style of an industry-trained analyst presenting the facts clearly and completely.
+Write in the style of an experienced biostatistician or clinical development reviewer presenting the facts clearly and completely.
 
 Open with the verdict stated plainly: the conclusion, the one number that
 carries it, and the condition under which it flips. Then walk assumption by
 assumption: name the assumption, show the worked number, state what changes
 if it fails.
 
-The expository model is Wittes 2002 (Epidemiol Rev 24:39-53). Match the
-register of these sentences from it:
+The expository model is Wittes 2002 (Epidemiol Rev 24:39-53). Write short
+declarative sentences that state a number and say what it means, for example
+(written for this skill, not quotations):
 
-> "False precision in the choice of sample size adds no value to the design
-> of a study."
+> In an event-driven trial, information comes from events, not from patients.
 
-> "Note that in trials with binary (yes/no) outcomes or trials that study
-> time to some event, the word 'small' refers not to the number of patients
-> studied but rather to the number of events observed."
+> Halving the assumed effect roughly quadruples the sample size.
 
-> "The approximately 99 percent of the sample who do not experience hip
-> fracture provide essentially no information about the effect of the
-> therapy."
+> At 330 events the trial has 90% power for a hazard ratio of 0.70 and about
+> 53% for 0.80.
 
 ## Citations
 

@@ -43,7 +43,8 @@ found. Do not guess load-bearing numbers.
 
 ## Ingestion path A: ClinicalTrials.gov
 
-`clinical_trials.get_trial_details(nct_id=...)` gives you arms, allocation,
+The trial record (from a ClinicalTrials.gov connector if one is connected,
+otherwise the public study page) gives you arms, allocation,
 masking, target enrollment, primary outcome text, and sometimes a stat plan
 synopsis under `Detailed Description` or as an attached protocol/SAP document
 (check `documents` / `largeDocs`).
@@ -56,6 +57,12 @@ come from path B/C or get reverse-engineered in Phase 2.
 
 Even when CT.gov or a paper supplies the basics, the sponsor's presentations
 are often the highest-yield public source for the statistical design.
+
+One exception: skip the subject-trial sweep when there is no public trial to
+search for, because the user is designing or sizing their own trial or
+supplied parameters without naming a public trial. In that case write the
+manifest below with `"subject_sweep": "not_applicable"`, a one-line `reason`
+and an empty `decks` list. Step 4 (precedent trials) still applies.
 
 Procedure:
 
@@ -76,15 +83,17 @@ Procedure:
 
 ```json
 {
+  "subject_sweep": "done | not_applicable",
+  "reason": "only when not_applicable, e.g. 'user is sizing their own unpublished trial'",
   "decks": [
     {
       "company": "...",
-      "role": "subject_sponsor" | "precedent_sponsor",
+      "role": "subject_sponsor" | "precedent_sponsor" | "sec_filing",
       "trial": "NCT... or name",
       "title": "Conference presentation",
       "date": "YYYY-MM",
       "url": "...",
-      "status": "fetched | blocked | not_found",
+      "status": "fetched | found_not_downloaded | blocked | not_found",
       "local_path": "decks/....pdf or null",
       "extracted": "one line on what it yielded (e.g. 'stat design slide: alpha split, target HRs, planned events')"
     }
@@ -93,7 +102,10 @@ Procedure:
 ```
 
 A memo that ships without this manifest is incomplete. Decks recorded as
-`blocked` or `not_found` are acceptable outcomes; an empty manifest is not.
+`found_not_downloaded` (located, but the user declined the download or the
+run was unattended), `blocked` or `not_found` are acceptable outcomes; name
+in the memo any deck that was located but not read. An empty `decks` list is
+acceptable only with `"subject_sweep": "not_applicable"`.
 
 ## Ingestion path B: Company deck / corporate presentation / SAP PDF
 
@@ -159,7 +171,9 @@ paper is the SAP; use it as the primary source.
 ## Ingestion path D: Manual
 
 User supplies parameters directly. Echo them back in the table and tag
-`source_type: user`.
+`source_type: user`. If the parameters describe a named public trial, the
+deck sweep still runs; if not, mark it `not_applicable` as described in the
+deck sweep section above.
 
 ## Endpoint classification heuristics
 

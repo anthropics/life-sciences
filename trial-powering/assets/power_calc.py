@@ -18,17 +18,17 @@ cp        Conditional power at an interim: P(final significant | interim).
           TTE), plus --alpha/--sided. Reports CP under three drifts: current
           trend, original hypothesis (pass expected final z via --drift-z,
           e.g. from `forward`: z_drift = z_alpha + z_power), and null.
-assurance Probability of success: power averaged over a normal prior on the
-          effect (O'Hagan; "Bayesian expected power"). Flags: --prior-mean,
-          --prior-sd on the canonical effect scale per type (log HR for tte,
-          delta for continuous, p2 for binary, RR for count), plus the
-          design flags (--events or --n1, --alpha, --sided, --ratio, --sd
-          for continuous, --p1 for binary, etc.). EXCEPTION for tte: pass
-          --prior-mean/--prior-sd as the HR and its sd; internally converted
-          to log scale via a lognormal approximation. Build the prior from
+assurance Probability of success: power averaged over a prior on the effect
+          (O'Hagan; "Bayesian expected power"), counting only a significant
+          result in the direction of benefit. Flags: --prior-mean and
+          --prior-sd (HR for tte, rate ratio for count, delta for continuous,
+          p2 for binary), plus the design flags (--events or --n1, --alpha,
+          --sided, --ratio, --sd for continuous, --p1 for binary, etc.). For
+          tte and count the prior is lognormal, and --prior-mean/--prior-sd
+          are its mean and sd on the ratio scale (the mean, not the median).
+          For continuous and binary the prior is normal. Build the prior from
           the Phase 3 assumptions audit: prior mean = precedent-informed
-          effect, prior sd = spread of the reference class. Count works the
-          same way as tte: pass the rate ratio and its sd.
+          effect, prior sd = spread of the reference class.
 
 Non-inferiority: pass --ni-margin M to forward/n, for binary, continuous or
 tte endpoints only; anything else stops with an error. Binary: M is the absolute
@@ -68,6 +68,12 @@ Common flags
 
 Output is always JSON. --dropout applies to forward, implied and grid as
 attrition (N or events multiplied by 1-D), and inflates required N in `n`.
+So with --dropout, --n1 means patients enrolled, not patients evaluable. An
+event-driven trial runs until it reaches its target events whatever the
+dropout, so for tte pass --dropout only for a calendar-driven analysis; the
+output carries a warning when events were reduced. `n` also reports each size
+rounded up to a whole number (n1_ceil, n2_ceil, n_total_ceil,
+events_required_ceil); quote those.
 
 binary
 ------
@@ -162,13 +168,14 @@ def z_alpha(alpha, sided):
     return norm_ppf(1 - alpha / sided)
 
 # ---------- binary (two independent proportions) ----------
-def binary_power(p1, p2, n1, ratio, alpha, sided):
+def binary_power(p1, p2, n1, ratio, alpha, sided, sign=0):
+    # sign: 0 = benefit is whichever way p2 differs; +1/-1 = only higher/lower counts
     n2 = n1 * ratio
     pbar = (n1*p1 + n2*p2) / (n1 + n2)
     se0 = math.sqrt(pbar*(1-pbar)*(1/n1 + 1/n2))          # under H0 (pooled)
     se1 = math.sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2)          # under H1
     za = z_alpha(alpha, sided)
-    z = (abs(p2 - p1) - za*se0) / se1
+    z = ((sign*(p2 - p1) if sign else abs(p2 - p1)) - za*se0) / se1
     return norm_cdf(z)
 
 def binary_n(p1, p2, power, ratio, alpha, sided):
@@ -190,12 +197,12 @@ def binary_single_arm_n(p_null, p_alt, power, alpha, sided):
     return (num / (p_alt - p_null))**2
 
 # ---------- continuous (two means) ----------
-def continuous_power(delta, sd, n1, ratio, alpha, sided, r2=0.0):
+def continuous_power(delta, sd, n1, ratio, alpha, sided, r2=0.0, sign=0):
     sd_eff = sd * math.sqrt(max(1 - r2, 1e-12))
     n2 = n1 * ratio
     se = sd_eff * math.sqrt(1/n1 + 1/n2)
     za = z_alpha(alpha, sided)
-    return norm_cdf(abs(delta)/se - za)
+    return norm_cdf((sign*delta if sign else abs(delta))/se - za)
 
 def continuous_n(delta, sd, power, ratio, alpha, sided, r2=0.0):
     sd_eff = sd * math.sqrt(max(1 - r2, 1e-12))
@@ -203,11 +210,11 @@ def continuous_n(delta, sd, power, ratio, alpha, sided, r2=0.0):
     return ((za + zb)**2) * (sd_eff**2) * (1 + 1/ratio) / (delta**2)  # n1
 
 # ---------- time-to-event (Schoenfeld) ----------
-def tte_power(hr, events, ratio, alpha, sided):
+def tte_power(hr, events, ratio, alpha, sided, sign=0):
     za = z_alpha(alpha, sided)
     pi = ratio / (1 + ratio)  # fraction in treatment arm
     se = 1.0 / math.sqrt(events * pi * (1 - pi))
-    return norm_cdf(abs(math.log(hr)) / se - za)
+    return norm_cdf((sign*math.log(hr) if sign else abs(math.log(hr))) / se - za)
 
 def tte_events(hr, power, ratio, alpha, sided):
     za = z_alpha(alpha, sided); zb = norm_ppf(power)
@@ -234,13 +241,13 @@ def tte_n_from_events(events, med_ctrl, hr, accrual, followup, ratio):
     return events / d_bar  # total N
 
 # ---------- count (negative binomial rate ratio) ----------
-def count_power(rate_ctrl, rr, exposure, k, n1, ratio, alpha, sided):
+def count_power(rate_ctrl, rr, exposure, k, n1, ratio, alpha, sided, sign=0):
     r1 = rate_ctrl; r2 = rate_ctrl * rr
     v1 = (1.0 / (r1 * exposure)) + k
     v2 = (1.0 / (r2 * exposure)) + k
     se = math.sqrt(v1 / n1 + v2 / (n1 * ratio))
     za = z_alpha(alpha, sided)
-    return norm_cdf(abs(math.log(rr)) / se - za)
+    return norm_cdf((sign*math.log(rr) if sign else abs(math.log(rr))) / se - za)
 
 def count_n(rate_ctrl, rr, exposure, k, power, ratio, alpha, sided):
     r1 = rate_ctrl; r2 = rate_ctrl * rr
@@ -330,6 +337,25 @@ def conditional_power(z_interim, t, z_alpha_final, drift):
     b = z_interim * math.sqrt(t)
     return norm_cdf((b + drift * (1 - t) - z_alpha_final) / math.sqrt(1 - t))
 
+TTE_DROPOUT_NOTE = ("--dropout reduced the event count; an event-driven trial runs until it reaches its "
+                    "target events, so use this only for a calendar-driven analysis, otherwise vary --events")
+
+def finish(out, a):
+    """Echo the flags used if the branch did not, add whole-number sizes, print."""
+    if not out["inputs"]:
+        skip = {"cmd", "type"}
+        if a.type != "count": skip |= {"exposure", "dispersion"}
+        if a.type != "continuous": skip |= {"ancova_r2"}
+        out["inputs"] = {k: v for k, v in vars(a).items()
+                         if k not in skip and v is not None and v is not False}
+    for k in ("n1", "n2", "n", "events_required"):
+        if k in out: out[k + "_ceil"] = math.ceil(out[k] - 1e-9)
+    if "n1_ceil" in out and "n2_ceil" in out:
+        out["n_total_ceil"] = out["n1_ceil"] + out["n2_ceil"]
+    elif "n_total" in out:
+        out["n_total_ceil"] = math.ceil(out["n_total"] - 1e-9)
+    json.dump(out, sys.stdout, indent=2); print()
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["forward", "n", "implied", "grid", "cp", "assurance"])
@@ -338,8 +364,8 @@ def main():
     ap.add_argument("--info-frac", type=float)
     ap.add_argument("--drift-z", type=float, help="expected final z under the design hypothesis (z_alpha + z_power)")
     ap.add_argument("--ni-margin", type=float, help="non-inferiority margin: abs risk diff (binary), delta (continuous), or HR bound like 1.3 (tte)")
-    ap.add_argument("--prior-mean", type=float, help="assurance: prior mean of the effect (HR for tte)")
-    ap.add_argument("--prior-sd", type=float, help="assurance: prior sd of the effect (sd of HR for tte)")
+    ap.add_argument("--prior-mean", type=float, help="assurance: prior mean of the effect (HR for tte, rate ratio for count)")
+    ap.add_argument("--prior-sd", type=float, help="assurance: prior sd of the effect, on the same scale as --prior-mean")
     ap.add_argument("--direction", choices=["higher", "lower"], help="which way benefit runs, for binary and continuous endpoints")
     ap.add_argument("--alpha", type=float, default=0.05)
     ap.add_argument("--sided", type=int, default=2, choices=[1, 2])
@@ -393,7 +419,9 @@ def main():
 
     if a.cmd in ("forward", "implied") and a.dropout:  # attrition, as in grid
         if a.n1: a.n1 *= 1 - a.dropout
-        if a.events: a.events *= 1 - a.dropout
+        if a.events:
+            a.events *= 1 - a.dropout
+            out["warnings"] = [TTE_DROPOUT_NOTE]
         out["dropout_applied"] = a.dropout
 
     t = a.type
@@ -404,28 +432,24 @@ def main():
         if t == "tte":
             # prior given on HR scale; convert to log scale (lognormal approx)
             m_log, s_log = lognormal_params(a.prior_mean, a.prior_sd)
-            fn = lambda lhr: tte_power(math.exp(lhr), a.events, a.ratio, alpha, a.sided) if lhr < 0 else \
-                 (1 - norm_cdf(z_alpha(alpha, a.sided)))  # no power credit for harmful effects
+            fn = lambda lhr: tte_power(math.exp(lhr), a.events, a.ratio, alpha, a.sided, sign=-1)
             val = assurance(fn, m_log, s_log)
             out["inputs"] = {"prior_hr_mean": a.prior_mean, "prior_hr_sd": a.prior_sd, "events": a.events}
         elif t == "continuous":
             sign = {"higher": 1, "lower": -1}.get(a.direction, 1 if a.prior_mean >= 0 else -1)
-            fn = lambda d: continuous_power(d, a.sd, a.n1, a.ratio, alpha, a.sided, a.ancova_r2) if sign*d > 0 else \
-                 (1 - norm_cdf(z_alpha(alpha, a.sided)))
+            fn = lambda d: continuous_power(d, a.sd, a.n1, a.ratio, alpha, a.sided, a.ancova_r2, sign=sign)
             val = assurance(fn, a.prior_mean, a.prior_sd)
             out["inputs"] = {"prior_delta_mean": a.prior_mean, "prior_delta_sd": a.prior_sd, "n1": a.n1, "sd": a.sd,
                              "benefit_direction": "higher" if sign > 0 else "lower"}
         elif t == "binary":
             sign = {"higher": 1, "lower": -1}.get(a.direction, 1 if a.prior_mean >= a.p1 else -1)
-            fn = lambda p2: binary_power(a.p1, min(max(p2, 1e-4), 0.9999), a.n1, a.ratio, alpha, a.sided) if sign*(p2 - a.p1) > 0 else \
-                 (1 - norm_cdf(z_alpha(alpha, a.sided)))
+            fn = lambda p2: binary_power(a.p1, min(max(p2, 1e-4), 0.9999), a.n1, a.ratio, alpha, a.sided, sign=sign)
             val = assurance(fn, a.prior_mean, a.prior_sd)
             out["inputs"] = {"p1": a.p1, "prior_p2_mean": a.prior_mean, "prior_p2_sd": a.prior_sd, "n1": a.n1,
                              "benefit_direction": "higher" if sign > 0 else "lower"}
         elif t == "count":
             m_log, s_log = lognormal_params(a.prior_mean, a.prior_sd)
-            fn = lambda lrr: count_power(a.rate_ctrl, math.exp(lrr), a.exposure, a.dispersion, a.n1, a.ratio, alpha, a.sided) if lrr < 0 else \
-                 (1 - norm_cdf(z_alpha(alpha, a.sided)))
+            fn = lambda lrr: count_power(a.rate_ctrl, math.exp(lrr), a.exposure, a.dispersion, a.n1, a.ratio, alpha, a.sided, sign=-1)
             val = assurance(fn, m_log, s_log)
             out["inputs"] = {"prior_rr_mean": a.prior_mean, "prior_rr_sd": a.prior_sd, "n1": a.n1}
         out["assurance"] = val
@@ -476,7 +500,7 @@ def main():
             else:
                 se = math.sqrt(var1/a.n1 + var2/(a.n1*a.ratio))
             out["power"] = norm_cdf(dist/se - za)
-        json.dump(out, sys.stdout, indent=2); print(); return
+        finish(out, a); return
 
     if a.cmd in ("forward", "n", "implied"):
         if t == "binary":
@@ -538,7 +562,7 @@ def main():
                 out["power"] = count_power(a.rate_ctrl, a.rr, a.exposure, a.dispersion, a.n1, a.ratio, alpha, a.sided)
             elif a.cmd == "n":
                 n1 = count_n(a.rate_ctrl, a.rr, a.exposure, a.dispersion, a.power, a.ratio, alpha, a.sided)
-                out.update({"n1": inflate(n1), "n_total": inflate(n1*(1+a.ratio))})
+                out.update({"n1": inflate(n1), "n2": inflate(n1*a.ratio), "n_total": inflate(n1*(1+a.ratio))})
             else:
                 rr = implied_count(a.rate_ctrl, a.exposure, a.dispersion, a.n1, a.ratio, alpha, a.sided, a.power)
                 out.update({"implied_rr": rr, "implied_reduction_pct": (1-rr)*100 if rr else None})
@@ -586,9 +610,10 @@ def main():
                             pw = count_power(rc, rr, a.exposure, k, n1_eff, a.ratio, alpha, a.sided)
                             rows.append({"rate_ctrl": rc, "rr": rr, "k": k, "dropout": dr, "n1_eff": n1_eff, "power": pw})
         out["grid"] = rows
+        if t == "tte" and a.events and any(drop_vals):
+            out["warnings"] = [TTE_DROPOUT_NOTE]
 
-    json.dump(out, sys.stdout, indent=2)
-    print()
+    finish(out, a)
 
 if __name__ == "__main__":
     main()

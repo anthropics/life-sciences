@@ -76,9 +76,13 @@ Based on Phase 3 trial patterns from ClinicalTrials.gov.]
 ### 5.2 Notable Failures
 [Significant failures and mechanism-level lessons learned.]
 
+## Gaps and Source Problems
+
+[What's missing or partial, and anything in `anomaly_flags` a reader should know.]
+
 ## Appendix: Sources
 
-[Numbered list of every source successfully used, grouped under bold subheadings by
+[Numbered list of every source consulted, grouped under bold subheadings by
 source type. Numbering is continuous across groups. Title is the hyperlink;
 accessed date closes the entry.]
 ```
@@ -91,6 +95,9 @@ accessed date closes the entry.]
 - Read `waypoints/biology_soc.json`
 - Read `waypoints/regulatory_trials.json`
 - Read `waypoints/sources_evaluated.json`
+- If writing reveals a missing value for a field already in a waypoint, one
+  targeted fetch to fill it is fine; record the new source in
+  `sources_evaluated.json`. Do not open new research threads.
 
 **Step 2: Write `waypoints/indication_dossier_report.md`**
 
@@ -101,7 +108,7 @@ Follow the output_structure above. Key guidance:
 *Sections 1-3*: Narrative prose with inline citations. Be specific with numbers
 (prevalence rates, trial sizes, approval years). Coverage status belongs in
 `research_output.json`, not the prose. In the report, only name what is
-partial or missing.
+partial or missing; never label a section as covered.
 
 *Section 4*: Mix of prose and structured data. Include tables for endpoint
 comparisons and trial parameters where helpful.
@@ -148,8 +155,5 @@ Write `waypoints/progress.json`:
 - Final report is narrative prose with inline citations
 - Follow `references/06-writing-style.md` for source attribution
 - Be explicit about gaps and data quality limitations
-- If writing reveals a missing value for a field already in a waypoint, one
-  targeted fetch to fill it is fine; record the new source in
-  `sources_evaluated.json`. Do not open new research threads.
 - For novel/non-standard indications, the regulatory section may be very short —
   that's correct, not a gap to fill

@@ -10,7 +10,7 @@ and what happens to them over time.
 ## Actions
 
 **Step 1: Diagnostic criteria and population definition**
-- WebSearch for consensus diagnostic criteria (e.g., EWGSOP2 for sarcopenia, GOLD for COPD)
+- Web search for consensus diagnostic criteria (e.g., EWGSOP2 for sarcopenia, GOLD for COPD)
 - Identify how this population is clinically identified and distinguished from related populations
 - Note if criteria are evolving or contested
 - For non-standard indications: document what proxy definitions exist (research criteria,
@@ -18,7 +18,7 @@ and what happens to them over time.
 
 **Step 2: Prevalence and incidence**
 - Search the literature for recent systematic reviews and meta-analyses on prevalence
-- WebSearch for CDC, WHO, or national registry data
+- Web search for CDC, WHO, or national registry data
 - Capture: global prevalence, US prevalence, incidence rates, trends over time
 - Distinguish between community-dwelling and clinical populations where relevant
 - Note data quality: are estimates from large epidemiological studies or small single-center studies?
@@ -43,4 +43,4 @@ Follow the schema from `references/waypoint-schemas.md`. For each subsection, no
 - For rare diseases, smaller studies are acceptable — note the evidence quality
 - If the indication is novel or non-standard, explicitly state that epidemiology
   data is limited and explain what proxy data exists
-- Search the literature and the web side by side (subagents where available, otherwise one after the other)
+- Literature and web side by side (subagents where available, otherwise one after the other)

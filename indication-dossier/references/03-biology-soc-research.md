@@ -24,14 +24,14 @@ currently treated. This covers Sections 2 (Disease Biology) and 3 (Standard of C
 - This directly informs Section 4 (endpoints)
 
 **Step 3: Approved therapies**
-- WebSearch site:fda.gov for approved drugs for this indication
+- Web search site:fda.gov for approved drugs for this indication
 - For each approved therapy: mechanism, approval year, key limitations
 - Note if therapies are approved for this specific indication or used off-label
 - Identify major drug classes and their positioning (first-line, second-line, etc.)
 - For indications with no approved therapies: state this explicitly
 
 **Step 4: Treatment guidelines**
-- WebSearch for specialty society guidelines (NCCN, AASLD, ATS/ERS, AGS, etc.)
+- Web search for specialty society guidelines (NCCN, AASLD, ATS/ERS, AGS, etc.)
 - Current standard of care algorithm
 - How guidelines differ between regions (US vs EU) if relevant
 - Recent guideline changes and their implications
@@ -50,6 +50,6 @@ Follow the schema from `references/waypoint-schemas.md`.
 - For pathophysiology: aim for "analyst-level" understanding — key pathways and
   why they matter for therapy, not textbook depth
 - For biomarkers: explicitly connect to clinical trial utility
-- For approved therapies: focus on limitations — this is what defines the unmet need
-- Three source families side by side (subagents where available): literature for biology,
-  web search for guidelines, web search site:fda.gov for approvals
+- For approved therapies: focus on limitations — this is what creates the opportunity
+- Three source families side by side (subagents where available): literature for biology, web search for guidelines,
+  web search site:fda.gov for approvals

@@ -35,7 +35,8 @@ When complete:
   "icd_codes": ["K70", "..."],
   "aliases": ["..."],
   "is_standard_diagnosis": true,
-  "notes": "Any caveats about this indication's status (not ICD-coded, novel, etc.)"
+  "notes": "Any caveats about this indication's status (not ICD-coded, novel, etc.)",
+  "trial_scan": {"total_trials": 0, "by_phase": {}, "by_status": {}}
 }
 ```
 
@@ -44,7 +45,7 @@ When complete:
 ```json
 {
   "subsections": {
-    "diagnostic_criteria": {"content": "...", "sources": [...], "coverage": "covered|partial|missing"},
+    "diagnostic_criteria": {"content": "...", "sources": [{"source_url": "...", "source_type": "...", "quote": "..."}], "coverage": "covered|partial|missing"},
     "prevalence_incidence": {"content": "...", "sources": [...], "coverage": "..."},
     "demographics": {"content": "...", "sources": [...], "coverage": "..."},
     "natural_history": {"content": "...", "sources": [...], "coverage": "..."}

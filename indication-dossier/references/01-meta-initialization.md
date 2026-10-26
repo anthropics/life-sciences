@@ -15,7 +15,7 @@ mkdir -p "<workdir>/waypoints"
 ```
 
 **Step 2: Resolve indication identity**
-- WebSearch for the indication name to confirm:
+- Web search for the indication name to confirm:
   - Standard clinical definition (if one exists)
   - ICD-10 codes (if applicable)
   - Common aliases and alternative names

@@ -81,13 +81,17 @@ Build a hierarchy from narrow to broad.
 2. **Medium**: Same submission history and type of issue, any therapeutic area
 3. **Broadest**: Same application type
 
-**Fix the inclusion rules before you search, and write them down.** Choosing the class after seeing outcomes biases the rate. Use the narrowest class with N≥5 resolved cases. If the narrowest class is smaller, report it, and report the medium class as well. If the medium class is also smaller than 5, report both anyway, with low confidence.
+**Fix the inclusion rules before you search, and write them down.** Choosing the class after seeing outcomes biases the rate. The headline rate comes from the narrowest class with N≥5 resolved cases. If the narrowest class is smaller, the medium class gives the headline, and the narrowest class still goes in the Reference Class Hierarchy table with its rate and N. If the medium class is also smaller than 5, it still gives the headline, with low confidence.
 
 **Keep the case being assessed out of its own class.** Exclude the trial or submission in question and list it under Excluded Cases. Say whether earlier trials or submissions of the same drug are in the class.
 
 ## Phase 3: Find the precedents
 
 Search the sources in parallel where you can, with subagents if available. Give each subagent `references/00-research-standards.md` and its own output file, and merge them into `precedents.json` yourself.
+
+**Keep a search log.** Before the first search, write the run date and the Phase 2 inclusion rules to `search_log.md`. Then add one line per search: the source, the exact query and filters, and the number of hits. A reader needs this to judge whether cases were missed.
+
+**Check status on the run date.** Status changes, and what you remember may be out of date. For every case labeled `ongoing` or `pending`, and wherever you say that something hasn't happened (no readout, no resubmission, no approval), check a source fetched during this run. If you couldn't, say so in Caveats.
 
 - **Clinical mode**: Search the registry for matching trials **in every status**: completed, terminated, withdrawn, suspended, unknown, and trials still listed as under way, including "Active, not recruiting". Registry status doesn't say whether a trial has read out. A trial can stay "Active, not recruiting" during long-term follow-up after its primary endpoint has been reported, and trials with an unknown status have often gone quiet past their completion date. A trial counts as resolved once its primary endpoint result is public, in the registry, a publication or a sponsor release, whatever its status. Use the literature and sponsor releases to confirm each outcome.
 - **Regulatory mode**: Work through the public sources in the table below for approvals, CRLs and advisory committee outcomes, then use the registry and literature for the underlying trial designs.
@@ -110,12 +114,22 @@ Classify every clinical case:
 |---|---|---|
 | `met` | Met its primary endpoint. This includes a trial stopped early because a planned interim analysis showed efficacy; cite the source that says so | Yes, as a success |
 | `missed` | Reported its primary endpoint and missed it | Yes, as a failure |
-| `stopped_for_failure` | Stopped for futility, safety or lack of efficacy | Yes, as a failure |
-| `stopped_other` | Withdrawn before enrolling anyone, or stopped for a specific stated reason that doesn't depend on the trial's own data, such as slow enrollment or a supply problem | No, but report the count |
+| `stopped_for_failure` | Stopped for futility, safety or lack of efficacy. This includes a trial stopped because another trial of the same drug failed | Yes, as a failure |
+| `stopped_other` | Withdrawn before enrolling anyone, or stopped for a specific stated reason unrelated to the drug's efficacy or safety in this or any other trial, such as slow enrollment or a supply problem | No, but report the count |
 | `no_results` | Ended or went quiet with no public result, stopped with no stated reason, or stopped after enrollment began for a vague reason ("business decision", "strategic reasons", "sponsor decision") with no public result | No, but it sets the bounds below |
 | `ongoing` | Primary endpoint not yet reported and the trial is still running, or suspended and may resume | No |
 
-**Counting rules.** The unit is the trial, and report how many distinct programs the cases come from, because trials in one program aren't independent. For co-primary endpoints, `met` means meeting what the trial required for success. If that isn't clear, use `no_results` and say why. For a multi-arm trial, count the arm that matches the pattern. If a stopped trial could be either `stopped_other` or `no_results`, use `no_results`, which widens the bounds instead of dropping the case.
+**Counting rules.** The unit is the trial, and report how many distinct programs the cases come from, because trials in one program aren't independent.
+
+- **One trial, one case.** Count each trial once, however many registry records, papers or releases describe it, and remove duplicates by registry ID when you merge files. Two trials reported in one paper, or folded into one registry record, are two cases. Two registry records with one planned primary analysis across both are one case; list both IDs.
+- **Extensions.** An extension or rollover study of a trial already in the class follows the same participants, so it isn't a new case. List it under Excluded Cases.
+- **Phase 2/3.** A trial registered as Phase 2/3 belongs in a Phase 3 class. Include that phase value in the search, because a filter on "Phase 3" alone can miss it.
+- **What `met` means.** The trial achieved what its own protocol required for success on the primary endpoint. If every co-primary endpoint had to succeed, all must be met. If either of two primary endpoints was enough, one is enough; say which one missed. If that isn't clear, use `no_results` and say why.
+- **Non-inferiority.** A trial whose primary test was non-inferiority is `met` if it showed non-inferiority, even if a later superiority test failed. Record both results. If the trial being assessed has to show superiority, say in the inclusion rules whether such trials are in the class. If they are, give the rate a second time, in which a trial counts as a success only if it showed superiority on its primary endpoint.
+- **Changed endpoints.** If the primary endpoint changed after the trial began, classify on the final one, record the change in `anomaly_flags` and mention it in Caveats. Say whether the change was made before any unblinded data were seen; if that isn't public, say so.
+- **Stopped, then reported.** If a stopped trial went on to report its planned primary analysis, the reported result decides the label. If that turns a futility stop into `met`, record the conflict in `anomaly_flags` and give the rate both ways. Results posted for a trial that stopped with too few participants for the planned analysis aren't a `missed`; label that trial by its reason for stopping.
+- **Several arms.** Count the arm that matches the pattern. If more than one arm matches, it is still one case, judged by the trial's own rule for success.
+- **Doubtful stops.** If a stopped trial could be either `stopped_other` or `no_results`, use `no_results`, which widens the bounds instead of dropping the case.
 
 Classify regulatory cases by **FDA's action on the submission in the pattern**. The unit is one review cycle: an original application or one resubmission, and what FDA did with it. Report how many distinct applications the review cycles come from, because cycles of one application aren't independent.
 
@@ -124,22 +138,29 @@ Classify regulatory cases by **FDA's action on the submission in the pattern**. 
 | `approved` | Yes, as a success |
 | `crl` | Yes, as a failure, even if a later resubmission was approved. Note the later approval in the case's result |
 | `refuse_to_file` (FDA declined to accept the application for review) | Yes, as a failure |
-| `withdrawn` (by the sponsor, before FDA acted) | No, but it sets the bounds below, as a possible failure |
+| `withdrawn` (by the sponsor, before FDA acted) | No, but it sets the bounds below, counted both ways. A sponsor may withdraw because it expects a refusal, so the true rate is more likely to sit near the lower bound |
 | `pending` | No |
+| `not_resubmitted` (the pattern starts from a CRL or a refusal to file, and the sponsor hasn't resubmitted within the period set in the inclusion rules) | No, but report the count |
 
-If the question is about eventual approval across all review cycles instead, say so before searching and in the report. In that case a `crl` is a failure only if no later resubmission has been approved, and it is `pending` while a resubmission is under review.
+**Patterns that start from an earlier FDA action.** If the pattern is what happens after a CRL or a refusal to file, some sponsors never resubmit. Those applications have no later review cycle, so a rate per review cycle leaves them out and holds only for sponsors who resubmitted. Label them `not_resubmitted` and record the date of the earlier action, because a recent one may still be resubmitted. Say in the report that the rate is conditional on resubmission, and next to it give the eventual-approval rate per application, defined below, in which they count as failures. Before searching, write down in the inclusion rules how long a sponsor must have gone without resubmitting before an application counts as a failure, for example two years from the earlier action. Label newer ones `pending`, and give their count.
+
+If the question is about eventual approval across all review cycles instead, say so before searching and in the report. In that case the unit is the application. A `crl` is a failure if no later resubmission has been approved, which includes an application not resubmitted within the period set in the inclusion rules, and it is `pending` while a resubmission is under review.
+
+**Match the application and the indication, not the drug name.** The precedent is the application and indication named in the letter or put to the vote. Use the application number as the identifier where it is public. An approval of the same drug for another indication or in a combination product isn't an approval of this case. A new application for the same drug and indication, filed in place of a resubmission, counts as the resubmission; record both application numbers. If FDA approved a narrower indication than the one requested, label it `approved` and note the difference. Write down in the inclusion rules what counts as the starting event: for a CRL, which deficiencies qualify; for an advisory committee vote, which question counts and how you treat ties, split questions and repeat votes.
 
 In regulatory mode, some failures can't be seen at all. FDA's published collection of CRLs began in 2025 and may not reach back to every earlier letter, and a refusal to file or a withdrawal may be public only if the sponsor disclosed it. Treat the base rate as an upper estimate, and don't rate confidence above medium.
 
-Record every candidate in `precedents.json`, including excluded ones, with its identifier, outcome, `source_url`, `source_type`, `quote`, the effect size where reported, any `anomaly_flags`, and the reason for any exclusion. For clinical cases, also record the registry status and, for a stopped trial, the stated reason for stopping, word for word.
+Record every candidate in `precedents.json`, including excluded ones, with its identifier, outcome, `source_url`, `source_type`, `quote`, the effect size where reported, any `anomaly_flags`, and the reason for any exclusion. For clinical cases, also record the registry status and, for a stopped trial, the stated reason for stopping, word for word. The registry's field for this is often empty. Before you label such a trial `no_results`, look for the reason in the rest of the registry record, the publication and the sponsor's release, and record where you found it.
 
 ## Phase 4: Score similarity and compute the base rate
 
-Rate each precedent's similarity as **high**, **medium** or **low**, and explain why in a sentence. Don't use percentage scores, which imply more precision than a judgment has.
+Rate each precedent's similarity as **high**, **medium** or **low**, and explain why in a sentence. Don't use percentage scores, which imply more precision than a judgment has. Rate a case high if it matches on every High-weight dimension and most of the others, low if it differs on any High-weight dimension, and medium otherwise.
+
+The ratings order the Top Precedents section and feed What Differs From This Case. They never change the rate: every case that meets the inclusion rules stays in, whatever its rating. If many cases in the narrowest class rate low, that class is too loose. Say so in Caveats rather than dropping cases after you have seen how they turned out.
 
 | Dimension | Weight | What to compare |
 |---|---|---|
-| Mechanism | High | Same target? Same modality? Mono vs combination? |
+| Mechanism | High in clinical mode, Medium in regulatory mode | Same target? Same modality? Mono vs combination? |
 | Indication and line | High | Same disease, line of therapy and subtype? |
 | Regulatory issue (regulatory mode) | High | Same type of deficiency, same submission history? |
 | Phase | Medium | Same phase? |
@@ -148,7 +169,7 @@ Rate each precedent's similarity as **high**, **medium** or **low**, and explain
 | Trial design | Low | Superiority vs non-inferiority? Open-label vs blinded? |
 | Era | Low | Is standard of care or regulatory practice comparable? |
 
-For each reference class you can enumerate, report the figures below. The broadest class is usually too large to classify case by case. Either use a published benchmark, labeled with its source and definition (which may differ from yours), or write "Not enumerated". Never estimate it. One public example for clinical mode is Wong, Siah and Lo, "Estimation of clinical trial success rates and related parameters" (Biostatistics 2019;20(2):273-286, PMID 29394327). It estimates phase-transition and overall success probabilities for drug development programs, which aren't the same as the share of trials that meet their primary endpoint.
+For each reference class you can enumerate, report the figures below. The broadest class is usually too large to classify case by case. Either use a published benchmark, labeled with its source and definition (which may differ from yours), or write "Not enumerated". Never estimate it. One public example for clinical mode is Wong, Siah and Lo, "Estimation of clinical trial success rates and related parameters" (Biostatistics 2019;20(2):273-286, PMID 29394327). It estimates phase-transition and overall success probabilities for drug development programs, which aren't the same as the share of trials that meet their primary endpoint. Take figures from the corrected Tables 1 and 2 (older PDF copies may still carry the uncorrected figures); see the corrigendum (Biostatistics 2019;20(2):366, PMID 30445524).
 
 - **Base rate**: successes divided by resolved cases. If N is 0, report "No resolved cases"
 - **N**: the number of resolved cases, meaning the cases whose outcome is marked "Yes" in the classification tables above
@@ -166,21 +187,24 @@ def base_rate(successes, failures, missing=0):
     # missing: the no_results (or withdrawn) cases
     z = 1.959964  # 95%
     n = successes + failures  # resolved cases
-    if n == 0:
+    total = n + missing
+    if total == 0:
         return "No resolved cases"
+    bounds = (successes / total, (successes + missing) / total)
+    if n == 0:
+        return {"rate": "No resolved cases", "n": 0, "wilson_95": None, "bounds": bounds}
     p = successes / n
     mid = (p + z * z / (2 * n)) / (1 + z * z / n)
     half = z * sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
-    total = n + missing
     return {
         "rate": p,
         "n": n,
         "wilson_95": (max(0.0, mid - half), min(1.0, mid + half)),
-        "bounds": (successes / total, (successes + missing) / total),
+        "bounds": bounds,
     }
 ```
 
-As a check, `base_rate(7, 3, 2)` gives a rate of 70.0%, N=10, an interval of 39.7% to 89.2% and bounds of 58.3% to 75.0%.
+As a check, `base_rate(7, 3, 2)` gives a rate of 70.0%, N=10, an interval of 39.7% to 89.2% and bounds of 58.3% to 75.0%. `base_rate(0, 0, 3)` gives "No resolved cases" with bounds of 0% to 100%.
 
 Where the data supports it, also report conditional rates (for example, after a positive Phase 2) and whether the rate has changed over time. Don't report a conditional rate from fewer than 5 cases without saying how few there are.
 
@@ -194,9 +218,10 @@ Save this to `precedent_report.md`, citing every case per `references/01-writing
 ### Pattern
 [pattern, and the mode used]
 
-### Narrow Base Rate: [XX%] (N=[n], 95% interval [XX-XX%])
-**Reference class**: [description and inclusion rules]
-**Unit**: [trial, FDA review cycle, or eventual approval]
+### Base Rate: [XX%] (N=[n], 95% interval [XX-XX%])
+**As of**: [run date]
+**Reference class**: [narrowest or medium, with its description and inclusion rules]
+**Unit**: [trial, FDA review cycle, or eventual approval; in regulatory mode, say if the rate holds only for sponsors who resubmitted]
 **Outcome counts**: [the count for every outcome in the classification table, including those outside the rate]
 **Confidence**: [high/medium/low]
 **Missing results**: [n] cases with no public result; the rate would be [XX%] to [XX%] depending on how they turned out

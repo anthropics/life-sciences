@@ -180,6 +180,11 @@ class Regressions(unittest.TestCase):
         g = run("grid", "--type", "continuous", "--delta", "3", "--sd", "10", "--n1", "200", "--dropout", ".3")
         self.assertAlmostEqual(f["power"], g["grid"][0]["power"], places=6)
 
+    def test_assurance_applies_dropout(self):
+        a = run("assurance", "--type", "continuous", "--prior-mean", "3", "--prior-sd", "1", "--sd", "10", "--n1", "200", "--dropout", ".3")
+        b = run("assurance", "--type", "continuous", "--prior-mean", "3", "--prior-sd", "1", "--sd", "10", "--n1", "140")
+        self.assertAlmostEqual(a["assurance"], b["assurance"], places=6)
+
     def test_dropout_on_events_warns(self):
         f = run("forward", "--type", "tte", "--hr", ".7", "--events", "330", "--dropout", ".1")
         self.assertAlmostEqual(f["inputs"]["events"], 297, places=6)

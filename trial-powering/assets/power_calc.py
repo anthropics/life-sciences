@@ -66,7 +66,7 @@ Common flags
                     (e.g. mortality, HbA1c) in `assurance` and non-inferiority.
                     `implied --type binary` reports both solutions without it.
 
-Output is always JSON. --dropout applies to forward, implied and grid as
+Output is always JSON. --dropout applies to forward, implied, assurance and grid as
 attrition (N or events multiplied by 1-D), and inflates required N in `n`.
 So with --dropout, --n1 means patients enrolled, not patients evaluable. An
 event-driven trial runs until it reaches its target events whatever the
@@ -417,7 +417,7 @@ def main():
     def inflate(n):  # dropout inflation for required-N outputs
         return n / max(1 - a.dropout, 1e-9)
 
-    if a.cmd in ("forward", "implied") and a.dropout:  # attrition, as in grid
+    if a.cmd in ("forward", "implied", "assurance") and a.dropout:  # attrition, as in grid
         if a.n1: a.n1 *= 1 - a.dropout
         if a.events:
             a.events *= 1 - a.dropout

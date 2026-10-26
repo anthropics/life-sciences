@@ -28,7 +28,8 @@ design: what is known, at what information fraction, and under whose custody
    spending implementation." Reference values for a single interim plus
    final, two-sided 0.05: classic OBF gives z ~2.80 at 50% information, ~2.57
    at 60% and ~2.33 at 75%; Lan-DeMets OBF spending gives ~2.96, ~2.67 and
-   ~2.34.
+   ~2.34 in its one-sided 0.025 form, or ~2.77, ~2.53 and ~2.26 in its two-sided
+   0.05 form.
 3. **Futility boundary placement.** If the SAP discloses a futility rule
    (conditional power threshold, beta-spending, or a fixed HR boundary),
    check where the current estimate sits relative to it. If no rule is

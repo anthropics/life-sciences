@@ -11,21 +11,17 @@ description: >
 # Indication Dossier
 
 Produces a structured research dossier on a single indication, framed as a
-patient population: who they are, what's wrong, how they're treated today,
-and how clinical trials can be designed to help them. Runs as five phases
-that write resumable waypoint files; after a brief identity check at the end
-of Phase 1, the remaining phases run straight through.
-
-A full run makes many research calls across subagents, so it takes longer and
-uses far more tokens than a single answer would.
+patient population: who they are, what drives their disease, how they're
+treated today, and how clinical trials can be designed to help them. Runs as
+five phases that write resumable waypoint files; after a brief identity check
+at the end of Phase 1, the remaining phases run straight through.
 
 ## Framing
 
 **Think of an indication as a patient population.** Frame everything
-from the patient perspective: "Who are these patients?" not "What is this
-disease?"; "How are these patients identified and managed?" not "What causes
-this condition?"; population nesting: "all patients in {child} are patients
-in {parent}".
+from the patient perspective: "Who are these patients?"; "How are these
+patients identified and managed?"; population nesting: "all patients in
+{child} are patients in {parent}".
 
 Some indications don't map to ICD codes or standard disease definitions:
 "immunosenescence" is a biological state, not a billable diagnosis; "ageing"
@@ -41,15 +37,6 @@ regulatory path and trial design.
   indication, or other framing.
 - **`workdir`** (optional) — where the waypoints and the final report go.
   Defaults to `indication-dossier-<slug>/`.
-
-Example requests:
-
-- "Write an indication dossier on GLP-1 induced sarcopenia, with sarcopenia as
-  the parent indication." The parent goes in `additional_context`.
-- "Characterize the primary sclerosing cholangitis patient population."
-- "Get me up to speed on idiopathic pulmonary fibrosis, with most attention on
-  the endpoints regulators have accepted." The focus goes in
-  `additional_context`; the dossier still covers every section.
 
 ## Tools this skill expects
 

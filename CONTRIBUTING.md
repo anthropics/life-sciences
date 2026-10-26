@@ -23,7 +23,7 @@ your-skill/
 Then:
 
 1. Add an entry to `.claude-plugin/marketplace.json`, following the existing skill entries (`"source": "./"`, `"strict": false`, and a `skills` list pointing at your directory).
-2. Add a section to the "Skills" part of `README.md`, and add the install command to the install lists.
+2. Add the install command to the Quick Start list in `README.md`.
 
 A good skill:
 

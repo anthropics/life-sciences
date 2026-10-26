@@ -17,6 +17,8 @@ density.
 ```markdown
 # [Asset Name] ([Company]): [Stage] [Mechanism] for [Indication]
 
+**As of**: [run date]. A research aid built from the cited sources. It isn't investment, medical or regulatory advice.
+
 ## Standard of Care Context
 [What does current SOC achieve? What % reach treatment goals? Key unmet needs?]
 
@@ -91,12 +93,23 @@ Apply `references/04-writing-style.md`.
 
 - What happened, why, lessons for subject asset
 
+**Comparing across trials**:
+
+- Give every efficacy and safety figure with its trial, population, line of
+  therapy and comparator
+- Only a head-to-head trial supports saying that one drug outperforms
+  another. Where the figures come from separate trials, say so, name the
+  differences that matter (population, prior therapy, endpoint definition,
+  length of follow-up) and don't rank the drugs on them
+
 **Required sections**:
 
 - SOC baseline context (what current treatment achieves)
 - Adjacent targets (REQUIRED — different targets, same clinical outcome)
 - Temporal projection (landscape at expected launch)
 - Combination threat analysis
+- Withdrawn or failed programs, with the lessons for the subject asset (say so
+  if none were found)
 - Gaps (say so if there are none)
 
 ## Citation rules

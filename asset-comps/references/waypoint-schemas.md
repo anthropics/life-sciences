@@ -47,6 +47,7 @@ All competitors found.
   "competitors": [
     {
       "name": "[drug name]",
+      "aliases": ["[code name, brand name or a regional partner's name]"],
       "company": "[company]",
       "target": "[target]",
       "mechanism": "[mechanism]",
@@ -103,6 +104,9 @@ Accumulated research findings (written/updated in research phase).
         }
       ],
       "safety": {
+        "trial": "[NCT# or trial name, or the label]",
+        "population": "[population and line of therapy]",
+        "comparator": "[comparator]",
         "key_aes": [{"ae": "[name]", "incidence": "[X%]"}],
         "black_box": "[true/false/none]",
         "source_url": "[URL]",

@@ -6,8 +6,8 @@
 
 ## Objective
 
-Gather detailed information for each competitor. Use subagents where
-available to parallelize the research. Focus depth on threat level — Level 1 gets
+Gather detailed information for each competitor, with subagents as SKILL.md
+sets out. Focus depth on threat level — Level 1 gets
 exhaustive coverage, Level 4 gets minimal.
 
 ## Target information
@@ -59,8 +59,8 @@ For each competitor, gather (depth varies by threat level):
 
 ## Approach
 
-Where subagents are available, use them for parallel research; otherwise run
-the same research in turn. How you organize the work is up to you — by
+If a subagent tool is available, use it for parallel research; running the same
+research yourself is the fallback for when none exists. How you organize the work is up to you — by
 category, by threat level, by data source, or however makes sense for this
 landscape.
 

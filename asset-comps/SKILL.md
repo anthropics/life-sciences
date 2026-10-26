@@ -40,7 +40,7 @@ Builds a comprehensive competitive map for a therapeutic asset: finds the compet
 | Literature | A PubMed MCP server or connector, if available |
 | Web | Web search and web fetch: approved labels, treatment guidelines, sponsor pipeline pages, conference data and recent news |
 | Licensed data | Any pipeline or competitive intelligence connector the user has, which should be preferred for pipeline and competitor data. Cross-check stage and dates against the registry or the sponsor, and follow the source's license terms on what can be quoted or shared |
-| Parallel research | Subagents where available; otherwise run the same research in turn |
+| Parallel research | If a subagent tool is available, use it for Phase 2, whatever the size of the landscape. Running the same research yourself, in turn, is the fallback for when no subagent tool exists; it covers less ground |
 
 If a connector isn't available, say so and fall back to web search against the public source (clinicaltrials.gov, ebi.ac.uk/chembl, accessdata.fda.gov, pubmed.ncbi.nlm.nih.gov), recording what the fallback loses.
 
@@ -56,7 +56,7 @@ If a connector isn't available, say so and fall back to web search against the p
     └── competitive_map.md    # phase 3: the deliverable
 ```
 
-Schemas for every waypoint file are in `references/waypoint-schemas.md`. Waypoints are the resumable state. If the workdir already has waypoints, read them, summarize what's done, and ask which phase to resume from.
+Schemas for every waypoint file are in `references/waypoint-schemas.md`. Waypoints are the resumable state. If the workdir already has waypoints, read them, summarize what's done, and ask which phase to resume from. On an unattended run, resume from the first incomplete phase and say so.
 
 ## Before starting
 
@@ -64,7 +64,7 @@ Read `references/00-research-standards.md`. It governs sourcing, the anti-fabric
 
 ## Workflow
 
-**After each phase**, write the waypoint file, show the user a summary of at most 200 words covering what you found and what's uncertain, and ask: **continue / revise this phase / stop**. Do not advance until told. When running unattended, use your own judgment, record each choice in `iteration_notes` in `progress.json`, and carry on.
+**After each phase**, write the waypoint file, show the user a summary of at most 200 words covering what you found and what's uncertain, and ask: **continue / revise this phase / stop**. Do not advance until told. The exception is an unattended run, meaning that the request said to run without stopping or the session cannot receive a reply (a scheduled or headless run). Then don't stop to ask, here or at the checkpoint steps in the reference files: write the same summary, use your own judgment, add each choice to `iteration_notes` in `progress.json`, and carry on through all three phases. The one stop is a subject asset that can't be identified (see `references/01-enumeration.md`).
 
 ### Phase 1: Enumeration
 

@@ -14,7 +14,8 @@ better to include too many than to miss a key competitor.
 Start by profiling the subject asset from sources: company, target, mechanism,
 stage, key clinical data and any stated development timeline. Tiering and
 every later comparison depend on this, so don't fill it in from memory. If it
-can't be identified, stop and ask the user.
+can't be identified, stop and ask the user. On an unattended run, say why in
+`iteration_notes` in `progress.json` and end the run.
 
 ## Target information
 
@@ -25,7 +26,7 @@ For each competitor, capture:
 - Target and mechanism class
 - Development stage, with its source
 - Category (`same_target`, `target_specific_soc`, `baseline_soc`,
-  `adjacent_mechanism`, `other_pipeline`)
+  `adjacent_mechanism`, `other_pipeline`, `withdrawn_failed`)
 
 ## Stopping condition
 
@@ -51,6 +52,8 @@ yielding new competitors. Specifically:
    - Different mechanisms, same patients (baseline SOC, adjacent)
    - Pipeline across stages (Phase I/II/III)
    - Withdrawn, discontinued or failed programs (`withdrawn_failed`)
+   - Programs run or approved only outside the US, and programs from private
+     companies and academic sponsors
 
 If you find new competitors, keep searching. If searches return only drugs
 you've already listed, you've reached saturation.
@@ -66,6 +69,26 @@ pipeline and competitor data.
 - Filter by intervention for SOC drugs
 - Search by sponsor for known players' programs in the space
 - Page through results to get complete lists
+
+**Beyond ClinicalTrials.gov** (programs a US-centered search misses):
+
+- Other registries: the WHO ICTRP search portal, which pools national and
+  regional registries, then the EU's CTIS, China's CDE drug trial platform
+  (chinadrugtrials.org.cn) and ChiCTR, or Japan's jRCT
+- Products approved only outside the US: check EMA, Japan's PMDA and China's
+  NMPA, or the sponsor's own announcement
+- Private companies and academic sponsors: these often have no public
+  filings, so look at conference abstracts, sponsor pipeline pages and recent
+  review articles
+- Licensed and partnered programs: the same molecule can carry a different
+  code name and sponsor in each region. Record these as `aliases` so that it
+  is counted once
+- Generics and biosimilars of the SOC that could arrive before the subject
+  asset's likely launch
+
+Reach these sites through a search and use the address it returns; don't build
+URLs for them. If one can't be reached or read, note it in `anomaly_flags`, so
+that it shows in the report's Gaps, and don't count it as searched.
 
 **ChEMBL** (target/mechanism enumeration):
 
@@ -94,7 +117,7 @@ programs with the same target or mechanism class:
 
 - Same target programs, at any stage
 - Target-specific SOC (marketed competitors with same mechanism)
-- Phase III programs in indication
+- Phase III programs, and programs under regulatory review, in the indication
 - Same target or mechanism class programs ahead of the subject asset
 
 **Level 2** (important context — moderate research):

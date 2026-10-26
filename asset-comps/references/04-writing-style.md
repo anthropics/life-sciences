@@ -18,6 +18,12 @@ Lead each section with the finding, give exact figures with their comparator and
 - "[Drug] achieved [X% responder rate vs Y% on placebo](https://pubmed.ncbi.nlm.nih.gov/<PMID>/)"
 - "Phase 3 [[TRIAL] trial (<NCT ID>)](https://clinicaltrials.gov/study/<NCT ID>)"
 
+**One claim per link:** each number, date or status carries the link of the source
+that states it, and the linked words say no more than that source does. When a
+sentence combines facts from several sources, link each fact separately. Write
+an inference or calculation of your own as your own ("this implies…", "by our
+arithmetic…"), outside the link and not straight after it.
+
 ## When to Use Inline Links vs Reference Lists
 
 **Prefer inline markdown links** for:

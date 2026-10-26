@@ -36,7 +36,7 @@ the script.
 | `trial` | one of these | NCT ID, drug+indication+phase, or trial acronym |
 | `source_file` | one of these | path to a company deck, corporate presentation, SAP, protocol, or paper PDF |
 | `manual_params` | one of these | user supplies design params directly (endpoint type, N, alpha, etc.) |
-| `perspective` | optional | one or more of `independent`, `sponsor`, `fda`, `payer`, `dsmb`, `academic`. If absent, ask (Phase 0). |
+| `perspective` | optional | one or more of `independent`, `sponsor`, `fda`, `payer`, `dsmb`, `academic`. If absent, Phase 5 asks. |
 | `workdir` | optional | defaults to `./trial-powering-<slug>/` |
 
 At least one of `trial`, `source_file`, or `manual_params` must resolve.
@@ -167,6 +167,9 @@ so run the NI grid as repeated `forward` calls. For binary and continuous
 endpoints where lower is better, pass `--direction lower`. Assurance (probability of success averaged over a prior on
 the effect) belongs in the memo whenever Phase 3 produces a precedent
 spread; see the assurance section of `references/02-stats-methodology.md`.
+For binary and continuous endpoints, pass `--direction` to `forward`, `grid` and
+`assurance`, so an effect in the harmful direction doesn't count as power. For
+time-to-event grids, `--vary events=a,b,c` sweeps the event count.
 
 The script prints JSON. Full CLI is documented at the top of the file. Read it
 before calling. Write `<workdir>/power_recon.json` with the forward check and

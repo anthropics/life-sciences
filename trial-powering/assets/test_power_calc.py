@@ -207,6 +207,34 @@ class Regressions(unittest.TestCase):
         e = run("n", "--type", "tte", "--hr", "0.7", "--power", "0.90")
         self.assertEqual(e["events_required_ceil"], 331)
 
+    def test_harmful_effect_is_not_power(self):
+        self.assertLess(run("forward", "--type", "tte", "--hr", "1.3", "--events", "330", "--sided", "1", "--alpha", ".025")["power"], 0.001)
+        self.assertLess(run("forward", "--type", "binary", "--p1", ".3", "--p2", ".4", "--n1", "200", "--direction", "lower")["power"], 0.01)
+        g = run("grid", "--type", "binary", "--p2", ".20", "--n1", "200", "--vary-control", ".30,.10", "--direction", "lower")
+        self.assertGreater(g["grid"][0]["power"], 0.5)
+        self.assertLess(g["grid"][1]["power"], 0.01)
+
+    def test_assurance_warns_when_direction_is_inferred(self):
+        p = run("assurance", "--type", "binary", "--p1", ".30", "--prior-mean", ".29", "--prior-sd", ".05", "--n1", "250")
+        self.assertTrue(p["warnings"])
+        q = run("assurance", "--type", "binary", "--p1", ".30", "--prior-mean", ".29", "--prior-sd", ".05", "--n1", "250", "--direction", "higher")
+        self.assertNotIn("warnings", q)
+        self.assertLess(q["assurance"], p["assurance"])
+
+    def test_single_arm_implied_honours_direction(self):
+        p = run("implied", "--type", "binary", "--single-arm", "--p_null", ".3", "--n1", "100", "--direction", "lower")
+        self.assertLess(p["implied_p_alt"], 0.3)
+
+    def test_grid_rejects_ignored_axes_and_sweeps_events(self):
+        self.assertTrue(fails("grid", "--type", "tte", "--hr", ".7", "--events", "300", "--vary", "effect=.7,.8", "--vary", "dropout=.1,.2"))
+        self.assertTrue(fails("grid", "--type", "binary", "--p1", ".3", "--p2", ".4", "--n1", "100", "--vary", "sd=8,10"))
+        g = run("grid", "--type", "tte", "--hr", ".7", "--vary", "events=300,330")
+        self.assertEqual([r["events_eff"] for r in g["grid"]], [300, 330])
+
+    def test_tte_without_events_stops_cleanly(self):
+        self.assertTrue(fails("implied", "--type", "tte", "--n1", "300"))
+        self.assertTrue(fails("n", "--type", "tte", "--hr", ".7", "--n-from-events", "--med-ctrl", "12"))
+
     def test_implied_count_finds_root(self):
         p = run("implied", "--type", "count", "--rate-ctrl", ".3", "--dispersion", "1", "--n1", "100")
         self.assertIsNotNone(p["implied_rr"])

@@ -22,7 +22,8 @@ assurance Probability of success: power averaged over a prior on the effect
           (O'Hagan; "Bayesian expected power"), counting only a significant
           result in the direction of benefit. Flags: --prior-mean and
           --prior-sd (HR for tte, rate ratio for count, delta for continuous,
-          p2 for binary), plus the design flags (--events or --n1, --alpha,
+          p2 for binary), plus the design flags (--events for tte, otherwise
+          --n1; --alpha,
           --sided, --ratio, --sd for continuous, --p1 for binary, etc.). For
           tte and count the prior is lognormal, and --prior-mean/--prior-sd
           are its mean and sd on the ratio scale (the mean, not the median).
@@ -61,10 +62,13 @@ Common flags
 --alpha-spent X     alpha already spent at interims; uses (alpha - X) at final.
                     This is conservative: if the SAP gives the final nominal
                     alpha, pass that as --alpha instead.
---direction D       which way benefit runs: higher or lower. Needed for binary
-                    and continuous endpoints where a lower value is better
-                    (e.g. mortality, HbA1c) in `assurance` and non-inferiority.
-                    `implied --type binary` reports both solutions without it.
+--direction D       which way benefit runs: higher or lower. Pass it for binary
+                    and continuous endpoints, so an effect in the harmful
+                    direction doesn't count as power. Without it, forward and
+                    grid count either direction, `assurance` assumes the way
+                    the prior mean points and says so, and `implied --type
+                    binary` reports both solutions. For tte and count, benefit
+                    is always a ratio below 1.
 
 Output is always JSON. --dropout applies to forward, implied, assurance and grid as
 attrition (N or events multiplied by 1-D), and inflates required N in `n`.
@@ -113,7 +117,8 @@ grid
 --vary VALUES        comma list of effect values to sweep, as effect=a,b,c or a,b,c
                     (meaning depends on type: binary->p2, continuous->delta,
                     tte->hr, count->rr). control=, sd= and dropout= are also
-                    accepted and behave like the flags below.
+                    accepted and behave like the flags below, and events=a,b,c
+                    sweeps the event count for tte. Pass --vary once.
 --vary-control      comma list of control-side values (binary->p1, count->rate-ctrl;
                     an error for continuous and tte, where power depends only on
                     delta or events: sweep the effect instead)
@@ -340,6 +345,9 @@ def conditional_power(z_interim, t, z_alpha_final, drift):
 TTE_DROPOUT_NOTE = ("--dropout reduced the event count; an event-driven trial runs until it reaches its "
                     "target events, so use this only for a calendar-driven analysis, otherwise vary --events")
 
+DIRECTION_NOTE = ("--direction not given, so benefit was assumed to run the way the prior mean points; "
+                  "a sceptical prior can reverse this, so pass --direction")
+
 def finish(out, a):
     """Echo the flags used if the branch did not, add whole-number sizes, print."""
     if not out["inputs"]:
@@ -389,7 +397,7 @@ def main():
     ap.add_argument("--rate-ctrl", type=float); ap.add_argument("--rr", type=float)
     ap.add_argument("--exposure", type=float, default=1.0); ap.add_argument("--dispersion", type=float, default=0.0)
     # grid
-    ap.add_argument("--vary"); ap.add_argument("--vary-control"); ap.add_argument("--vary-sd"); ap.add_argument("--vary-dropout")
+    ap.add_argument("--vary", action="append"); ap.add_argument("--vary-control"); ap.add_argument("--vary-sd"); ap.add_argument("--vary-dropout")
     a = ap.parse_args()
     if a.cmd != "cp" and a.type is None:
         raise SystemExit(f"{a.cmd} requires --type")
@@ -425,6 +433,12 @@ def main():
         out["dropout_applied"] = a.dropout
 
     t = a.type
+    sgn = {"higher": 1, "lower": -1}.get(a.direction, 0)  # 0: benefit is whichever way the effect points
+
+    if t == "tte" and a.cmd != "n" and not a.events and not (a.vary and a.vary[0].startswith("events=")):
+        raise SystemExit(f"{a.cmd} --type tte needs --events; estimate them from N first (see references/02-stats-methodology.md)")
+    if a.n_from_events and not (a.med_ctrl and a.accrual is not None and a.followup is not None):
+        raise SystemExit("--n-from-events needs --med-ctrl, --accrual and --followup")
 
     if a.cmd == "assurance":
         if a.prior_mean is None or a.prior_sd is None:
@@ -439,12 +453,16 @@ def main():
             sign = {"higher": 1, "lower": -1}.get(a.direction, 1 if a.prior_mean >= 0 else -1)
             fn = lambda d: continuous_power(d, a.sd, a.n1, a.ratio, alpha, a.sided, a.ancova_r2, sign=sign)
             val = assurance(fn, a.prior_mean, a.prior_sd)
+            if not a.direction:
+                out.setdefault("warnings", []).append(DIRECTION_NOTE)
             out["inputs"] = {"prior_delta_mean": a.prior_mean, "prior_delta_sd": a.prior_sd, "n1": a.n1, "sd": a.sd,
                              "benefit_direction": "higher" if sign > 0 else "lower"}
         elif t == "binary":
             sign = {"higher": 1, "lower": -1}.get(a.direction, 1 if a.prior_mean >= a.p1 else -1)
             fn = lambda p2: binary_power(a.p1, min(max(p2, 1e-4), 0.9999), a.n1, a.ratio, alpha, a.sided, sign=sign)
             val = assurance(fn, a.prior_mean, a.prior_sd)
+            if not a.direction:
+                out.setdefault("warnings", []).append(DIRECTION_NOTE)
             out["inputs"] = {"p1": a.p1, "prior_p2_mean": a.prior_mean, "prior_p2_sd": a.prior_sd, "n1": a.n1,
                              "benefit_direction": "higher" if sign > 0 else "lower"}
         elif t == "count":
@@ -513,11 +531,14 @@ def main():
                     out["n"] = inflate(binary_single_arm_n(a.p_null, a.p2, a.power, alpha, a.sided))
                 else:
                     f = lambda p: binary_single_arm_power(a.p_null, p, a.n1, alpha, a.sided) - a.power
-                    out["implied_p_alt"] = bisect(f, a.p_null + 1e-6, 0.9999)
+                    if a.direction == "lower":
+                        out["implied_p_alt"] = bisect(f, 1e-4, a.p_null - 1e-6)
+                    else:
+                        out["implied_p_alt"] = bisect(f, a.p_null + 1e-6, 0.9999)
             elif a.cmd == "forward":
                 p2 = a.p2 if a.p2 is not None else a.p1 + a.delta
                 out["inputs"] = {"p1": a.p1, "p2": p2, "n1": a.n1, "ratio": a.ratio}
-                out["power"] = binary_power(a.p1, p2, a.n1, a.ratio, alpha, a.sided)
+                out["power"] = binary_power(a.p1, p2, a.n1, a.ratio, alpha, a.sided, sign=sgn)
             elif a.cmd == "n":
                 p2 = a.p2 if a.p2 is not None else a.p1 + a.delta
                 n1 = binary_n(a.p1, p2, a.power, a.ratio, alpha, a.sided)
@@ -533,7 +554,7 @@ def main():
         elif t == "continuous":
             if a.cmd == "forward":
                 out["inputs"] = {"delta": a.delta, "sd": a.sd, "n1": a.n1, "ratio": a.ratio, "r2": a.ancova_r2}
-                out["power"] = continuous_power(a.delta, a.sd, a.n1, a.ratio, alpha, a.sided, a.ancova_r2)
+                out["power"] = continuous_power(a.delta, a.sd, a.n1, a.ratio, alpha, a.sided, a.ancova_r2, sign=sgn)
             elif a.cmd == "n":
                 n1 = continuous_n(a.delta, a.sd, a.power, a.ratio, alpha, a.sided, a.ancova_r2)
                 out.update({"n1": inflate(n1), "n2": inflate(n1*a.ratio), "n_total": inflate(n1*(1+a.ratio))})
@@ -547,7 +568,7 @@ def main():
         elif t == "tte":
             if a.cmd == "forward":
                 out["inputs"] = {"hr": a.hr, "events": a.events, "ratio": a.ratio}
-                out["power"] = tte_power(a.hr, a.events, a.ratio, alpha, a.sided)
+                out["power"] = tte_power(a.hr, a.events, a.ratio, alpha, a.sided, sign=-1)
             elif a.cmd == "n":
                 ev = tte_events(a.hr, a.power, a.ratio, alpha, a.sided)
                 out["events_required"] = ev
@@ -559,7 +580,7 @@ def main():
         elif t == "count":
             if a.cmd == "forward":
                 out["inputs"] = {"rate_ctrl": a.rate_ctrl, "rr": a.rr, "exposure": a.exposure, "k": a.dispersion, "n1": a.n1}
-                out["power"] = count_power(a.rate_ctrl, a.rr, a.exposure, a.dispersion, a.n1, a.ratio, alpha, a.sided)
+                out["power"] = count_power(a.rate_ctrl, a.rr, a.exposure, a.dispersion, a.n1, a.ratio, alpha, a.sided, sign=-1)
             elif a.cmd == "n":
                 n1 = count_n(a.rate_ctrl, a.rr, a.exposure, a.dispersion, a.power, a.ratio, alpha, a.sided)
                 out.update({"n1": inflate(n1), "n2": inflate(n1*a.ratio), "n_total": inflate(n1*(1+a.ratio))})
@@ -568,16 +589,23 @@ def main():
                 out.update({"implied_rr": rr, "implied_reduction_pct": (1-rr)*100 if rr else None})
 
     elif a.cmd == "grid":
-        key, vary_vals = parse_kv_list(a.vary)
-        if key not in (None, "effect", "control", "sd", "dropout"):
-            raise SystemExit(f"--vary: unknown parameter {key!r}; use effect, control, sd or dropout")
+        if a.vary and len(a.vary) > 1:
+            raise SystemExit("pass --vary once; use --vary-control, --vary-sd and --vary-dropout for other axes")
+        key, vary_vals = parse_kv_list(a.vary[0] if a.vary else None)
+        if key not in (None, "effect", "control", "sd", "dropout", "events"):
+            raise SystemExit(f"--vary: unknown parameter {key!r}; use effect, control, sd, dropout or events")
+        if key == "events" and t != "tte":
+            raise SystemExit("--vary events applies to tte only")
         eff_vals = vary_vals if key in (None, "effect") else []
+        event_vals = vary_vals if key == "events" else [a.events]
         _, ctrl_vals = parse_kv_list(a.vary_control)
         _, sd_vals = parse_kv_list(a.vary_sd)
         _, drop_vals = parse_kv_list(a.vary_dropout)
         if key == "control": ctrl_vals = vary_vals
         if key == "sd": sd_vals = vary_vals
         if key == "dropout": drop_vals = vary_vals
+        if sd_vals and t in ("binary", "tte"):
+            raise SystemExit(f"--vary-sd has no effect for {t}")
         if ctrl_vals and t in ("continuous", "tte"):
             raise SystemExit(f"--vary-control has no effect for {t}: power depends on the effect, so sweep that instead")
         eff_vals = eff_vals or [None]; ctrl_vals = ctrl_vals or [None]
@@ -588,26 +616,28 @@ def main():
                 for s in sd_vals:
                     for dr in drop_vals:
                         n1_eff = (a.n1 or 0) * (1 - dr) if a.n1 else None
-                        ev_eff = (a.events or 0) * (1 - dr) if a.events else None
+                        ev_eff = None
                         if t == "binary":
                             p1 = c if c is not None else a.p1
                             p2 = e if e is not None else (a.p2 if a.p2 is not None else p1 + a.delta)
-                            pw = binary_power(p1, p2, n1_eff, a.ratio, alpha, a.sided)
+                            pw = binary_power(p1, p2, n1_eff, a.ratio, alpha, a.sided, sign=sgn)
                             rows.append({"p1": p1, "p2": p2, "dropout": dr, "n1_eff": n1_eff, "power": pw})
                         elif t == "continuous":
                             sd = s if s is not None else a.sd
                             d = e if e is not None else a.delta
-                            pw = continuous_power(d, sd, n1_eff, a.ratio, alpha, a.sided, a.ancova_r2)
+                            pw = continuous_power(d, sd, n1_eff, a.ratio, alpha, a.sided, a.ancova_r2, sign=sgn)
                             rows.append({"delta": d, "sd": sd, "dropout": dr, "n1_eff": n1_eff, "power": pw})
                         elif t == "tte":
                             hr = e if e is not None else a.hr
-                            pw = tte_power(hr, ev_eff if ev_eff else a.events, a.ratio, alpha, a.sided)
-                            rows.append({"hr": hr, "events_eff": ev_eff or a.events, "dropout": dr, "power": pw})
+                            for ev in event_vals:
+                                ev_eff = ev * (1 - dr)
+                                pw = tte_power(hr, ev_eff, a.ratio, alpha, a.sided, sign=-1)
+                                rows.append({"hr": hr, "events_eff": ev_eff, "dropout": dr, "power": pw})
                         elif t == "count":
                             rc = c if c is not None else a.rate_ctrl
                             rr = e if e is not None else a.rr
                             k = s if s is not None else a.dispersion
-                            pw = count_power(rc, rr, a.exposure, k, n1_eff, a.ratio, alpha, a.sided)
+                            pw = count_power(rc, rr, a.exposure, k, n1_eff, a.ratio, alpha, a.sided, sign=-1)
                             rows.append({"rate_ctrl": rc, "rr": rr, "k": k, "dropout": dr, "n1_eff": n1_eff, "power": pw})
         out["grid"] = rows
         if t == "tte" and a.events and any(drop_vals):

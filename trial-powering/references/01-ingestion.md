@@ -38,6 +38,10 @@ each field tagged with where it came from.
 }
 ```
 
+`power_calc.py` has no equivalence (two one-sided tests) mode. For an
+equivalence design, say so in the memo and rely on the SAP's own sizing rather
+than running a superiority or non-inferiority calculation in its place.
+
 Leave a field `null` and add a note in `param_sources` if it could not be
 found. Do not guess load-bearing numbers.
 

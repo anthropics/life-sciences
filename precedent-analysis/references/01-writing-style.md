@@ -13,8 +13,8 @@ Write in the style of an industry-trained analyst presenting the facts clearly a
 ```
 
 **Examples:**
-- "Efgartigimod achieved [68% MG-ADL responder rate vs 30% placebo](https://pubmed.ncbi.nlm.nih.gov/34146511/)"
-- "Phase 3 [ADAPT trial (NCT03669588)](https://clinicaltrials.gov/study/NCT03669588)"
+- "[Drug] achieved [X% responder rate vs Y% on placebo](https://pubmed.ncbi.nlm.nih.gov/<PMID>/)"
+- "Phase 3 [[TRIAL] trial (<NCT ID>)](https://clinicaltrials.gov/study/<NCT ID>)"
 
 ## When to Use Inline Links vs Reference Lists
 
@@ -33,11 +33,11 @@ Write in the style of an industry-trained analyst presenting the facts clearly a
 
 **Link specificity:**
 - ClinicalTrials.gov: Link directly to study page with NCT number
-  - Good: `https://clinicaltrials.gov/study/NCT03669588`
+  - Good: `https://clinicaltrials.gov/study/<NCT ID>`
   - Bad: `https://clinicaltrials.gov` (homepage)
 
 - PubMed: Use PubMed ID link format
-  - Good: `https://pubmed.ncbi.nlm.nih.gov/34146511/`
+  - Good: `https://pubmed.ncbi.nlm.nih.gov/<PMID>/`
   - Avoid: DOI redirects when PubMed ID available
 
 - Company materials: Link to specific press release or presentation
@@ -81,13 +81,13 @@ The registry figure of 180 is used.
 **Format for trial references:**
 - Include NCT number as a clickable link
 - Add trial name/acronym if available
-- Example: "Phase 3 [ADAPT trial (NCT03669588)](https://clinicaltrials.gov/study/NCT03669588)"
+- Example: "Phase 3 [[TRIAL] trial (<NCT ID>)](https://clinicaltrials.gov/study/<NCT ID>)"
 
 **When citing trial results:**
 - Link to publication if published
 - Link to ClinicalTrials.gov if results posted there
 - Link to company press release if that's the only source
-- Example: "[ADAPT trial](https://pubmed.ncbi.nlm.nih.gov/34146511/) demonstrated 68% MG-ADL responder rate"
+- Example: "[[TRIAL] trial](https://pubmed.ncbi.nlm.nih.gov/<PMID>/) showed an X% responder rate vs Y% on placebo"
 
 ## Quality Checks Before Finalizing
 

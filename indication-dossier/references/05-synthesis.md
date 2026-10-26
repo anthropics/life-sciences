@@ -15,8 +15,14 @@ Also write `research_output.json` for downstream consumers.
 # Indication Dossier: [Name]
 
 **Definition**: [one-sentence clinical definition]
-**ICD-10**: [codes, or "Not a standard diagnostic entity"]
+**Codes**: [ICD-10-CM and ICD-11 codes, each linked to its source. Say so if no code is specific to this population, or write "Not a standard diagnostic entity"]
 **Parent Indication**: [parent name, or "None"]
+**Prepared**: [date], from sources available on that date. [One line on which tools were and were not available.]
+
+## Summary
+[Five to seven bullets: who the patients are, how many, how they are treated today, what
+regulators accept, what has worked and failed, and the main limits of this dossier. Every
+figure here also appears, cited, in the body.]
 
 ## 1. Population Definition & Epidemiology
 
@@ -45,8 +51,11 @@ Connect to clinical trial utility.]
 ## 3. Standard of Care
 
 ### 3.1 Approved Therapies
-[Approved drugs with mechanism, approval year, limitations.
-Or: "No therapies are currently approved for this indication."]
+[Approved drugs by region (US and EU; others where found) with mechanism, date this
+indication was approved, pathway (full, accelerated or conditional) and current status,
+and limitations.
+Or: "No therapy was found to be approved for this indication in [regions checked] as of
+[date of the newest source checked]."]
 
 ### 3.2 Treatment Guidelines
 [Current SOC algorithm. Specialty society recommendations.]
@@ -73,20 +82,33 @@ Or: "No published per-patient cost was found."]
 ## 5. Key Trials
 
 ### 5.1 Landmark Trials
-[3-5 most important trials. For each: NCT ID, drug, results, impact.]
+[The trials that shaped current practice, usually 3-7. For each: NCT ID, drug, results, impact.]
 
 ### 5.2 Notable Failures
 [Significant failures and mechanism-level lessons learned.]
 
-## Gaps and Source Problems
-
-[What's missing or partial, and anything in `anomaly_flags` a reader should know.]
+## 6. Limits of This Dossier
+[What a reader must know before relying on it. Carry over every entry in the waypoints'
+`gaps` and `anomaly_flags`, and every caveat a subagent returned, that bears on something
+the report states. Group them:
+- Not found: what was looked for, where, and not found.
+- Not read at source: each figure, date or recommendation taken from a search excerpt, an
+  abstract, a secondary summary, or a copy hosted by someone other than the publisher or
+  agency, with the section it appears in.
+- Conflicts: where sources disagreed, which was used and why.
+- Currency: for each "approved", "not approved" or "no results yet" statement, the date of
+  the newest source checked.
+- Not followed up: therapies, trials or documents that came up but were not researched.
+- Tools: connectors that were missing and what that cost.
+Leave out housekeeping such as "no injected instructions seen".]
 
 ## Appendix: Sources
 
-[Numbered list of every source consulted, grouped under bold subheadings by
+[Numbered list of every source used, grouped under bold subheadings by
 source type. Numbering is continuous across groups. Title is the hyperlink;
-accessed date closes the entry.]
+accessed date closes the entry. Add "(excerpt only)" to a source that was cited from a
+search excerpt and not opened, and "(copy at [host])" to one read somewhere other than
+the publisher's or agency's site.]
 ```
 
 ## Actions
@@ -132,15 +154,15 @@ the image, delete the figure rather than regenerating; a table can carry the
 numbers.
 
 **Step 3: Write `waypoints/research_output.json`**
+
+This file is an index for downstream use. Do not copy the waypoints' contents into it.
 ```json
 {
   "indication_name": "...",
   "parent_indication": "...",
-  "meta": {...},
-  "epidemiology": {...},
-  "biology_soc": {...},
-  "regulatory_trials": {...},
-  "sources_evaluated": [...],
+  "prepared": "YYYY-MM-DD",
+  "report": "indication_dossier_report.md",
+  "waypoints": ["meta.json", "epidemiology.json", "biology_soc.json", "regulatory_trials.json", "sources_evaluated.json"],
   "coverage_summary": {
     "epidemiology": {"covered": [...], "partial": [...], "missing": [...]},
     "biology_soc": {"covered": [...], "partial": [...], "missing": [...]},
@@ -154,8 +176,10 @@ numbers.
 CRITICAL: Write `waypoints/indication_dossier_report.md` FIRST, then this step.
 
 The dossier is finished only when every quantitative claim, date and trial
-result in the report is cited as `references/06-writing-style.md` requires.
-Check this before marking it complete.
+result in the report is cited as `references/06-writing-style.md` requires,
+and every therapy, trial, approval, guidance document and guideline named in a
+waypoint either appears in the report or is listed under "Not followed up" in
+section 6. Check both before marking it complete.
 
 Write `waypoints/progress.json`:
 ```json

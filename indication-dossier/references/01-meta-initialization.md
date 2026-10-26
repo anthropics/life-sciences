@@ -30,7 +30,9 @@ mkdir -p "<workdir>/waypoints"
 
 **Step 4: Quick trial landscape scan**
 - Search the trial registry for this indication
-- Record total count, phase distribution, and status distribution
+- Record total count, phase distribution, and status distribution if the registry tool can
+  count. If it cannot, record the trials you sampled, say that they are a sample, and never
+  present a sample as a total
 - This gives a rough sense of how mature the indication is clinically
 
 **Step 5: Write outputs**
@@ -39,7 +41,6 @@ mkdir -p "<workdir>/waypoints"
 
 ## Guidance
 
-- This phase should complete in a single iteration
 - If the indication has no ICD codes or standard definition, note this clearly —
   it affects every downstream section (epidemiology data will be scarce,
   regulatory path will be novel)

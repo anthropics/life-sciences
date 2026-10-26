@@ -8,15 +8,15 @@
 
 ## Citation requirements
 
-**Mandatory_Fields** — Every finding MUST include: `source_url` (direct URL to the primary source, not homepage) · `source_type` (one of the values above) · `quote` (verbatim text from the source supporting the claim). Findings missing these fields cannot be cited and will be flagged as incomplete. Exception for `source_type` `licensed`: a licensed database record usually has no public URL, so give the database name, record ID and access date in place of `source_url`, give a paraphrase, marked as a paraphrase, in place of `quote` unless the license allows quotation, and mark the claim as licensed data in the report.
+**Mandatory_Fields** — Every finding MUST include: `source_url` (direct URL to the primary source, not homepage) · `source_type` (one of the values above) · `source_title` (the title, the publisher or venue, and the date, as the tool or page shows them; leave out any part that isn't shown) · `quote` (verbatim text from the source supporting the claim; mark anything left out with an ellipsis). Findings missing these fields cannot be cited and will be flagged as incomplete. Exception for `source_type` `licensed`: a licensed database record usually has no public URL, so give the database name, record ID and access date in place of `source_url`, give a paraphrase, marked as a paraphrase, in place of `quote` unless the license allows quotation, and mark the claim as licensed data in the report.
 
-**URL_Validation** — Only use URLs you successfully fetched or that a tool returned, or canonical links built from an identifier a tool returned (`https://clinicaltrials.gov/study/<NCT ID>`, `https://pubmed.ncbi.nlm.nih.gov/<PMID>/`). NEVER otherwise construct or guess URLs. If a URL fails, note it in `anomaly_flags`. Academic journal links often break — try DOI resolver (`https://doi.org/[DOI]`).
+**URL_Validation** — Only use URLs you successfully fetched or that a tool returned, or canonical links built from an identifier a tool returned (`https://clinicaltrials.gov/study/<NCT ID>`, `https://pubmed.ncbi.nlm.nih.gov/<PMID>/`). NEVER otherwise construct or guess URLs, and copy every other URL exactly as the tool gave it. Don't cite a listing, keyword or search-results page, because its content changes: if a fact appears nowhere else, note that in `anomaly_flags` and treat the fact as unconfirmed. If a URL fails, note it in `anomaly_flags`. Academic journal links often break — try DOI resolver (`https://doi.org/[DOI]`).
 
 ## Anti-fabrication protocol
 
 NEVER fabricate, infer, or guess: trial results or statistics · dates (approval, filing, completion) · prevalence or incidence figures · drug names or approval status · patent numbers or expiry dates.
 
-When data cannot be found after checking the canonical primary source (Drugs@FDA for approvals, or FDA's CBER product lists for biologics such as cell and gene therapies, the sponsor pipeline page for mechanism and stage, ClinicalTrials.gov for trial details): note the gap in `anomaly_flags` · do NOT create placeholder findings · state "Not publicly available" rather than guessing.
+When data cannot be found after checking the canonical primary source (Drugs@FDA for approvals, or FDA's CBER product lists for biologics such as cell and gene therapies, the sponsor pipeline page for mechanism and stage, ClinicalTrials.gov for trial details, the sponsor's securities filings and conference presentations for safety and secondary-endpoint data): note the gap in `anomaly_flags` · do NOT create placeholder findings · state "Not found in the sources searched", and name any key source you couldn't read, rather than guessing. Write "not publicly available" only when a primary source says the data are undisclosed.
 
 ## Tool guidance
 
@@ -37,7 +37,7 @@ When data cannot be found after checking the canonical primary source (Drugs@FDA
 
 - *Clinical visual data*: Efficacy — ORR waterfall plots, KM curves, spider plots, forest plots · PK — concentration-time curves, dose-proportionality plots · Safety — AE frequency tables (often as figures), labs over time · Biomarkers — suppression curves, time-to-nadir, durability plots · Mechanism — pathway diagrams, receptor binding schematics.
 
-**Context_Discipline** — To avoid context overflow: summarize findings as you go — do not hold raw source text · after extracting data, immediately distill to structured output · for long documents, read table of contents/abstract first to target sections.
+**Context_Discipline** — To avoid context overflow: summarize findings as you go — do not hold raw source text · after extracting data, immediately distill to structured output · for long documents, read table of contents/abstract first to target sections · keep each findings file to what the brief could use, with quotes of one or two sentences (for a registry table, only the rows that carry the claim).
 
 ## Quality calibration
 

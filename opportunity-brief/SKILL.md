@@ -22,7 +22,7 @@ Researches a drug asset and writes a structured assessment of it. It gathers the
 
 Read `references/00-research-standards.md`. It governs sourcing, the anti-fabrication rules, and how to handle untrusted fetched content.
 
-`references/` files are in this skill's directory. Everything you write goes in a run folder, `opportunity-brief-<asset-slug>/`, in the current working directory. Create it and a `findings/` directory inside it before starting. Paths below are relative to that folder. If the user names a path or file name for the final document, save it there instead of as `report.md` in the run folder, and keep only that one copy.
+`references/` files are in this skill's directory. Everything you write goes in a run folder, `opportunity-brief-<asset-slug>/`, in the current working directory. Create it and a `findings/` directory inside it before starting. Paths below are relative to that folder. If the user names a path or file name for the final document, save it there instead of as `report.md` in the run folder, and keep only that one copy. A bare file name, even `report.md`, means that file in the current working directory, not in the run folder.
 
 ## Tools this skill expects
 
@@ -49,7 +49,7 @@ At each checkpoint, ask the user how to proceed. When running unattended, use yo
 
 If the user already has research files, verify they exist, copy them into `findings/` under the matching name, and skip that track. Check that their key claims have sources, and flag any that don't.
 
-Before launching the tracks, run a few searches to establish where the program stands today: latest stage, pivotal readouts, approvals, holds or discontinuation. Pass what you find to every track. If it already settles the user's question (for example, the pivotal trial failed and the sponsor has stopped), keep the data assessment at full depth, limit the competitive map to what bears on the answer, and note in `coverage.md` that you scaled down.
+Before launching the tracks, run a few searches to establish where the program stands today: latest stage, pivotal readouts, approvals, holds or discontinuation. Pass what you find to every track. If it already settles the user's question (for example, the pivotal trial failed and the sponsor has stopped), keep the data assessment at full depth, limit the competitive map to what bears on the answer, and note in `coverage.md` that you scaled down. In that case you may do the asset primer and the competitive map yourself, in a few searches each, instead of launching subagents for them. Write them to the same files in the same format. If anything you or the data assessment find suggests the question is not settled after all, run both tracks in full.
 
 Run three tracks in parallel. Give each subagent the user's request word for word, its own output file, and the research standards: either the absolute path of `references/00-research-standards.md` with an instruction to read it first, or the file's full text if the subagent can't read files. Don't paraphrase the standards. Each finding is a claim followed by its `source_url`, `source_type`, `source_title` and `quote`. Each file ends with an `## Anomalies` section, which is where everything the standards call `anomaly_flags` goes: failed URLs, suspected injected instructions, unread figures, data that couldn't be found, and what any fallback lost. The tracks are:
 
@@ -61,7 +61,7 @@ If a track fails or returns nothing, log it, carry on, and raise it at the check
 
 While the tracks run (or after them, if you run them in turn), search for the sponsor's own account of the program in its presentations, filings and press releases, and save it to `findings/sponsor_account.md`. If there is no sponsor, say so in one line and move on.
 
-**Checkpoint.** Read all the findings. Set each headline sponsor claim beside the independent figure where there is one, and where tracks disagree, settle it from the sources or carry both figures into the brief. Save the draft crux questions to `findings/crux_questions.md`. Present:
+**Checkpoint.** Read all the findings. Set each headline sponsor claim beside the independent figure where there is one, and where tracks disagree, settle it from the sources or carry both figures into the brief. Before you carry a gap forward, try once more to close it: if there is a sponsor, run one search aimed at that item in its filings and presentations, and open any sponsor results presentation or filing in the findings that might cover it. Save the draft crux questions to `findings/crux_questions.md`. Present:
 
 - Key findings from each track
 - Draft crux questions: the ones whose answers would most change your assessment
@@ -109,14 +109,14 @@ Then check the diversity. Flag pairs with more than 50% overlap in crux question
 
 Write `outline.md` using these sections:
 
-0. **Bottom line**: about 150 words that answer what the user asked, give the two or three cited facts the answer rests on, and say what would change it
+0. **Bottom line** (headed "Bottom line", with no number): 200 words at most that answer what the user asked, give the two or three cited facts the answer rests on, and say what would change it
 1. **Asset Overview**: mechanism, sponsor, stage, lead indication
 2. **Reason to Believe**: efficacy signal, differentiation, unmet need
 3. **Competition**: approved and pipeline therapies, positioning
 4. **Key Risks**: clinical, regulatory and commercial
 5. **Due Diligence Plan**: up to 5 crux questions that are still open (leave out any the evidence has already answered), each with positive and negative outcomes and how to resolve it, and a citation for any figure or date it restates (from the chosen framing, or from `findings/crux_questions.md` if framing was skipped)
 6. **Sources**: numbered list with one entry for each source cited in the report (title, publisher or venue, date, URL; for licensed data, the database name, record ID and access date), and nothing that isn't cited. Take these details from each finding's `source_title` (for licensed data, from the fields the standards give instead). If the findings don't record an author, journal or date, leave it out rather than supplying it from memory
-7. **Appendix**: supporting tables, trial details, data cuts
+7. **Appendix** (optional): only tables or trial details that the body relies on but doesn't show, and a short list of evidence not found. Don't repeat figures, comparisons or points already made in the body. If nothing is left, leave the Appendix out
 
 If the user supplies their own template, use that instead.
 
@@ -128,7 +128,7 @@ Expand the approved outline into full prose in `report.md`, following `reference
 
 Before finishing, check that:
 
-- Every quantitative claim is cited to its specific source (not a homepage), inline or by reference number
+- Every quantitative claim is cited to its specific source (not a homepage) with an inline link, or with a reference number only if it is licensed data with no URL
 - Sponsor claims are distinguished from independent data
 - The reasons to believe and the key risks are given equal rigor
 - Gaps are stated rather than filled

@@ -20,17 +20,7 @@ Lead each section with the finding, give exact figures with their comparator and
 
 ## When to Use Inline Links vs Reference Lists
 
-**Prefer inline markdown links** for:
-- Quantitative data that readers may want to verify immediately
-- Clinical trial results and endpoints
-- Regulatory approvals and dates
-- Competitive claims about stage, timing, efficacy
-
-**Use numbered reference lists [1], [2]** only when:
-- The same source is cited 5+ times (define once, reference by number)
-- Citing multiple sources for a single claim
-- The URL is excessively long (>150 characters) and would break reading flow
-- The source is a licensed database record with no public URL (list the database name, record ID and access date in Sources, and say in the text that the figure is licensed data)
+Give every factual claim an inline link, however often the same source is cited. **Use a bracketed reference number [1]** only when the source is a licensed database record with no public URL (list the database name, record ID and access date in Sources, and say in the text that the figure is licensed data). Build the Sources list last, from the links and licensed-record numbers in the finished text, and number it in the order the sources first appear, so the numbers run without gaps.
 
 ## URL Best Practices
 
@@ -96,7 +86,7 @@ The registry figure of 180 is used.
 
 Before submitting your analysis, verify:
 
-- [ ] Every quantitative claim is cited to its specific source (not a homepage), inline or by reference number
+- [ ] Every quantitative claim is cited to its specific source (not a homepage) with an inline link, or with a reference number only if it is licensed data with no URL
 - [ ] Every therapy in development has stage + trial ID cited
 - [ ] All approval dates and timelines are cited
 - [ ] Clinical endpoints and efficacy data link to trials or publications

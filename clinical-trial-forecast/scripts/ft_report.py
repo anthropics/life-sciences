@@ -50,13 +50,15 @@ def load_bearing_text(P):
     meta = read_json(P / "sim" / "parameter_metadata.json", {}) or {}
     lines = ["LOAD-BEARING RANKING (from sim/results.json; PTS swing = PTS at the parameter's 90th minus 10th percentile, all else sampled):"]
     tor = (r.get("sensitivity") or {}).get("tornado") or [] if isinstance(r.get("sensitivity"), dict) else []
+    if isinstance(tor, dict):
+        tor = [{"param": k, **v} for k, v in tor.items() if isinstance(v, dict)]
     rows = []
     for t in tor if isinstance(tor, list) else []:
         if not isinstance(t, dict):
             continue
         pid = t.get("param") or t.get("parameter") or t.get("id")
-        lo = _scalar(t.get("pts_at_p10") if "pts_at_p10" in t else t.get("at_q10"))
-        hi = _scalar(t.get("pts_at_p90") if "pts_at_p90" in t else t.get("at_q90"))
+        lo = _scalar(next((t[k] for k in ("pts_at_p10", "at_q10", "p10", "low") if k in t), None))
+        hi = _scalar(next((t[k] for k in ("pts_at_p90", "at_q90", "p90", "high") if k in t), None))
         if lo is None or hi is None:
             continue
         rows.append((abs(hi - lo), str(pid), lo, hi))
@@ -313,7 +315,7 @@ def cmd_report_body_apply(a):
         return fail("the narrative could not be used: " + "; ".join(problems))
     f = P / "report" / "prompts" / "summary_editor.md"
     left = render_prompt(P, "narrative_editor", f, run_label=f"Forecast run of {now_iso()[:10]}", ledger_note="", load_bearing=load_bearing_text(P))
-    return done({"ok": True, "parts": got, "problems": problems, "prompt": str(f),
+    return done({"ok": True, "parts": got, "problems": problems, "step_notes": problems, "prompt": str(f),
                  "result_file": str(P / "report" / "out" / "summary_editor.json"), "unfilled": left})
 
 
@@ -352,7 +354,7 @@ def cmd_report_editor_apply(a):
         write_text(pd_ / "summary.md", o["summary_markdown"].strip() + "\n")
         write_text(pd_ / "methods.md", o["methods_markdown"].strip() + "\n")
         mark_applied(P, src_json, "written")
-    return done({"ok": True, "editor_problem": problem, "condense": condense_prompts(P, 1)})
+    return done({"ok": True, "editor_problem": problem, "step_notes": [problem] if problem else [], "condense": condense_prompts(P, 1)})
 
 
 def cmd_condense_apply(a):
@@ -518,7 +520,7 @@ def cmd_ledger(a):
               "conditions": cut("; ".join(map(str, x.get("conditions") or [])), 160),
               "examples": cut("; ".join(f"{e.get('name')} ({e.get('id')})" for e in (x.get("examples") or [])[:3] if isinstance(e, dict)), 160),
               "possible misreading": cut(x.get("misread_risk"), 140),
-              "primary sources": cut("; ".join(s.get("primary_source", "") for s in x.get("assertions") or []
+              "primary sources": cut("; ".join(cell(s.get("primary_source")) for s in x.get("assertions") or []
                                                if isinstance(s, dict) and s.get("source_type") == "primary"), 140)} for x in rows]
     md = (f"# Claim ledger · {now}\n\nIndependent checkers' findings on the forecast report's headline claims. Verdicts: "
           + ", ".join(f"{n} {v}" for v, n in sorted(tally.items())) + ".\n\n"
@@ -644,7 +646,7 @@ def cmd_deliver(a):
 # The footnote renderer: bracket citations become numbered footnotes, listed under "Sources"; NCT ids, PMIDs and DOIs
 # get links to their pages, and other sources are listed as written.
 CIT = re.compile(
-    r"\[((?:reported|derived|sponsor claim|secondary|estimate|label|guidance|registry|URL|PMID|DOI|CT\.gov|NCT)[^\[\]]*|NCT\d{8}[^\[\]]*|PMID[^\[\]]*|DOI[^\[\]]*|https?://[^\[\]]*)\]",
+    r"(?<!!)\[((?:reported|derived|sponsor claim|secondary|estimate|label|guidance|registry|URL|PMID|DOI|CT\.gov|NCT)\b[^\[\]]*|NCT\d{8}[^\[\]]*|PMID[^\[\]]*|DOI[^\[\]]*|https?://[^\[\]]*)\](?!\()",
     re.I,
 )
 PLAIN = {"estimate", "derived", "reported", "inferred", "sponsor claim"}
@@ -718,7 +720,7 @@ def footnotize(md: str) -> str:
     )
     body = CIT.sub(repl, md)
     # tidy: collapse "[^1][^2]" spacing and space-before-punct
-    body = re.sub(r"\s+(\[\^\d+\])", r"\1", body)
+    body = re.sub(r"(?<=[\w)\]%.,;])[ \t]+(\[\^\d+\])", r"\1", body)
     body = re.sub(r"(\[\^\d+\])\s+([.,;:])", r"\1\2", body)
     if not order:
         return md

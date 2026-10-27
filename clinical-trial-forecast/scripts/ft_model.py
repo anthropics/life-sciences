@@ -160,7 +160,7 @@ def cmd_sim_spec_apply(a):
                          critic_requests=requests_text(crit, {"code", "report"}),
                          critic_assessment=clean(crit.get("overall_assessment"), 1500) if crit else "(none — first round)")
     return done({"ok": True, "mode": mode, "params_sha": psha, "parameters": len(params.get("parameters") or []),
-                 "warnings": warn, "prompt": str(f), "result_file": str(br), "unfilled": left})
+                 "warnings": warn, "step_notes": warn[:3], "prompt": str(f), "result_file": str(br), "unfilled": left})
 
 
 def cmd_sim_build_apply(a):
@@ -170,6 +170,12 @@ def cmd_sim_build_apply(a):
     rd = a.round
     rdir = hist / f"round{rd:02d}"
     bo, errs = load_checked(ws / "build_result.json", "build")
+    if not errs and bo.get("status") == "failed":
+        errs = ["the builder reported status failed"]
+    built_sha = (read_json(ws / "results.json", {}) or {}).get("params_sha")
+    sheet = read_json(sd / "params.json")
+    if not errs and built_sha and isinstance(sheet, dict) and built_sha != params_sha(sheet):
+        errs = ["sim/workspace/results.json was built from another parameter sheet"]
     if errs or not (ws / "results.json").exists():
         return fail("the build did not finish: " + "; ".join(errs[:4] + ([] if (ws / "results.json").exists() else ["sim/workspace/results.json is missing"])))
     bo["_round"] = rd

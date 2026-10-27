@@ -77,7 +77,7 @@ def cmd_card_prompts(a):
         if not gitems:
             continue
         f = P / "analyses" / n / "prompts" / f"group-{g['id']}.md"
-        left = render_prompt(P, "trial_checklist_worker", f, group_title=g["title"], fetched_at=tj.get("fetched_at"), items=fmt_items(gitems),
+        left = render_prompt(P, "trial_checklist_worker", f, group_title=g["title"], fetched_at=tj.get("fetched_at") or "date not recorded", items=fmt_items(gitems),
                              trial_json=tslim, reference_population=(pj.get("indication") or {}).get("reference_population", ""))
         out.append({"group": g["id"], "title": g["title"], "prompt": str(f), "items": [i["id"] for i in gitems], "unfilled": left})
     return done({"ok": bool(out), "groups": out, "problem": "" if out else "no checklist item applies to this trial"})
@@ -197,7 +197,8 @@ def cmd_card_check_apply(a):
     chk, errs = load_checked(d / "check.json", "check")
     if errs:
         # not a failure of this command: the next trials' checks still get applied, and the check reruns next launch
-        return done({"ok": True, "note": f"analyses/{n}/check.json was not usable: " + "; ".join(errs[:3])})
+        note = f"analyses/{n}/check.json was not usable: " + "; ".join(errs[:3])
+        return done({"ok": True, "note": note, "step_notes": [note]})
     aj = read_json(d / "analysis.json", {}) or {}
     if aj.get("check") == chk:
         return done({"ok": True, "note": "already applied"})
@@ -462,7 +463,7 @@ def cmd_integrate_apply(a):
     fups = read_json(d / "followups_raised.json", []) or []
     write_json(K / "open_questions.json", {"iteration": it, "open": opens + [{**x, "status": "open"} for x in fups]})
     learning_log(P)
-    return done({"ok": True, "sections": done_s, "rejected": bad})
+    return done({"ok": True, "sections": done_s, "rejected": bad, "step_notes": bad})
 
 
 def learning_log(P):

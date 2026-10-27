@@ -475,18 +475,26 @@ def load_checked(path, schema_name):
     return obj, errs
 
 
+def reject_project(P, why):
+    """Move a project.json that cannot be used aside, as load_checked does, so that the scope step runs again."""
+    (Path(P) / "project.json").replace(Path(P) / "project.rejected.json")
+    return fail(why + "; moved it to project.rejected.json, so the scope step runs again on the next launch")
+
+
 def cmd_setup(a):
     """project.json -> scope.json and scope_public.json (the registry part, in the shape the registry commands read);
     run_settings.json records whether outside sources are allowed."""
     P = Path(a.project)
     write_json(P / "run_settings.json", {"outside": a.outside == "yes"})
+    if (P / "project.json").is_file() and not isinstance(read_json(P / "project.json"), dict):
+        return reject_project(P, "project.json is not valid JSON")
     pj = project(P)
     errs = schema_errors(pj, schemas()["project"])
     if errs:
-        return fail("project.json does not match the project schema: " + "; ".join(errs[:8]))
+        return reject_project(P, "project.json does not match the project schema: " + "; ".join(errs[:8]))
     f = (pj.get("focal_trial") or {}).get("nct_id", "")
     if not NCT.fullmatch(str(f)):
-        return fail(f"project.json focal_trial.nct_id {f!r} is not an NCT id")
+        return reject_project(P, f"project.json focal_trial.nct_id {f!r} is not an NCT id")
     if a.trial and f.upper() != a.trial.upper():
         return fail(f"project.json is set up for {f}, not for {a.trial}: a project.json packed for another question? Remove it and launch again")
     if not sections_of(pj):

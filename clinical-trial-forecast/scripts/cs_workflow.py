@@ -305,11 +305,14 @@ class Workflow:
         because a step's brief is its identity in the journal."""
         self.TOOLN += 1
         file = P + "/steps/" + self.RUN + "-" + str(self.TOOLN) + "-" + re.sub(r"[^A-Za-z0-9]+", "-", label) + ".json"
-        return self.helper(label, "tool", "STEP: " + label + ". Result file: " + file + " (if it exists, answer with what it holds and do nothing else).\n" +
+        r = self.helper(label, "tool", "STEP: " + label + ". Result file: " + file + " (if it exists, answer with what it holds and do nothing else).\n" +
                            "Run exactly these commands with your bash tool, one command per call, in this order, and nothing else:\n" +
                            "\n".join("  " + c for c in commands) +
                            "\nEach prints one JSON object as its last line, with ok and problem. If one prints ok false, stop there, and in submit_result give that ok and problem with empty values (empty lists, 0, false, \"\") for the other fields. " +
                            "Write the last JSON object printed to " + file + ", then call submit_result with the fields asked for, copied from it.", schema, commands=run or commands, file=file)
+        for note in arr(get(r, "step_notes")):
+            self.problems.append(label + ": " + S(note)[:300])
+        return r
 
     def follow(self, label, kind, promptFile, resultFile, schemaName, extra=None):
         return self.helper(label, kind, "STEP: " + label + ". Result file: " + S(resultFile) + " (if it exists, answer with ok true and do nothing else).\n" +
@@ -901,6 +904,9 @@ class Session:
             if v.get("ok") is False:
                 break
         result = ran[-1]
+        notes = [note for v in ran for note in arr(v.get("step_notes"))]
+        if notes:
+            result = {**result, "step_notes": notes}
         write_json(call["file"], result)
         self.record(call, result, commands=len(ran), seconds=round(time.time() - t_start, 1))
         self.event(what="tool", n=call["n"], name=call["name"], ok=result.get("ok") is not False)

@@ -112,6 +112,7 @@ def cmd_candidates(a):
     if not plan:
         return fail("registry/queries.json is missing: run plan first")
     kept, fams, order, missing, sources, bad, truncated = {}, {}, [], [], collections.Counter(), 0, []
+    notes = []
     for g in plan["groups"]:
         got = read_json(P / "registry" / "search" / f"{g['id']}.json")
         local = read_json(P / "registry" / "search" / f"{g['id']}.local.json")
@@ -175,6 +176,9 @@ def cmd_candidates(a):
         for n in local_ids:
             if NCT.fullmatch(n) and n not in keep and (not cap or len(keep) < cap):
                 keep.append(n)
+        left_out = sum(1 for n in local_ids if NCT.fullmatch(n) and n not in keep)
+        if left_out:
+            notes.append(f"{g['id']}: the cap of {cap} left out {left_out} attached records")
         for n in keep:
             if n not in kept:
                 kept[n] = []
@@ -209,7 +213,7 @@ def cmd_candidates(a):
         write_json(f, {"batch": i // size + 1, "trials": cands[i:i + size]})
         batches.append(str(f))
     return done({"ok": bool(cands), "candidates": len(cands), "batches": batches, "groups_without_results_file": missing,
-                 "searches_with_fewer_ids_than_total": truncated, "ignored_ids": bad, "sources": dict(sources),
+                 "searches_with_fewer_ids_than_total": truncated, "ignored_ids": bad, "sources": dict(sources), "step_notes": notes,
                  "problem": "" if cands else "no NCT ids found in registry/search/*.json"})
 
 
@@ -345,6 +349,21 @@ def _terms(ind):
     return [t.lower() for t in out if len(t.strip()) >= 3]
 
 
+def local_rank(n, t):
+    """Sort key for attached records: active, recently completed, then phase 2/3 evidence, newest first in each."""
+    A, B = UNIVERSE["A"], UNIVERSE["B"]
+    status, pcd, start = t.get("status"), date(t.get("primary_completion_date")), date(t.get("start_date"))
+    if status in A["statuses"]:
+        rank = 0
+    elif status == "COMPLETED" and pcd and pcd >= date(A["also_completed_since"]):
+        rank = 1
+    elif status in B["statuses"] and start and start >= date(B["start_since"]) and set(t.get("phase") or []) & set(B["phases"]):
+        rank = 2
+    else:
+        rank = 3
+    return rank, -(start.toordinal() if start else 0), n
+
+
 def cmd_local_search(a):
     """For each group of registry/queries.json, the attached records that match it -> registry/search/<group>.local.json:
     an indication group takes records whose conditions or title name the indication (its name, aliases or the terms of
@@ -371,6 +390,7 @@ def cmd_local_search(a):
             terms = [re.compile(r"(?<![a-z0-9])" + re.escape(term) + r"(?:e?s)?(?![a-z0-9])") for term in _terms(inds.get(g["indication"]) or {})]
             ids = [n for n, t in recs.items()
                    if any(term.search(" ".join([*(map(str, t.get("conditions") or [])), str(t.get("brief_title") or ""), str(t.get("title") or "")]).lower()) for term in terms)]
+        ids.sort(key=lambda n: local_rank(n, recs[n]))
         write_json(P / "registry" / "search" / f"{g['id']}.local.json",
                    {"group": g["id"], "queries": [{"family": "local", "source": "attached files", "total": None, "nct_ids": ids, "note": "records the person attached"}]})
         counts[g["id"]] = len(ids)
@@ -400,7 +420,7 @@ def assign_tiers(t, cls):
         return [], "not a drug trial"
     ke = cls.get("key_endpoint") or {}
     has_ke = bool(ke.get("primary") or ke.get("secondary"))
-    if cls.get("indications") == [] and not cls.get("analog_features"):
+    if to_int(cls.get("relevance_score")) == 0 and not cls.get("analog_features"):
         return [], "not in any scoped indication"
     status, pcd, start = t.get("status"), date(t.get("primary_completion_date")), date(t.get("start_date"))
     phases = set(t.get("phase") or [])
@@ -446,6 +466,7 @@ def cmd_index(a):
         locs = [x for x in t.get("locations") or [] if isinstance(x, dict)]
         countries = collections.Counter(loc.get("country") for loc in locs if loc.get("country"))
         inv = [i for i in cls.get("interventions") or [] if isinstance(i, dict) and i.get("role") == "investigational"]
+        pop = cls.get("population") or {}
         ke = cls.get("key_endpoint") or {}
         row = {"nct_id": n, "title": t.get("brief_title") or t.get("title"), "acronym": t.get("acronym"), "sponsor": t.get("sponsor"),
                "phase": "/".join(t.get("phase") or []), "status": t.get("status"), "start_date": t.get("start_date"),
@@ -454,8 +475,8 @@ def cmd_index(a):
                "interventions": [i.get("canonical_name") for i in inv] or t.get("interventions"),
                "route": "; ".join(sorted({i.get("route") or "" for i in inv} - {""})),
                "key_endpoint_primary": ke.get("primary"), "key_endpoint_timepoint_weeks": ke.get("timepoint_weeks"),
-               "indications": sorted((set(cls.get("indications") or []) & ind_of[n]) or ind_of[n]),
-               "population": (cls.get("population") or {}).get("summary"), "duration_weeks": (cls.get("design") or {}).get("duration_weeks"),
+               "indications": sorted(ind_of[n]),
+               "population": "; ".join(str(pop[k]) for k in ("severity_criteria", "age_group") if pop.get(k)), "duration_weeks": (cls.get("design") or {}).get("duration_weeks"),
                "tiers": "".join(tiers), "novel_investigational": cls.get("novel_investigational"), "analog_features": cls.get("analog_features"),
                "relevance_score": to_int(cls.get("relevance_score")) or 0, "n_locations": len(locs), "n_countries": len(countries),
                "top_countries": [f"{c} ({k})" for c, k in countries.most_common(5)], "has_results": t.get("has_results"),

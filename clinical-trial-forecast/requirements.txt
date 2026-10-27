@@ -1,0 +1,16 @@
+# The skill installs nothing. It uses these packages when the session's Python has them.
+# The workflow's own scripts need only the Python 3 standard library.
+
+# Used by the simulation code that the model step writes
+numpy
+scipy
+pandas
+
+# Optional: draws the report's figures (scripts/ft_figures.py)
+matplotlib
+
+# Optional: formats forecast_report.html (scripts/ft_report.py)
+markdown
+
+# Optional: reads Parquet input (scripts/add_data.py)
+pyarrow

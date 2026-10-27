@@ -1,0 +1,56 @@
+# gpu-job.example.yaml — one GPU step of the design loop as a Kubernetes Job.
+# This is an example, not a template for a tool: the Claude Code session (or you) copies it
+# per step, replaces every <placeholder>, and applies it with
+#   kubectl --context <ctx> -n <namespace> apply -f jobs/<run-id>-<step>.yaml
+# One Job = one tool run over one batch of candidates. It runs once (no retries), is stopped
+# by the cluster at its deadline, and is removed by the cluster a day after it finishes.
+# Keep the applied copy and the Job's log under jobs/ in your working folder.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: <run-id>-<step>              # e.g. pdl1-01-pred-b3; lower-case letters, digits and hyphens
+  namespace: <namespace>
+  labels: {app: binder-design, run: "<run-id>", step: "<step>"}
+spec:
+  backoffLimit: 0                    # a failed step is read and reported, not retried blind
+  activeDeadlineSeconds: 7200        # hard stop; counts time spent Pending as well as running
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels: {app: binder-design, run: "<run-id>", step: "<step>"}
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false   # the step needs files and a GPU, not the Kubernetes API
+      nodeSelector: {}                       # your GPU pool's label(s), from TOOLS.md; {} = any node with the GPU resource free
+      tolerations: []                        # your GPU pool's taint(s), from TOOLS.md
+      # imagePullSecrets: [{name: <your-registry-secret>}]
+      # securityContext: {runAsNonRoot: true, fsGroup: 1000}   # if the image runs as a non-root user, fsGroup makes /work writable
+      containers:
+        - name: step
+          image: <registry>/<tool-image>:<tag>   # from TOOLS.md
+          imagePullPolicy: IfNotPresent
+          workingDir: /work
+          command: ["bash", "-lc"]
+          # The tool invocation from TOOLS.md, over one batch, wrapped so its output also lands in
+          # /work/logs/<job>.log: a Job stopped at its deadline loses its pod, and "kubectl logs"
+          # with it; the copy on the volume survives.
+          args:
+            - |
+              mkdir -p /work/logs
+              {
+              <one tool's command over one batch, exactly as TOOLS.md gives it>
+              } 2>&1 | tee /work/logs/<run-id>-<step>.log; exit ${PIPESTATUS[0]}
+          env:
+            - {name: PYTHONUNBUFFERED, value: "1"}
+            # - {name: XDG_CACHE_HOME, value: /work/.cache}   # if a tool wants a writable cache and the image is read-only
+          resources:
+            requests: {cpu: "8", memory: 48Gi}
+            limits: {cpu: "8", memory: 48Gi, nvidia.com/gpu: 1}   # GPU resource name from TOOLS.md; drop the GPU entry for a CPU-only step
+          volumeMounts:
+            - {name: work, mountPath: /work}
+            - {name: shm, mountPath: /dev/shm}   # some predictors' data loaders need more shared memory than the default
+      volumes:
+        - name: work
+          persistentVolumeClaim: {claimName: <run-id>-work}
+        - name: shm
+          emptyDir: {medium: Memory, sizeLimit: 8Gi}

@@ -1,0 +1,39 @@
+# TOOLS.md — how each tool is called on *our* compute (fill this in; Claude reads it first)
+
+<!-- This is a template. Every command below is a PLACEHOLDER in angle brackets, not a real
+     flag of any tool: replace each with the invocation that works on your machine or inside
+     your image, found from the tool's own README and tried once by hand. Delete tools you did
+     not install. Keep it to one page. Claude writes every tool invocation from this file. -->
+
+## Where the GPU work runs
+
+<!-- Keep exactly one of the three blocks. -->
+
+**This machine** (Route A). GPU(s): `<model, memory, how many>`. Working folder: wherever Claude Code was started.
+
+**Kubernetes** (Route B; see `cluster/README.md`). kubectl context: `<ctx>` · namespace: `<ns>` · image: `<registry>/<name>:<tag>` · GPU resource name: `nvidia.com/gpu` · GPU node selector: `<label: value, or none>` · tolerations: `<key/effect, or none>` · storage class for the work volume: `<class, ReadWriteMany or ReadWriteOnce>` · run id: `<short, lower-case, e.g. pdl1-01>` · GPUs I may use at once: `<n>`.
+
+**Slurm** (Route B; see `cluster/README.md`). Partition: `<name>` · extra sbatch options: `<--account=… --qos=…>` · environment activation line: `<module load … && source …/bin/activate>` · GPUs I may use at once: `<n>`.
+
+## Tools
+
+Built `<date>`; measured on `<GPU model, memory>`.
+
+| Tool (project, version or commit) | Role | Invocation | Weights / databases | GPU memory and time we measured | Smoke test | Licence checked |
+|---|---|---|---|---|---|---|
+| RFdiffusion `<version>` | backbone generation | `<command> <target pdb> <site residues> <length range> <n designs> <out dir>` | `<path>` | `<GB>`, `<min per 100 backbones>` | `<command that prints the version or runs the bundled example>` | yes / no |
+| `<second generator>` | backbone generation | `<…>` | `<…>` | `<…>` | `<…>` | |
+| ProteinMPNN / SolubleMPNN (LigandMPNN code base, `<commit>`) | sequence design | `<command> <backbone dir> <fixed chain> <n sequences> <out fasta>` | `<path>` | `<…>` | `<…>` | |
+| ESMFold2 `<version>` | screening predictor (single-sequence, fast) | `<command> <fasta of two-chain complexes> <seeds> <out dir>` | `<path>` | `<s per complex per seed>` | `<…>` | |
+| Protenix `<version>` | screening predictor (uses the target's alignment) | `<command> <input json or fasta> <alignment dir> <seeds> <out dir>` | `<path>` | `<…>` | `<…>` | |
+| `<held-out predictor: AlphaFold2-multimer via ColabFold, Boltz-2 or Chai-1>` | final pass only | `<…>` | `<…>` | `<…>` | `<…>` | |
+| ipSAE script `<commit>` | interface score from aligned error | `python <path>/ipsae.py <arguments per the script's README>` | — | CPU | | |
+| DockQ `<version>`, US-align `<version>`, DSSP `<version>` | pose agreement, clustering, secondary structure | `<…>` | — | CPU | | |
+
+## Environment notes
+
+- How the environment is activated, if at all: `<nothing needed / source … / conda activate …>`.
+- Variables the tools expect: `<e.g. a weights or cache directory variable and its value>`.
+- Where a run may write scratch files: `<path>` (on a cluster: `/work/tmp/` on the volume, or `/tmp`, node-local and lost with the pod).
+- Output formats Claude should expect from each predictor (which file holds ipTM, pLDDT and the aligned-error matrix): `<one line per predictor>`.
+- Anything that went wrong during installation and how you worked round it.

@@ -1,0 +1,7 @@
+[lint]
+select = ["E9", "F"]
+# The forecast scripts share helpers through star imports on purpose.
+ignore = ["F403", "F405"]
+
+[lint.per-file-ignores]
+"clinical-trial-forecast/scripts/ft_*.py" = ["F401"]

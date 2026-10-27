@@ -1864,8 +1864,6 @@ Falling back to pattern-based approach using similar trials from Phase 1.
 Proceeding with protocol generation using enrollment target from similar trials.
 ```
 
-```
-
 ## Quality Checks
 
 Before finalizing, verify:

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: pip install ruff==0.14.10 pyyaml==6.0.2
+      - name: Test the repository checks
+        run: python3 -m unittest discover -s .github/scripts
+      - name: Check marketplace, skills, Markdown and data files
+        run: python3 .github/scripts/check_repo.py
+      - name: Validate the plugin marketplace
+        run: npx --yes @anthropic-ai/claude-code@2.1.310 plugin validate .
+      - name: Lint Python
+        run: ruff check .
+      - name: Lint shell scripts
+        run: find . -name '*.sh' -not -path './.git/*' -exec shellcheck --severity=warning {} +
+      - name: Run skill self-tests
+        run: |
+          grep -l -- '--self-test' */scripts/*.py | while read -r script; do
+            python3 "$script" --self-test
+          done

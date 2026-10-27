@@ -89,6 +89,8 @@ The `binder-gauntlet` skill adds validation and developability checks that steer
 
 You need only Claude Code and the open-source tools. Your compute, files and designs stay inside your own infrastructure. We developed and tested the method on this setup, so use it for your first run.
 
+**Begin with one session, one GPU and a fixed time budget.** Anthropic's [September 2026 research post](https://www.anthropic.com/research/claude-uplifts-biomolecular-modeling) tested this setup. A single Claude model had one NVIDIA H200, 24 hours of wall time, accelerated builds of the kind section 4 links, a prompt of about 1,100 words and a reference sheet for the installed tools. It had no sub-agents. The post reports in silico binding scores comparable to those of an earlier campaign, which could use sub-agents and about 100 times as many GPU hours. These are predictor scores, not laboratory results.
+
 **Scale out by submitting each GPU step as a batch job to your Kubernetes or Slurm cluster (Route B).** Claude Code runs wherever `kubectl` or `sbatch` runs. It writes and submits one job per tool per batch, reads the logs and result tables, and decides what to run next. The brief and the checks stay the same.
 
 [`cluster/README.md`](cluster/README.md) describes what the cluster needs, gives an example Job manifest and lists the rules the session follows. We have documented this route, but it has not yet been run on a customer's own cluster. Move to it after Route A has proven your `TOOLS.md`.
@@ -125,14 +127,23 @@ Install the tools before the session starts, either on the machine (Route A) or 
 
 | Group | Tools |
 |-------|-------|
-| Backbone generators | At least two of: RFdiffusion or its successors, BindCraft, or another open de novo binder generator your group trusts |
+| Backbone generators | At least two of: RFdiffusion or a successor (RFdiffusion3, RFD4-Proteina), BindCraft, PXDesign, BoltzGen, Proteina-Complexa, the ESM cookbook's gradient-guided binder design through ESMFold2, or another open de novo binder generator your group trusts |
 | Sequence design | ProteinMPNN or SolubleMPNN (the LigandMPNN code base) |
 | Structure prediction for screening | At least two of: AlphaFold2-multimer (ColabFold), Boltz-2, Chai-1, ESMFold2, Protenix. Claude uses two during design. Ideally, hold back one or two more for the final check (section 9). |
 | Analysis | TM-align or US-align, DockQ, DSSP, freesasa or another solvent-accessibility library, Biopython, and an ipSAE script (the interface predicted-aligned-error score of Dunbrack, 2025) |
 
-Anthropic's [September 2026 research post](https://www.anthropic.com/research/claude-uplifts-biomolecular-modeling) links to a public release of accelerated builds at [`github.com/anthropics/uplifting-biomolecular-modeling`](https://github.com/anthropics/uplifting-biomolecular-modeling). The release has one kit per tool. It covers RFdiffusion, ProteinMPNN, ColabFold, Boltz-2, Chai-1, Protenix and ESMFold2, including ESMFold2's fast, alignment-conditioned and no-alignment variants.
+Anthropic's [September 2026 research post](https://www.anthropic.com/research/claude-uplifts-biomolecular-modeling) links to a public release of accelerated builds at [`github.com/anthropics/uplifting-biomolecular-modeling`](https://github.com/anthropics/uplifting-biomolecular-modeling). The release has one kit per tool, 36 in all. The kits that matter here are:
 
-The kit code uses the Apache-2.0 licence. Each upstream tool keeps its own licence, which you will find in the kit's folder. The release is published as-is and is not maintained. Check each upstream licence as you would for the tool itself, and record the builds you use in your run notes.
+- **Generators:** RFdiffusion, RFdiffusion3, BindCraft (the `colabdesign` kit), PXDesign, BoltzGen, Proteina-Complexa, Genie 3, mosaic and the ESM cookbook's gradient-guided binder design through ESMFold2
+- **Sequence design:** ProteinMPNN, with its soluble weights
+- **Structure prediction:** ColabFold, Boltz-2, Chai-1, Protenix, OpenFold3 and ESMFold2, including ESMFold2's fast, alignment-conditioned and no-alignment variants
+- **Interface scoring:** AF2 initial guess
+
+The release has no kit for RFD4-Proteina. Install that from [its own repository](https://github.com/RosettaCommons/RFD4-Proteina), and read its [model card](https://huggingface.co/nvidia/RFD4-Proteina).
+
+Each kit runs its tool in a named mode. `off` is the unmodified tool. `exact` gives the same outputs, faster. `fast` is faster still, with small documented numeric differences. `big` uses the least GPU memory, for inputs the other modes cannot hold. Not every kit has all four, and with no mode named most kits run `fast`. Use the same mode for the controls and the candidates, and record it in `TOOLS.md`.
+
+The kit code uses the Apache-2.0 licence. Each upstream tool keeps its own licence, which you will find in the kit's folder. Model weights are not part of the release. They come from their providers under the providers' own terms, which each kit's `STOCK.md` names. The release dates from 17 September 2026. It is published as-is and is not maintained, and it had not changed by 27 October 2026. Check each upstream licence as you would for the tool itself, and record the builds you use in your run notes.
 
 Write a one-page `TOOLS.md` from [`TOOLS.md.example`](TOOLS.md.example). It should say where the GPU work runs, how to call each tool, where the weights are and how much GPU memory each tool needs. Claude reads this file first and writes every tool call from it.
 
@@ -415,6 +426,7 @@ If the model declines a step that you believe your declared use case covers, do 
 | Symptom | Likely cause | What to do |
 |---------|-------------|-----------|
 | A generator or predictor crashes on start, or Claude cannot find it | The tool is not on the path, the weights are missing, or an expected scratch-directory or environment variable is unset | Update `TOOLS.md` with the exact working command and any environment variables. Make the tool check in step 2 run each tool's smallest example before the real session. Claude can usually work around failures that reach a log. It cannot work around silent ones. |
+| A tool from the accelerated release prints `NOT ACTIVE` and exits with code 3 | The kit's mode cannot start on this machine. A kit never falls back to the unmodified tool silently. | Read the reason on the `NOT ACTIVE` line. Most kits have a dry run, `bash run.sh check`, that shows what would start on this machine. Fix what the line names, or choose another mode and use it for the controls too. |
 | The GPU runs out of memory, or everything slows down | Several tools are loaded at once, or batch sizes suit a larger card | Add the GPU's memory to `TOOLS.md`. Run one tool per run and batch inside the run. On small cards, drop the largest predictor from the in-session screen and use it only for the held-out check. |
 | On a cluster, jobs stay **Pending** | No GPU node is free, your GPU pool needs a node selector or toleration, or your cluster names the GPU resource differently | Read the pending pod's Events lines, or ask Claude to describe the pod and read them to you. Fix the Kubernetes block of `TOOLS.md`. Ask your platform team what a GPU job in this namespace must carry. [`cluster/README.md`](cluster/README.md) covers more cases, including image pull errors, volume access modes and OOMKilled. |
 | The skill never ran, or the dossier appeared only at the very end | The request did not name the skill, or the session treated it as a reporting template | Name the skill in the first message ("use the binder-gauntlet skill") and keep point 5 of the brief. A dossier written after the run still has value, and the skill says to label it that way. |

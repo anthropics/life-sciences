@@ -33,6 +33,7 @@ Built `<date>`; measured on `<GPU model, memory>`.
 ## Environment notes
 
 - How the environment is activated, if at all: `<nothing needed / source … / conda activate …>`.
+- If a tool runs from an accelerated kit: `<which kit, which commit, and which mode: off, exact, fast or big>`. Use the same mode for the controls and the candidates.
 - Variables the tools expect: `<e.g. a weights or cache directory variable and its value>`.
 - Where a run may write scratch files: `<path>` (on a cluster: `/work/tmp/` on the volume, or `/tmp`, node-local and lost with the pod).
 - Output formats Claude should expect from each predictor (which file holds ipTM, pLDDT and the aligned-error matrix): `<one line per predictor>`.

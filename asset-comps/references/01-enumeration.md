@@ -30,8 +30,10 @@ For each competitor, capture:
 
 ## Stopping condition
 
-**Search until saturation.** You're done when additional searches stop
-yielding new competitors. Specifically:
+**Search until saturation, within the budget in SKILL.md.** You're done when
+additional searches stop yielding new competitors, or when enumeration has used
+its share of the budget. In the second case, note in `anomaly_flags` which of
+the strategies below were not tried. Saturation means:
 
 1. You've tried multiple search strategies:
    - Trial registry search by indication (paged through all results)

@@ -66,6 +66,14 @@ Read `references/00-research-standards.md`. It governs sourcing, the anti-fabric
 
 **After each phase**, write the waypoint file, show the user a summary of at most 200 words covering what you found and what's uncertain, and ask: **continue / revise this phase / stop**. Do not advance until told. The exception is an unattended run, meaning that the request said to run without stopping or the session cannot receive a reply (a scheduled or headless run). Then don't stop to ask, here or at the checkpoint steps in the reference files: write the same summary, use your own judgment, add each choice to `iteration_notes` in `progress.json`, and carry on through all three phases. The one stop is a subject asset that can't be identified (see `references/01-enumeration.md`).
 
+**Leave room to write.** The map is the deliverable, and a run that ends before it is written has produced nothing. Everything a search or a page read returns stays in the context window, and a landscape of any size can fill it. So treat the window as a budget:
+
+- Start Phase 3 once about two thirds of the context window is used, whatever the coverage at that point. If you can't see how much is used, estimate it from the size of what the tools have returned so far.
+- Within that, keep Phase 1 to about a third of the research. Enumeration needs names, stages and sponsors, which search results usually give without opening the page.
+- The saturation rule and the coverage levels in the reference files are targets. The budget overrides them. List whatever was left unsearched or unresearched in the report's Gaps.
+- With subagents, give each one a bounded list and have it return findings, not raw pages, so that the main context holds only the distilled results.
+- Without subagents or a filesystem, everything shares one window: open a page only for the figures a Level 1 or 2 competitor needs, rely on search results for Levels 3 and 4, and don't read the same source twice.
+
 ### Phase 1: Enumeration
 
 Read `references/01-enumeration.md`. Profile the subject asset, then find all potential competitors across development stages: same target, target-specific standard of care (SOC), baseline SOC, adjacent mechanisms and pipeline. Search until saturation, when additional searches stop yielding new competitors. Assign each a threat level from 1 to 4. Write `waypoints/enumeration.json`.

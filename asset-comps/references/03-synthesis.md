@@ -7,8 +7,9 @@
 ## Objective
 
 Transform research findings into a well-organized competitive map. The
-output is a reference document optimized for scanability and fact
-density.
+output opens with what the landscape means for the subject asset and sets the
+main rivals against it. The rest is a reference document optimized for
+scanability and fact density.
 
 ## Output format
 
@@ -19,13 +20,26 @@ density.
 
 **As of**: [run date]. A research aid built from the cited sources. It isn't investment, medical or regulatory advice.
 
+## Bottom line
+[Four to six bullets, each one sentence and each resting on evidence given further down:
+where the subject asset sits in the landscape; the two or three most direct threats and why;
+who reaches the market first, and when; which patients remain open; what would change this picture.
+This is a reading of the evidence. It isn't a recommendation to invest, license or prescribe.]
+
+## Main rivals against [Asset Name]
+[One table. A row for the subject asset, then one for each Level 1 competitor. Columns: stage and next
+milestone; efficacy on the endpoint that matters, with trial and population; safety; dosing and route;
+ahead of, level with or behind the subject asset, and on what. Take the last column from
+`differentiation_vs_subject` in findings.json. Follow "Comparing across trials" below.]
+
 ## Standard of Care Context
 [What does current SOC achieve? What % reach treatment goals? Key unmet needs?]
 
 ## [Category 1 - e.g., "First-Line Therapies" or "EGFR-mutant"]
 - [Drug Class A]
     - [Drug Name] (Generic) - [Mechanism sentence]. [Key efficacy with numbers].
-      [Key safety concerns]. [Major limitations]. [Source links inline].
+      [Key safety concerns]. [Major limitations]. [For Levels 1 and 2: how it compares
+      with the subject asset]. [Source links inline].
 
 ## [Category 2]
 - ...
@@ -48,7 +62,10 @@ density.
 - **Emerging threats**: Novel modalities or approaches
 
 ## Gaps
-[What couldn't be found or verified, and the anomaly flags that affect the reader]
+[What couldn't be found or verified, and the anomaly flags that affect the reader: facts, sources and
+competitors. Notes about the run itself (which tools or connectors were available, whether it was
+unattended, what was or wasn't downloaded) go in `iteration_notes` in progress.json. Mention one here
+only where it limits a stated fact, in a clause beside that fact.]
 
 ## Sources
 [Numbered sources: reference-list citations and licensed records]
@@ -102,8 +119,13 @@ Apply `references/04-writing-style.md`.
   differences that matter (population, prior therapy, endpoint definition,
   length of follow-up) and don't rank the drugs on them
 
+**Describe each program once**, in the section where it matters most. Elsewhere
+refer to it by name, with only the point that section adds.
+
 **Required sections**:
 
+- Bottom line
+- Main rivals against the subject asset, as one table
 - SOC baseline context (what current treatment achieves)
 - Adjacent targets (REQUIRED — different targets, same clinical outcome)
 - Temporal projection (landscape at expected launch)

@@ -53,6 +53,9 @@ For each competitor, gather (depth varies by threat level):
   data confirmed not public
 - Level 2 competitors: ≥90% researched
 - Level 3–4: At least identified with mechanism
+- Or the budget in SKILL.md is reached. Then stop, record each competitor still
+  short of its level under `gaps`, and go on to Phase 3. A map with stated gaps
+  is worth more than research with no map
 - No placeholder text (TBD, Unknown) for Level 1–2 efficacy/safety. Where
   the canonical source has been checked and nothing is disclosed, write "Not
   publicly available": that counts as researched, not as a gap

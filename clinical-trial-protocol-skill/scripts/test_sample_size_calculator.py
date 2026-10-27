@@ -1,6 +1,5 @@
 """Unit tests for sample_size_calculator.py. They need scipy, like the calculator."""
 
-import json
 import math
 import pathlib
 import subprocess
@@ -88,20 +87,31 @@ class TestInputs(unittest.TestCase):
         self.assertIn("must be a positive number", calculate_continuous_sample_size(1.0, 0.0)["error"])
         self.assertIn("must differ", calculate_binary_sample_size(0.60, 0.60)["error"])
 
-    def test_both_spellings_of_non_inferiority_give_the_same_one_sided_result(self):
-        outputs = [
-            subprocess.run(
-                [sys.executable, str(SCRIPT), "--type", "continuous", "--effect-size", "5",
-                 "--std-dev", "15", "--design", design],
-                capture_output=True, text=True, check=True,
-            ).stdout
-            for design in ("non-inferiority", "noninferiority")
-        ]
-        self.assertEqual(outputs[0], outputs[1])
-        result = json.loads(outputs[0])
-        self.assertEqual(result["study_design"], "non-inferiority")
-        # 2 (1.645 + 0.842)^2 / (5 / 15)^2 = 111.3
-        self.assertEqual(result["sample_size"]["treatment_arm"], 112)
+    def test_settings_outside_their_range_are_refused(self):
+        for kwargs, message in (
+            ({"alpha": 0.0}, "--alpha"), ({"alpha": 5.0}, "--alpha"), ({"alpha": math.nan}, "--alpha"),
+            ({"power": 1.0}, "--power"), ({"power": 80.0}, "--power"),
+            ({"dropout_rate": 1.0}, "--dropout"), ({"dropout_rate": 15.0}, "--dropout"),
+            ({"dropout_rate": -0.1}, "--dropout"),
+        ):
+            with self.subTest(kwargs=kwargs):
+                for result in (
+                    calculate_continuous_sample_size(1.0, 1.0, **kwargs),
+                    calculate_binary_sample_size(0.60, 0.75, **kwargs),
+                ):
+                    self.assertIn(message, result["error"])
+
+    def test_both_spellings_of_non_inferiority_are_refused(self):
+        for design in ("non-inferiority", "noninferiority"):
+            with self.subTest(design=design):
+                run = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--type", "continuous", "--effect-size", "5",
+                     "--std-dev", "15", "--design", design],
+                    capture_output=True, text=True,
+                )
+                self.assertEqual(run.returncode, 1)
+                self.assertEqual(run.stdout, "")
+                self.assertIn("cannot size non-inferiority trials", run.stderr)
 
 
 if __name__ == "__main__":

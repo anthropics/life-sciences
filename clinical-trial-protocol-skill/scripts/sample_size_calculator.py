@@ -30,6 +30,22 @@ def _continuous_arms(z_alpha: float, z_beta: float, cohens_d: float, allocation_
     return math.ceil(round(r * n_control, 9)), n_control
 
 
+def _settings_error(alpha: float, power: float, dropout_rate: float, design: str):
+    """Return an error message for settings the calculator cannot use, or None if they are fine."""
+    if design != "superiority":
+        return (
+            "This calculator cannot size non-inferiority trials because it has no option for a "
+            "non-inferiority margin."
+        )
+    if not 0 < alpha < 1:
+        return "Alpha (--alpha) must be between 0 and 1 (exclusive), e.g. 0.05"
+    if not 0 < power < 1:
+        return "Power (--power) must be between 0 and 1 (exclusive), e.g. 0.80"
+    if not 0 <= dropout_rate < 1:
+        return "Dropout rate (--dropout) must be from 0 up to but not including 1, e.g. 0.15 for 15%"
+    return None
+
+
 def calculate_continuous_sample_size(
     effect_size: float,
     std_dev: float,
@@ -63,6 +79,9 @@ def calculate_continuous_sample_size(
             "error": "scipy not installed. Run: pip install scipy statsmodels numpy"
         }
 
+    settings_error = _settings_error(alpha, power, dropout_rate, design)
+    if settings_error:
+        return {"error": settings_error}
     if not (math.isfinite(allocation_ratio) and allocation_ratio > 0):
         return {"error": ALLOCATION_ERROR}
     if not (math.isfinite(effect_size) and effect_size != 0):
@@ -200,6 +219,10 @@ def calculate_binary_sample_size(
         return {
             "error": "scipy not installed. Run: pip install scipy statsmodels numpy"
         }
+
+    settings_error = _settings_error(alpha, power, dropout_rate, design)
+    if settings_error:
+        return {"error": settings_error}
 
     # Validate proportions
     if not (0 < p1 < 1 and 0 < p2 < 1):
@@ -373,7 +396,7 @@ Examples:
         "--design",
         choices=["superiority", "non-inferiority", "noninferiority"],
         default="superiority",
-        help='Study design type (default: superiority); "noninferiority" means the same as "non-inferiority"'
+        help="Study design type (default: superiority); either non-inferiority spelling stops with an error"
     )
     parser.add_argument(
         "--output",
@@ -382,8 +405,6 @@ Examples:
     )
 
     args = parser.parse_args()
-    if args.design == "noninferiority":
-        args.design = "non-inferiority"
 
     # Validate inputs based on endpoint type
     if args.type == "continuous":

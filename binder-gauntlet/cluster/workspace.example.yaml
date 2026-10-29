@@ -1,0 +1,47 @@
+# workspace.example.yaml — the shared work volume, and a small utility pod that mounts it at
+# /work and sleeps so that "kubectl cp" and "kubectl exec" have somewhere to land. It asks for
+# no GPU. Replace every <placeholder>; apply once per run with
+#   kubectl --context <ctx> -n <namespace> apply -f jobs/<run-id>-workspace.yaml
+# and wait for the pod to be Ready before copying inputs in. Everything carries the labels
+# app=binder-design and run=<run-id>. Remove the pod by name when the run is finished, and the
+# volume, by name, only after you have copied what you need.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: <run-id>-work
+  namespace: <namespace>
+  labels: {app: binder-design, run: "<run-id>"}
+spec:
+  accessModes: ["ReadWriteMany"]     # or ReadWriteOnce, with this pod and every Job pinned to one GPU node (README, "A work volume")
+  # storageClassName: <class>        # omit for the cluster default
+  resources:
+    requests:
+      storage: 50Gi               # tens of GB is enough when the weights are in the image (README, "A work volume"); raise it if they are not
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: <run-id>-workspace
+  namespace: <namespace>
+  labels: {app: binder-design, run: "<run-id>", role: workspace}
+spec:
+  automountServiceAccountToken: false   # nothing in this pod talks to the Kubernetes API
+  restartPolicy: Always
+  terminationGracePeriodSeconds: 5
+  nodeSelector: {}                       # normally empty; with ReadWriteOnce storage, {"kubernetes.io/hostname": "<gpu-node>"}
+  tolerations: []
+  # imagePullSecrets: [{name: <your-registry-secret>}]
+  # securityContext: {runAsNonRoot: true, fsGroup: 1000}
+  containers:
+    - name: workspace
+      image: <registry>/<tool-image>:<tag>   # or any smaller image with bash and tar
+      command: ["bash", "-c", "trap 'exit 0' TERM; sleep infinity & wait"]
+      workingDir: /work
+      resources:                             # raise the limits if the CPU scoring step runs here with "kubectl exec"
+        requests: {cpu: "500m", memory: 1Gi}
+        limits: {cpu: "4", memory: 8Gi}
+      volumeMounts:
+        - {name: work, mountPath: /work}
+  volumes:
+    - name: work
+      persistentVolumeClaim: {claimName: <run-id>-work}

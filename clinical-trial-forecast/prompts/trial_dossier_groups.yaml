@@ -1,0 +1,18 @@
+---
+# Worker groups for the trial-dossier checklist (trial_dossier_bank.yaml): ONE worker per trial answers all of a
+# group's checklist groups. They follow a dossier's parts: intent, design, chronology, data evolution.
+    - id: intent
+      title: "Intent: identity, origins, sponsor, scientific rationale and unmet need"
+      bank_groups: [meta, origins_timing, sponsor_context, scientific_rationale, unmet_need]
+    - id: success_regulatory
+      title: "Bar for success and regulatory context"
+      bank_groups: [bar_for_success, regulatory_context]
+    - id: design
+      title: "Design: overview, population, interventions, endpoints, statistics and fit with intent"
+      bank_groups: [design_overview, population, interventions, endpoints, statistical_design, design_intent_alignment]
+    - id: chronology
+      title: "Chronology: events, enrollment, protocol changes, safety signals and completion"
+      bank_groups: [chronology]
+    - id: data_evolution
+      title: "Data evolution: every data disclosure with full efficacy and safety tables, and the readout outlook"
+      bank_groups: [data_evolution, readout_outlook]

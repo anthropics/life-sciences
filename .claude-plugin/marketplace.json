@@ -40,6 +40,38 @@
       "skills": [
         "./scientific-problem-selection"
       ]
+    },
+    {
+      "name": "clinical-trial-forecast",
+      "source": "./",
+      "description": "Forecast a registered clinical trial's probability of success with a cited report and Monte Carlo model. Runs in Claude Science",
+      "category": "life-sciences",
+      "tags": [
+        "clinical-trials",
+        "forecasting",
+        "simulation",
+        "research"
+      ],
+      "strict": false,
+      "skills": [
+        "./clinical-trial-forecast"
+      ]
+    },
+    {
+      "name": "binder-gauntlet",
+      "source": "./",
+      "description": "Validate and profile de novo designed protein binders with independent re-prediction, controls, developability checks and a dossier",
+      "category": "life-sciences",
+      "tags": [
+        "protein-design",
+        "binders",
+        "developability",
+        "validation"
+      ],
+      "strict": false,
+      "skills": [
+        "./binder-gauntlet"
+      ]
     }
   ]
 }

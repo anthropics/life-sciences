@@ -1,0 +1,327 @@
+{
+ "bank": {
+  "meta": {
+   "title": "Clinical trial dossier checklist: what to establish for every trial evaluated",
+   "version": "0.1",
+   "n_items": 24,
+   "groups": [
+    "meta",
+    "origins_timing",
+    "sponsor_context",
+    "scientific_rationale",
+    "unmet_need",
+    "bar_for_success",
+    "regulatory_context",
+    "design_overview",
+    "population",
+    "interventions",
+    "endpoints",
+    "statistical_design",
+    "design_intent_alignment",
+    "chronology",
+    "data_evolution",
+    "readout_outlook"
+   ],
+   "priority_scale": {
+    "1": "always run",
+    "2": "important",
+    "3": "nice to have"
+   },
+   "applies_when_vocabulary": [
+    "always",
+    "completed_with_results",
+    "ongoing"
+   ]
+  },
+  "items": [
+   {
+    "id": "trial_identity",
+    "group": "meta",
+    "question": "What are the trial's identifiers and anchor facts? Give the NCT ID and any other registry IDs (EudraCT/CTIS), the official title, the asset (drug name and code), the indication, the sponsor and collaborators, the phase and the current status. Give the first-posted, last-update, start, primary-completion and study-completion dates, each marked actual or estimated.",
+    "inputs": "ClinicalTrials.gov record (registry fields, secondary IDs); the sponsor's investor-relations pages.",
+    "output": "fields: nct_id, other_ids[], title, asset, indication, sponsor, collaborators[], phase, status, first_posted, last_update, start_date, primary_completion_date (actual|estimated), study_completion_date (actual|estimated), sponsor_ir_url (or null)",
+    "why": "Every other answer is anchored to these facts. Whether the dates are actual or estimated sets what can be known today.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "origins_and_timing",
+    "group": "origins_timing",
+    "question": "When was the trial first registered, and what was the sponsor's development stage for this asset at that time? Which prior trials or data informed the decision to run it? What was the competitive landscape when it started?",
+    "inputs": "ClinicalTrials.gov record and its history of changes; the sponsor's earlier trials of the asset (registry search by intervention and sponsor); press releases and investor material from around the start date.",
+    "output": "fields: first_registered, development_stage_at_start, prior_trials[{nct_id, phase, result_summary}], prior_data_relied_on[], landscape_at_start (2-4 sentences)",
+    "why": "What the sponsor knew when it committed to the trial explains its design. Write it as of the start date, with no hindsight.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "sponsor_context",
+    "group": "sponsor_context",
+    "question": "Who is the sponsor, and what is its pipeline focus? Is this asset its lead program, and how strategically important is this trial? Which partnerships or licensing deals bear on the trial?",
+    "inputs": "Sponsor investor presentations and pipeline pages; SEC filings (10-K, S-1) for strategic context; deal press releases.",
+    "output": "fields: sponsor_type (large pharma|mid-size|small biotech|academic|other), pipeline_focus, lead_asset (y/n), strategic_importance (high|medium|low, with the reason), partnerships[{partner, deal_type, date, terms_if_public}]",
+    "why": "When a trial carries the company, its delays, amendments and disclosures read differently.",
+    "applies_when": "always",
+    "priority": 2
+   },
+   {
+    "id": "mechanism_and_hypothesis",
+    "group": "scientific_rationale",
+    "question": "What is the asset's mechanism of action (its target and modality), and what scientific hypothesis does this trial test?",
+    "inputs": "Drug and target records (ChEMBL); papers on the mechanism (PubMed); the sponsor's own description.",
+    "output": "fields: target, modality, mechanism (1-2 sentences), hypothesis_tested",
+    "why": "The hypothesis says what a positive or a negative result would show beyond this one trial.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "supporting_evidence",
+    "group": "scientific_rationale",
+    "question": "Which preclinical or earlier clinical data supported moving to this trial? For each study, what did it show, with numbers? How strong is that evidence?",
+    "inputs": "PubMed papers; registry records and posted results of earlier trials of the asset; conference abstracts; sponsor presentations.",
+    "output": "table supporting_data[{study (NCT id or citation), phase_or_model, population, key_result (with numbers), source}], evidence_strength_note",
+    "why": "How strong the earlier evidence is gives the starting point for judging the trial's chance of success.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "unmet_need_brief",
+    "group": "unmet_need",
+    "question": "Briefly, what is the current standard of care? What unmet need does this trial address, and where does the asset sit among the alternatives? Give one or two sentences each. This is positioning context, not a competitive-landscape analysis.",
+    "inputs": "Treatment guidelines; recent reviews (PubMed); the sponsor's own positioning.",
+    "output": "fields: standard_of_care, unmet_need, positioning",
+    "why": "Positioning sets how large an effect matters to prescribers and payers. The full landscape belongs elsewhere.",
+    "applies_when": "always",
+    "priority": 2
+   },
+   {
+    "id": "bar_for_success",
+    "group": "bar_for_success",
+    "question": "What primary-endpoint result would count as success? Give the effect the sponsor needs to show, any regulatory guidance on effect-size thresholds for this endpoint in this indication, and the result that would make the asset commercially viable.",
+    "inputs": "FDA and EMA guidance for the indication and endpoint; the trial's sample-size assumptions; sponsor statements; sourced analyst or physician commentary.",
+    "output": "fields: success_definition, effect_needed (with units and timepoint), regulatory_threshold (or \"none found\"), commercial_viability_bar",
+    "why": "The bar set before the readout is what the result, and any forecast of it, is judged against.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "designations_and_pathway",
+    "group": "regulatory_context",
+    "question": "Which designations does the asset hold for this indication (breakthrough therapy, fast track, orphan, priority review, PRIME)? Which regulatory pathway does this trial serve: accelerated or traditional approval? Is it registrational?",
+    "inputs": "FDA and EMA documents; sponsor press releases announcing designations; the registry record.",
+    "output": "fields: designations[{designation, agency, date}], pathway (accelerated|traditional|not registrational|unclear), registrational (y/n/unclear)",
+    "why": "The pathway decides which result is enough for approval, and how soon one is needed.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "prior_regulatory_interactions",
+    "group": "regulatory_context",
+    "question": "Which prior agency interactions or guidance bear on this trial? Consider end-of-phase meetings, special protocol assessments, clinical holds, advisory committees, complete response letters and published agency guidance for the indication.",
+    "inputs": "FDA documents (letters, reviews, advisory committee materials); EMA assessment reports; sponsor disclosures and SEC filings.",
+    "output": "table interactions[{date, agency, type, what_was_said_or_decided}]",
+    "why": "What the agency has already said about the endpoint or the design narrows what the result has to show.",
+    "applies_when": "always",
+    "priority": 2
+   },
+   {
+    "id": "design_overview",
+    "group": "design_overview",
+    "question": "What type of study is this (randomized controlled, single-arm, adaptive, crossover, other), and with what allocation, masking and intervention model? Why this phase at this time? What are the planned treatment and follow-up durations, and why?",
+    "inputs": "ClinicalTrials.gov record; published protocol or design paper; sponsor presentations.",
+    "output": "fields: study_type, allocation, masking, intervention_model, phase, phase_rationale, treatment_duration, followup_duration, duration_rationale",
+    "why": "The design type and the duration bound what the trial can show, and when.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "eligibility_and_population",
+    "group": "population",
+    "question": "What are the key inclusion and exclusion criteria? What population do they define: stage or severity, prior therapies, biomarker selection? How restrictive or generalizable is that population?",
+    "inputs": "ClinicalTrials.gov eligibility section; protocol or design paper; the baseline table of any publication.",
+    "output": "fields: key_inclusion[], key_exclusion[], target_population (1-2 sentences), enrichment_or_biomarker_selection, restrictiveness (restrictive|moderate|broad, with the reason)",
+    "why": "Who is enrolled shapes the size of the effect, and how far a result carries to the population on a label.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "arms_and_comparator",
+    "group": "interventions",
+    "question": "What are all the study arms, with their doses and schedules? What is the comparator (placebo, an active drug, standard of care, none), and why was it chosen?",
+    "inputs": "ClinicalTrials.gov arms and interventions; protocol or design paper; sponsor presentations.",
+    "output": "table arms[{arm, intervention, dose, schedule, n_planned}], comparator, comparator_rationale",
+    "why": "The comparator sets the effect the trial must beat. The doses decide what label it can support.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "endpoints_and_hierarchy",
+    "group": "endpoints",
+    "question": "What is the primary endpoint, and why was it chosen? What are the secondary endpoints, where do they sit in any testing hierarchy, and at which timepoint is each assessed?",
+    "inputs": "ClinicalTrials.gov outcome measures and their history of changes; protocol, design paper or statistical analysis plan.",
+    "output": "fields: primary{endpoint, definition, timepoint, rationale}, secondaries[{endpoint, timepoint, in_hierarchy (y/n), rank}], exploratory_of_note[]",
+    "why": "The readout is judged on the endpoint and its timepoint. Design-intent alignment checks them against the bar for success.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "powering_and_sample_size",
+    "group": "statistical_design",
+    "question": "What is the target enrollment, and what is the power calculation based on? Give the assumed control-arm result, the effect size the trial is powered to detect, alpha, power and dropout. If the trial is event-driven, give the target number of events.",
+    "inputs": "Statistical analysis plan or protocol paper (rare, but valuable when found); ClinicalTrials.gov enrollment; the primary publication's methods; FDA statistical reviews.",
+    "output": "fields: target_n, actual_n (if known), assumed_control_result, assumed_effect, alpha, power_pct, dropout_assumption, target_events (if event-driven), assumptions_source (SAP|protocol paper|publication|registry|press|inferred)",
+    "why": "The power assumptions are the sponsor's own forecast of the result. Set beside the earlier data, they show how optimistic the design is.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "interim_analyses_and_sap",
+    "group": "statistical_design",
+    "question": "Are interim analyses planned? Give how many, when or at what information fraction, their purpose (efficacy, futility or sample-size re-estimation) and their stopping boundaries. Who reviews them? Has a statistical analysis plan or protocol been published?",
+    "inputs": "Statistical analysis plan; protocol or design paper; ClinicalTrials.gov record; sponsor disclosures of interim looks.",
+    "output": "fields: interim_analyses[{timing_or_information_fraction, purpose (efficacy|futility|safety|sample-size re-estimation), boundary}], monitoring_committee (y/n), sap_available (y/n, with the source), adaptive_features[]",
+    "why": "Interim looks set the dates on which the trial can stop early, on good news or bad.",
+    "applies_when": "always",
+    "priority": 2
+   },
+   {
+    "id": "design_intent_alignment",
+    "group": "design_intent_alignment",
+    "question": "Does the design serve the sponsor's stated intent? Which design choices strengthen or weaken the trial's ability to show what the sponsor needs? How well does the endpoint align with the bar for success? Briefly state the intent and the bar you judge against, with their sources.",
+    "inputs": "The registry record; the protocol or analysis plan; the sponsor's statements of the trial's aim; regulatory guidance for the endpoint.",
+    "output": "fields: intent_judged_against, bar_judged_against, alignment (strong|adequate|weak), strengths[], weaknesses[], endpoint_vs_bar_note (2-3 sentences). This is analysis: cite the facts it rests on and mark inferences.",
+    "why": "This is the dossier's design critique: an analysis of the intent and design facts, not new data gathering.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "event_log",
+    "group": "chronology",
+    "question": "Build the dated event log, from the decisions that led to the trial through to today: initiation, enrollment milestones, protocol changes, safety events, regulatory interactions, and primary and study completion. For each event's date, prefer FDA documents, then the registry, then publications, then press. Flag dates on which the sources disagree.",
+    "inputs": "ClinicalTrials.gov history of changes; FDA documents; publications; conference materials; sponsor press releases and investor presentations.",
+    "output": "table events[{date, event_type (pre_trial|initiation|enrollment|protocol_change|safety|regulatory|completion), description, source_type}], date_conflicts[], event_types_with_no_data[]",
+    "why": "A complete dated timeline shows how the trial has actually run against its plan.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "enrollment_history",
+    "group": "chronology",
+    "question": "How has enrollment progressed? Give the dated milestones (first patient, share enrolled, last patient), the number of sites and countries, any pauses or changes to the target, and the enrollment rate the dates imply.",
+    "inputs": "ClinicalTrials.gov record and its history of changes (enrollment and status updates); sponsor press releases and investor presentations; site lists.",
+    "output": "table milestones[{date, milestone, n_enrolled_or_pct}], n_sites, countries[], target_changes[], enrollment_rate_note (mark computed rates \"inferred\")",
+    "why": "Enrollment pace against plan is the most visible sign of whether a trial is on schedule.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "protocol_changes",
+    "group": "chronology",
+    "question": "Which protocol amendments and design changes have been made, and when? Look for changes to endpoints, sample size, eligibility, arms or the analysis plan, as the registry's history of changes and the sponsor's disclosures show them. For each, what changed, and what reason was given?",
+    "inputs": "ClinicalTrials.gov history of changes (each record version); published protocol amendments; sponsor disclosures.",
+    "output": "table changes[{date, what_changed, before, after, stated_reason}]",
+    "why": "A change to a running trial's endpoints, size or population often shows what the sponsor has learned.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "safety_signals",
+    "group": "chronology",
+    "question": "Which safety events have occurred over time? Consider monitoring-committee recommendations, clinical holds, safety-driven amendments, disclosed deaths or serious adverse events, and safety signals reported for the asset or its mechanism in other trials.",
+    "inputs": "Sponsor press releases and filings; FDA documents; ClinicalTrials.gov status history; publications and conference reports on the asset and its class.",
+    "output": "table safety_events[{date, event, outcome}], class_signals[]",
+    "why": "Safety findings can stop or reshape a trial before its efficacy is ever tested.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "completion_and_followup",
+    "group": "chronology",
+    "question": "What are the primary and study completion dates, and are they actual or estimated? Has the trial completed, been terminated or suspended, or been withdrawn? If it stopped early, why? What follow-up exists (long-term follow-up, extension studies)?",
+    "inputs": "ClinicalTrials.gov status and dates, with their history; sponsor press releases; publications.",
+    "output": "fields: primary_completion (date, actual|estimated), study_completion (date, actual|estimated), final_status, stop_reason (if stopped), followup_studies[{nct_id, kind}]",
+    "why": "A slipping completion date or an early stop is a signal in its own right. For an ongoing trial the dates are estimates.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "data_disclosures",
+    "group": "data_evolution",
+    "question": "List every data disclosure for this trial in date order: conference presentations, publications, press releases, FDA documents and company presentations. For each, extract ALL the data reported: the data cutoff; the population (N per arm, and the baseline table as reported); efficacy (the primary and secondary endpoints, each with its value, confidence interval and p-value, per arm and timepoint); safety (any adverse event, serious adverse events, discontinuation for adverse events, dose modifications, and the adverse-event table with any-grade and grade 3+ rates for each event, per arm); biomarkers; and subgroups. \"No data disclosed yet\" is an answer.",
+    "inputs": "Peer-reviewed publications and their supplements; conference abstracts, posters and slides; ClinicalTrials.gov posted results; FDA reviews; sponsor press releases and investor presentations.",
+    "output": "table disclosures[{date, event_name, source_type, data_cutoff, population{n_per_arm, baseline_table[]}, efficacy[{endpoint, arm, timepoint, value, ci, p_value}], safety{overall{any_ae, serious_ae, discontinuation_due_to_ae, dose_modifications}, ae_table[{ae, arm, any_grade, grade_3_plus}]}, biomarkers, subgroups[]}]",
+    "why": "Data evolution is the most valuable part of a dossier. Complete per-arm tables at each disclosure show how the efficacy and safety profile moved over time. They also give the forecast the numbers as reported, rather than a summary of them.",
+    "applies_when": "always",
+    "priority": 1
+   },
+   {
+    "id": "result_against_bar",
+    "group": "data_evolution",
+    "question": "If the primary endpoint has read out, how does the result compare with the bar for success and with the effect the trial was powered to detect? Did it meet the primary endpoint as pre-specified? How did the efficacy and safety picture change from one disclosure to the next? State the bar you compare against, with its source.",
+    "inputs": "The trial's disclosures; its sample-size assumptions; the sponsor's statements of what success means.",
+    "output": "fields: bar_compared_against, met_primary (y/n/partial), observed_vs_powered_effect, change_across_disclosures (2-4 sentences)",
+    "why": "This is the dossier's read on a trial that has reported: whether it cleared the bar it set itself.",
+    "applies_when": "completed_with_results",
+    "priority": 1
+   },
+   {
+    "id": "readout_watch",
+    "group": "readout_outlook",
+    "question": "If the trial has not read out yet, when is the readout expected, and what will it be judged on? Which facts disclosed so far bear on the result: enrollment pace, amendments, blinded or pooled event rates, interim looks, earlier data?",
+    "inputs": "The sponsor's guidance on timing (press releases, investor presentations, filings); ClinicalTrials.gov dates; the trial's chronology.",
+    "output": "fields: expected_readout (date or window, with the source), judged_on, signals_so_far[{fact, direction (supportive|concerning|neutral)}], key_uncertainties[]",
+    "why": "A dossier ends on what to watch for at the readout.",
+    "applies_when": "ongoing",
+    "priority": 2
+   }
+  ]
+ },
+ "groups": [
+  {
+   "id": "intent",
+   "title": "Intent: identity, origins, sponsor, scientific rationale and unmet need",
+   "bank_groups": [
+    "meta",
+    "origins_timing",
+    "sponsor_context",
+    "scientific_rationale",
+    "unmet_need"
+   ]
+  },
+  {
+   "id": "success_regulatory",
+   "title": "Bar for success and regulatory context",
+   "bank_groups": [
+    "bar_for_success",
+    "regulatory_context"
+   ]
+  },
+  {
+   "id": "design",
+   "title": "Design: overview, population, interventions, endpoints, statistics and fit with intent",
+   "bank_groups": [
+    "design_overview",
+    "population",
+    "interventions",
+    "endpoints",
+    "statistical_design",
+    "design_intent_alignment"
+   ]
+  },
+  {
+   "id": "chronology",
+   "title": "Chronology: events, enrollment, protocol changes, safety signals and completion",
+   "bank_groups": [
+    "chronology"
+   ]
+  },
+  {
+   "id": "data_evolution",
+   "title": "Data evolution: every data disclosure with full efficacy and safety tables, and the readout outlook",
+   "bank_groups": [
+    "data_evolution",
+    "readout_outlook"
+   ]
+  }
+ ]
+}

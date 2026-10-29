@@ -141,6 +141,8 @@ Note: Sample size calculator may not support time-to-event. If primary endpoint 
 
 #### 2.4 Run Sample Size Calculator Script
 
+**For non-inferiority designs, do not run the calculator,** whether the design comes from Section 4 (step 2.2) or from the user's answer at 2.3. The calculator has no option for a non-inferiority margin, so it cannot size these trials. Instead, follow the "If script fails" steps in 2.5, and show the "If sample size calculation fails" warning under Error Handling with `[error message]` replaced by "The calculator cannot size non-inferiority trials because it takes no non-inferiority margin." If Section 4 and the user's answer at 2.3 name different designs (keeping the superiority default counts as an answer), also tell the user that they differ, so they can correct whichever one is wrong.
+
 **BEFORE running the calculator, display this message to the user:**
 
 ```
@@ -167,7 +169,7 @@ python scripts/sample_size_calculator.py \
   --alpha [user provided or 0.05] \
   --power [user provided or 0.80] \
   --dropout [user provided or 0.15] \
-  --design [superiority or noninferiority] \
+  --design superiority \
   --output waypoints/02_sample_size_calculation.json
 ```
 
@@ -181,7 +183,7 @@ python scripts/sample_size_calculator.py \
   --alpha [user provided or 0.05] \
   --power [user provided or 0.80] \
   --dropout [user provided or 0.15] \
-  --design [superiority or noninferiority] \
+  --design superiority \
   --output waypoints/02_sample_size_calculation.json
 ```
 
@@ -212,6 +214,7 @@ If script succeeds:
 
 If script fails:
 - Use pattern-based approach: Look at similar trials from Step 1 research, use their enrollment numbers
+- Do not use a `waypoints/02_sample_size_calculation.json` left from an earlier run. Wherever later instructions in this file use the calculation results or that file, use the enrollment target from similar trials instead; wherever they report the calculation as completed or the file as created, say the calculation was not performed (in Step 6, set `sample_size_calculated` to false).
 - Add prominent disclaimer: "Sample size calculation could not be performed. Enrollment target based on similar trials: [NCT numbers]. Requires biostatistician review and validation."
 
 ### Step 3: Read Protocol Template and Shared Guidance

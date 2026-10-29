@@ -79,7 +79,8 @@ references/
 
 ```
 scripts/
-└── sample_size_calculator.py   # Statistical power analysis (validated)
+├── sample_size_calculator.py        # Statistical power analysis
+└── test_sample_size_calculator.py   # Unit tests for the calculator
 ```
 
 ## Prerequisites
@@ -131,7 +132,7 @@ pip install -r requirements.txt
 - scipy >= 1.11.0 (statistical calculations)
 - numpy >= 1.24.0 (numerical operations)
 
-**Purpose:** Accurate statistical sample size calculations for clinical protocols
+**Purpose:** Statistical sample size calculations for clinical protocols
 
 ## How to Use
 

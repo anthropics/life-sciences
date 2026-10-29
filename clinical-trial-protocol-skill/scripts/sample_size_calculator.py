@@ -12,6 +12,39 @@ import sys
 import math
 from typing import Dict, Any
 
+ALLOCATION_ERROR = (
+    "Allocation ratio (--allocation) must be a positive number: treatment "
+    "participants per control participant, e.g. 2 for 2:1"
+)
+
+
+def _continuous_arms(z_alpha: float, z_beta: float, cohens_d: float, allocation_ratio: float):
+    """Return (n_treatment, n_control) for comparing two means, where r = n_treatment / n_control.
+
+    Both are rounded up, and n_treatment is r times the rounded n_control, so a whole-number r gives
+    groups exactly in that ratio. Formula: Julious 2004, Stat Med 23:1921-1986.
+    """
+    r = allocation_ratio
+    n_control = math.ceil((1 + 1 / r) * ((z_alpha + z_beta) ** 2) / (cohens_d ** 2))
+    # round() so floating-point error (1.1 * 50 = 55.00000000000001) cannot add a participant
+    return math.ceil(round(r * n_control, 9)), n_control
+
+
+def _settings_error(alpha: float, power: float, dropout_rate: float, design: str):
+    """Return an error message for settings the calculator cannot use, or None if they are fine."""
+    if design != "superiority":
+        return (
+            "This calculator cannot size non-inferiority trials because it has no option for a "
+            "non-inferiority margin."
+        )
+    if not 0 < alpha < 1:
+        return "Alpha (--alpha) must be between 0 and 1 (exclusive), e.g. 0.05"
+    if not 0 < power < 1:
+        return "Power (--power) must be between 0 and 1 (exclusive), e.g. 0.80"
+    if not 0 <= dropout_rate < 1:
+        return "Dropout rate (--dropout) must be from 0 up to but not including 1, e.g. 0.15 for 15%"
+    return None
+
 
 def calculate_continuous_sample_size(
     effect_size: float,
@@ -46,6 +79,21 @@ def calculate_continuous_sample_size(
             "error": "scipy not installed. Run: pip install scipy statsmodels numpy"
         }
 
+    settings_error = _settings_error(alpha, power, dropout_rate, design)
+    if settings_error:
+        return {"error": settings_error}
+    if not (math.isfinite(allocation_ratio) and allocation_ratio > 0):
+        return {"error": ALLOCATION_ERROR}
+    if not (math.isfinite(effect_size) and effect_size != 0):
+        return {
+            "error": "Effect size (--effect-size) must be a nonzero number: the difference in "
+            "means the trial should detect. This calculator cannot size a trial that expects no "
+            "difference, such as some non-inferiority trials, because it has no option for a "
+            "non-inferiority margin."
+        }
+    if not (math.isfinite(std_dev) and std_dev > 0):
+        return {"error": "Standard deviation (--std-dev) must be a positive number"}
+
     # Calculate effect size (Cohen's d)
     cohens_d = abs(effect_size) / std_dev
 
@@ -61,26 +109,7 @@ def calculate_continuous_sample_size(
     z_alpha = stats.norm.ppf(1 - alpha_adj)
     z_beta = stats.norm.ppf(power)
 
-    # Sample size per arm (equal allocation formula)
-    # n = 2 * (z_alpha + z_beta)^2 * (sigma^2 / delta^2)
-    # = 2 * (z_alpha + z_beta)^2 / d^2
-    # For unequal allocation: multiply by (1 + 1/r)^2 / 4
-
-    if allocation_ratio == 1.0:
-        n_per_arm = 2 * ((z_alpha + z_beta) ** 2) / (cohens_d ** 2)
-    else:
-        n_per_arm = ((1 + 1/allocation_ratio) ** 2) * ((z_alpha + z_beta) ** 2) / (cohens_d ** 2)
-
-    # Round up to nearest integer
-    n_per_arm = math.ceil(n_per_arm)
-
-    # Calculate control arm size if unequal allocation
-    if allocation_ratio == 1.0:
-        n_control = n_per_arm
-        n_treatment = n_per_arm
-    else:
-        n_treatment = n_per_arm
-        n_control = math.ceil(n_per_arm / allocation_ratio)
+    n_treatment, n_control = _continuous_arms(z_alpha, z_beta, cohens_d, allocation_ratio)
 
     total_n = n_treatment + n_control
 
@@ -91,30 +120,12 @@ def calculate_continuous_sample_size(
 
     # Sensitivity analysis: 90% power
     z_beta_90 = stats.norm.ppf(0.90)
-    if allocation_ratio == 1.0:
-        n_per_arm_90 = 2 * ((z_alpha + z_beta_90) ** 2) / (cohens_d ** 2)
-    else:
-        n_per_arm_90 = ((1 + 1/allocation_ratio) ** 2) * ((z_alpha + z_beta_90) ** 2) / (cohens_d ** 2)
-    n_per_arm_90 = math.ceil(n_per_arm_90)
-
-    if allocation_ratio == 1.0:
-        total_90 = n_per_arm_90 * 2
-    else:
-        total_90 = n_per_arm_90 + math.ceil(n_per_arm_90 / allocation_ratio)
+    total_90 = sum(_continuous_arms(z_alpha, z_beta_90, cohens_d, allocation_ratio))
     total_90_dropout = math.ceil(total_90 / (1 - dropout_rate))
 
     # Sensitivity analysis: Effect size reduced by 10%
     cohens_d_reduced = cohens_d * 0.9
-    if allocation_ratio == 1.0:
-        n_per_arm_reduced = 2 * ((z_alpha + z_beta) ** 2) / (cohens_d_reduced ** 2)
-    else:
-        n_per_arm_reduced = ((1 + 1/allocation_ratio) ** 2) * ((z_alpha + z_beta) ** 2) / (cohens_d_reduced ** 2)
-    n_per_arm_reduced = math.ceil(n_per_arm_reduced)
-
-    if allocation_ratio == 1.0:
-        total_reduced = n_per_arm_reduced * 2
-    else:
-        total_reduced = n_per_arm_reduced + math.ceil(n_per_arm_reduced / allocation_ratio)
+    total_reduced = sum(_continuous_arms(z_alpha, z_beta, cohens_d_reduced, allocation_ratio))
     total_reduced_dropout = math.ceil(total_reduced / (1 - dropout_rate))
 
     return {
@@ -161,6 +172,21 @@ def calculate_continuous_sample_size(
     }
 
 
+def _binary_arms(z_alpha: float, z_beta: float, p1: float, p2: float, allocation_ratio: float):
+    """Return (n_treatment, n_control) for a two-proportion z-test; p1 is the control proportion,
+    p2 the treatment proportion, and r = n_treatment / n_control.
+
+    The variance is pooled under the null hypothesis and unpooled under the alternative.
+    Rounding is as in _continuous_arms.
+    """
+    r = allocation_ratio
+    p_pooled = (p1 + r * p2) / (1 + r)
+    n_control = math.ceil((z_alpha * math.sqrt(p_pooled * (1 - p_pooled) * (1 + 1 / r)) +
+                           z_beta * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2) / r)) ** 2 / ((p2 - p1) ** 2))
+    # round() so floating-point error cannot add a participant, as in _continuous_arms
+    return math.ceil(round(r * n_control, 9)), n_control
+
+
 def calculate_binary_sample_size(
     p1: float,
     p2: float,
@@ -194,9 +220,23 @@ def calculate_binary_sample_size(
             "error": "scipy not installed. Run: pip install scipy statsmodels numpy"
         }
 
+    settings_error = _settings_error(alpha, power, dropout_rate, design)
+    if settings_error:
+        return {"error": settings_error}
+
     # Validate proportions
     if not (0 < p1 < 1 and 0 < p2 < 1):
         return {"error": "Proportions must be between 0 and 1 (exclusive)"}
+    if p1 == p2:
+        return {
+            "error": "The control and treatment proportions (--p1 and --p2) must differ: the "
+            "trial is sized to detect the difference between them. This calculator cannot size "
+            "a trial that expects no difference, such as some non-inferiority trials, because "
+            "it has no option for a non-inferiority margin."
+        }
+
+    if not (math.isfinite(allocation_ratio) and allocation_ratio > 0):
+        return {"error": ALLOCATION_ERROR}
 
     # Determine sidedness
     if design == "superiority":
@@ -206,12 +246,6 @@ def calculate_binary_sample_size(
         alpha_adj = alpha  # One-sided test
         sidedness = "one-sided"
 
-    # Calculate pooled proportion
-    if allocation_ratio == 1.0:
-        p_pooled = (p1 + p2) / 2
-    else:
-        p_pooled = (p1 + allocation_ratio * p2) / (1 + allocation_ratio)
-
     # Z-scores
     z_alpha = stats.norm.ppf(1 - alpha_adj)
     z_beta = stats.norm.ppf(power)
@@ -219,22 +253,7 @@ def calculate_binary_sample_size(
     # Effect size
     effect_size = abs(p2 - p1)
 
-    # Sample size calculation for two proportions
-    # n = [z_alpha * sqrt(p_pooled*(1-p_pooled)*(1+1/r)) + z_beta * sqrt(p1*(1-p1)/r + p2*(1-p2))]^2 / (p2-p1)^2
-
-    if allocation_ratio == 1.0:
-        numerator = (z_alpha * math.sqrt(2 * p_pooled * (1 - p_pooled)) +
-                    z_beta * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2
-    else:
-        numerator = (z_alpha * math.sqrt(p_pooled * (1 - p_pooled) * (1 + 1/allocation_ratio)) +
-                    z_beta * math.sqrt(p1 * (1 - p1) / allocation_ratio + p2 * (1 - p2))) ** 2
-
-    n_treatment = math.ceil(numerator / (effect_size ** 2))
-
-    if allocation_ratio == 1.0:
-        n_control = n_treatment
-    else:
-        n_control = math.ceil(n_treatment / allocation_ratio)
+    n_treatment, n_control = _binary_arms(z_alpha, z_beta, p1, p2, allocation_ratio)
 
     total_n = n_treatment + n_control
 
@@ -245,36 +264,14 @@ def calculate_binary_sample_size(
 
     # Sensitivity analysis: 90% power
     z_beta_90 = stats.norm.ppf(0.90)
-    if allocation_ratio == 1.0:
-        numerator_90 = (z_alpha * math.sqrt(2 * p_pooled * (1 - p_pooled)) +
-                       z_beta_90 * math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2
-    else:
-        numerator_90 = (z_alpha * math.sqrt(p_pooled * (1 - p_pooled) * (1 + 1/allocation_ratio)) +
-                       z_beta_90 * math.sqrt(p1 * (1 - p1) / allocation_ratio + p2 * (1 - p2))) ** 2
-
-    n_treatment_90 = math.ceil(numerator_90 / (effect_size ** 2))
-    if allocation_ratio == 1.0:
-        total_90 = n_treatment_90 * 2
-    else:
-        total_90 = n_treatment_90 + math.ceil(n_treatment_90 / allocation_ratio)
+    total_90 = sum(_binary_arms(z_alpha, z_beta_90, p1, p2, allocation_ratio))
     total_90_dropout = math.ceil(total_90 / (1 - dropout_rate))
 
     # Sensitivity analysis: Effect size reduced by 10%
     effect_reduced = effect_size * 0.9
     p2_reduced = p1 + effect_reduced if p2 > p1 else p1 - effect_reduced
 
-    if allocation_ratio == 1.0:
-        numerator_reduced = (z_alpha * math.sqrt(2 * p_pooled * (1 - p_pooled)) +
-                           z_beta * math.sqrt(p1 * (1 - p1) + p2_reduced * (1 - p2_reduced))) ** 2
-    else:
-        numerator_reduced = (z_alpha * math.sqrt(p_pooled * (1 - p_pooled) * (1 + 1/allocation_ratio)) +
-                           z_beta * math.sqrt(p1 * (1 - p1) / allocation_ratio + p2_reduced * (1 - p2_reduced))) ** 2
-
-    n_treatment_reduced = math.ceil(numerator_reduced / (effect_reduced ** 2))
-    if allocation_ratio == 1.0:
-        total_reduced = n_treatment_reduced * 2
-    else:
-        total_reduced = n_treatment_reduced + math.ceil(n_treatment_reduced / allocation_ratio)
+    total_reduced = sum(_binary_arms(z_alpha, z_beta, p1, p2_reduced, allocation_ratio))
     total_reduced_dropout = math.ceil(total_reduced / (1 - dropout_rate))
 
     return {
@@ -397,9 +394,9 @@ Examples:
     )
     parser.add_argument(
         "--design",
-        choices=["superiority", "non-inferiority"],
+        choices=["superiority", "non-inferiority", "noninferiority"],
         default="superiority",
-        help="Study design type (default: superiority)"
+        help="Study design type (default: superiority); either non-inferiority spelling stops with an error"
     )
     parser.add_argument(
         "--output",

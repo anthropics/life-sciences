@@ -10,6 +10,22 @@
   },
   "plugins": [
     {
+      "name": "asset-comps",
+      "source": "./",
+      "description": "Build a cited competitive map for a therapeutic asset, covering competitors across development stages, the standard of care and the likely landscape at launch",
+      "category": "life-sciences",
+      "tags": [
+        "clinical-development",
+        "drug-development",
+        "research",
+        "competitive-landscape"
+      ],
+      "strict": false,
+      "skills": [
+        "./asset-comps"
+      ]
+    },
+    {
       "name": "clinical-trial-protocol",
       "source": "./",
       "description": "Generate FDA/NIH-compliant clinical trial protocols for medical devices or drugs",

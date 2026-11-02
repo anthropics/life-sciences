@@ -1,0 +1,35 @@
+# Thresholds and where they come from
+
+Use these as the literature's conventions, not as laws. Quote the source when you apply one. Where no threshold is given, report the value and compare to your controls/reference proteins.
+
+## Complex re-prediction (Part A1, A4)
+| Quantity | Convention | Source |
+|---|---|---|
+| AF2 interface pAE ("pAE_interaction") | < 10 → sharply higher experimental success; used as the pass mark in RFdiffusion's in-silico success definition | Bennett et al., Nat Commun 2023 (PMC10163288): AF2 with target template + initial guess; "sharp increases in success rates for designs with pAE_interaction < 10"; retrospectively AF2 filtering would have raised success nearly 10-fold, and two prospective AF2-filtered libraries had 8- and 30-fold higher success than physics-filtered ones. The < 10 mark is calibrated for AF2 with initial guess; other predictors' PAE values have not been calibrated this way. Watson et al. (RFdiffusion), Nature 2023 (PMC10468394): in-silico success = monomer pLDDT > 80, interaction pAE < 10, monomer RMSD to design < 1 Å |
+| ipSAE (interface-restricted pTM from the PAE matrix) | higher is better; across 3,766 lab-tested designs AF3 ipSAE_min gave 1.4× the average precision of ipAE; best combined with physics descriptors; performance varies by target | Dunbrack, bioRxiv 2025 (PMC11844409); Overath et al., bioRxiv 2025 10.1101/2025.08.14.670059 |
+| ipTM / i_pTM | binary binder/non-binder predictor; "does not correlate with the interaction affinity"; BindCraft's own AF2 acceptance marks are pLDDT > 0.8, i_pTM > 0.5, i_pAE (normalised) < 0.35 — verify against its default_filters.json before quoting | Pacesa et al. (BindCraft), Nature 2025 (PMC12507698); the Adaptyv EGFR competition organisers' round-2 analysis found no significant correlation between any ranking metric (ipTM, iPAE, ESM2 pseudo-log-likelihood) and measured KD; competition write-up: Cotet et al., bioRxiv 10.1101/2025.04.17.648362 |
+| DockQ (pose agreement between two models of the same complex) | ≥ 0.80 high, ≥ 0.49 medium, ≥ 0.23 acceptable (CAPRI classes) | Basu & Wallner, PLoS One 2016 (DockQ); DockQ v2 |
+| Binder RMSD, predicted complex vs design | ≈ 1–2 Å is what solved de novo complexes achieve vs their design models | Predictor vs experiment: AF2 with target template + initial guess reproduced 5/5 previously solved minibinder complexes to ≈ 1–2 Å (Bennett 2023). Experiment vs design model: Gainza et al., Nature 2023 (two binder co-crystals, 0.8 and 2.0 Å backbone RMSD to design); Pacesa et al. 2025 (BindCraft BBF-14 complex, 1.7 Å); Cao et al., Nature 2022 (five solved complexes, 0.6–2.5 Å) |
+
+## Monomer (Part A2, B6)
+| Quantity | Convention | Source |
+|---|---|---|
+| Monomer pLDDT | > 80 | RFdiffusion in-silico criteria (Watson 2023) |
+| Monomer RMSD to design | < 1 Å (RFdiffusion); bound-vs-unbound binder RMSD < 3.5 Å (BindCraft filter) | Watson 2023; Pacesa 2025 |
+| Typical de novo miniprotein stability | Tm > 70 °C (many > 90 °C); trypsin-resistant; weeks at room temperature | Chevalier et al., Nature 2017 (PMC5802399); Cao et al., Science 2020 (PMC7857403); Rocklin et al., Science 2017 (>15,000 designs, protease-stability by display); Tsuboyama et al., Nature 2023 (776,298 stability measurements, domains 40–72 aa) |
+
+## Interface physics (Part A11) — BindCraft's default filters, for orientation
+Shape complementarity > 0.60; > 3 interface H-bonds; < 4 unsatisfied buried polar atoms at the interface; binder surface hydrophobicity < 35 % (values as reported in the paper's methods; check inequality inclusivity against BindCraft's default_filters.json before quoting as exact). Rosetta ddG "remains an effective filter" but discriminated worse than AF2 pAE (Bennett 2023). Source: Pacesa et al. 2025 methods; Bennett 2023.
+
+## What the filters buy, and do not
+- Adding AF2-type confidence filtering raised wet-lab success roughly an order of magnitude over physics-only filtering (Bennett 2023; Watson 2023 attributes one of RFdiffusion's two orders of magnitude to it).
+- They are pass/fail enrichers, not affinity predictors (BindCraft; Adaptyv EGFR).
+- Expression of modern de novo minibinders was high in the one large public test (Adaptyv EGFR round 2: 378/400 expressed after designers added an expression proxy; SolubleMPNN recommended as a final check — Adaptyv blog posts on the competition).
+- No published evidence we know of that molecular dynamics improves hit rate beyond these filters; use it as a red-flag screen only.
+
+## Developability references (Part B)
+- Antibody developability flag sets, for orientation only (they are calibrated on clinical IgGs and do not transfer to other folds): Jain et al., PNAS 2017 114:944 (137 clinical-stage mAbs × 12 biophysical assays; approved mAbs carry fewest flags); Raybould et al., PNAS 2019 116:4025, Therapeutic Antibody Profiler (242 clinical-stage Fvs; five guidelines: total CDR length, CDR-vicinity surface-hydrophobicity patches, positive-charge patches, negative-charge patches, Fv charge symmetry).
+- Spatial aggregation propensity (SAP) and the Developability Index: Chennamsetty et al., PNAS 2009; Lauer et al., J Pharm Sci 2012. Structure-based aggregation: Aggrescan3D 2.0 (Kuriata et al., NAR 2019; standalone Bioinformatics 2019). Sequence-based: CamSol (Sormanni et al., J Mol Biol 2015), Protein-Sol (Hebditch et al., Bioinformatics 2017), NetSolP (Thumuluri et al., Bioinformatics 2022). β-aggregation: TANGO (Fernandez-Escamilla et al., Nat Biotechnol 2004), AGGRESCAN (Conchillo-Solé et al., BMC Bioinformatics 2007: hot spot = ≥ 5 consecutive residues with windowed propensity above threshold and no proline; window 5 for ≤ 75 residues, 7 for ≤ 175).
+- Chemical-liability motif ranking (antibody forced-degradation data): Lu et al., mAbs 2019 (131 antibodies carrying clinical-stage variable regions, forced-degradation at low and high pH); Sydow et al., PLoS One 2014. Asn-Gly is by far the most labile deamidation motif; Asp-Gly the most labile isomerisation motif; rates depend on local flexibility and exposure.
+- Immunogenicity risk assessment consensus: Jawa et al., Front Immunol 2020 (consensus that the root cause of anti-drug antibodies is a T-cell-dependent response whatever the driver — aggregates, host-cell proteins, impurities, immune modulation from target engagement, or the sequence of the drug itself); HLA-II predictors: NetMHCIIpan 4.x (DTU; academic licence), IEDB tools.
+- PK by size: proteins well below albumin (67 kDa; glomerular sieving coefficient ≪ 0.01) are renally filtered; practical cut-off ≈ 30–50 kDa; unmodified small proteins clear in minutes–hours (examples: ecallantide 7 kDa t½ 2.0 h; anakinra 17 kDa 4–6 h). Size-parameterised two-pore PBPK predicts plasma PK across protein sizes a priori (Li & Shah, J Pharmacokinet Pharmacodyn 2019, PMC6531344). Subcutaneous bioavailability of proteins is variable (often 50–95 %). There is no validated sequence→PK model for non-antibody proteins; half-life is set by format (Fc fusion, albumin binding, PEG/PAS/XTEN).

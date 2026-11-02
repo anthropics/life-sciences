@@ -1,0 +1,2114 @@
+{
+ "_about": "JSON schemas for every file a step writes: the helpers' answers, plus project (what the scope step writes), trial_record (a registry record on disk) and extract (the claim extraction, with a public restatement of each claim). Each step writes JSON that matches its schema exactly.",
+ "project": {
+  "type": "object",
+  "properties": {
+   "title": {
+    "type": "string"
+   },
+   "scope_label": {
+    "type": "string"
+   },
+   "public_thesis": {
+    "type": "string"
+   },
+   "focal_trial": {
+    "type": "object",
+    "properties": {
+     "nct_id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "nct_id",
+     "name"
+    ]
+   },
+   "indication": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "aliases": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "reference_population": {
+      "type": "string"
+     },
+     "key_endpoint": {
+      "type": "object",
+      "properties": {
+       "label": {
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "keywords": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        }
+       },
+       "typical_timepoint_weeks": {
+        "type": [
+         "number",
+         "null"
+        ]
+       }
+      },
+      "required": [
+       "label",
+       "description",
+       "keywords",
+       "typical_timepoint_weeks"
+      ]
+     }
+    },
+    "required": [
+     "name",
+     "aliases",
+     "reference_population",
+     "key_endpoint"
+    ]
+   },
+   "target": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "aliases": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "name",
+     "aliases"
+    ]
+   },
+   "asset": {
+    "type": "object",
+    "properties": {
+     "public": {
+      "type": "boolean"
+     },
+     "name": {
+      "type": "string"
+     },
+     "code": {
+      "type": "string"
+     },
+     "developer": {
+      "type": "string"
+     },
+     "modality": {
+      "type": "string"
+     },
+     "stage": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "public",
+     "name",
+     "code",
+     "developer",
+     "modality",
+     "stage"
+    ]
+   },
+   "report": {
+    "type": "object",
+    "properties": {
+     "goal": {
+      "type": "string"
+     },
+     "decision": {
+      "type": "string"
+     },
+     "audience": {
+      "type": "string"
+     },
+     "scope_note": {
+      "type": "string"
+     },
+     "flip_criteria": {
+      "type": "string"
+     },
+     "sections": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "title": {
+         "type": "string"
+        },
+        "question": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "id",
+        "title",
+        "question"
+       ]
+      }
+     }
+    },
+    "required": [
+     "goal",
+     "decision",
+     "audience",
+     "scope_note",
+     "flip_criteria",
+     "sections"
+    ]
+   },
+   "simulation": {
+    "type": "object",
+    "properties": {
+     "target_description": {
+      "type": "string"
+     },
+     "success_definition": {
+      "type": "string"
+     },
+     "considerations": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "target_description",
+     "success_definition",
+     "considerations"
+    ]
+   },
+   "registry": {
+    "type": "object",
+    "properties": {
+     "indications": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "name": {
+         "type": "string"
+        },
+        "aliases": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "ctgov_condition_query": {
+         "type": "string",
+         "minLength": 1
+        },
+        "key_endpoint_description": {
+         "type": "string"
+        },
+        "key_endpoint_keywords": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "reference_population": {
+         "type": "string"
+        },
+        "why": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "id",
+        "name",
+        "aliases",
+        "ctgov_condition_query",
+        "key_endpoint_description",
+        "key_endpoint_keywords",
+        "reference_population",
+        "why"
+       ]
+      }
+     },
+     "mechanism_classes": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "analog_features": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "pathway_interventions": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "indications",
+     "mechanism_classes",
+     "analog_features",
+     "pathway_interventions"
+    ]
+   },
+   "notes": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "title",
+   "scope_label",
+   "public_thesis",
+   "focal_trial",
+   "indication",
+   "target",
+   "asset",
+   "report",
+   "simulation",
+   "registry",
+   "notes"
+  ]
+ },
+ "trial_record": {
+  "type": "object",
+  "description": "raw/ctgov/<NCT>.json: one registry record as the classify step writes it. Copy values exactly as the source gives them; null or [] for anything it does not give.",
+  "properties": {
+   "nct_id": {
+    "type": "string"
+   },
+   "found": {
+    "type": "boolean"
+   },
+   "source": {
+    "type": "string",
+    "description": "where the record came from: the tool (web_fetch of the API v2, or the connector's name), or \"web search (not the registry)\" for a record built from web search results"
+   },
+   "fetched_at": {
+    "type": "string",
+    "description": "UTC time, YYYY-MM-DDTHH:MM:SSZ"
+   },
+   "trial": {
+    "type": "object",
+    "properties": {
+     "nct_id": {
+      "type": "string"
+     },
+     "title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "brief_title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "acronym": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "the registry's overall status in its upper-case form, e.g. RECRUITING, ACTIVE_NOT_RECRUITING, COMPLETED, TERMINATED"
+     },
+     "phase": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "e.g. [\"PHASE2\"], [\"PHASE1\", \"PHASE2\"]"
+     },
+     "study_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "conditions": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "interventions": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "sponsor": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "collaborators": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "enrollment": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "start_date": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "YYYY-MM-DD or YYYY-MM"
+     },
+     "primary_completion_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "completion_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "brief_summary": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "detailed_description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "eligibility_criteria": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "minimum_age": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "maximum_age": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sex": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "healthy_volunteers": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "primary_outcomes": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "measure": {
+         "type": "string"
+        },
+        "time_frame": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "secondary_outcomes": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "measure": {
+         "type": "string"
+        },
+        "time_frame": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "other_outcomes": {
+      "type": "array"
+     },
+     "locations": {
+      "type": "array",
+      "description": "every listed site, at least for recruiting and active trials (sites and countries feed the competitive-landscape tables)",
+      "items": {
+       "type": "object",
+       "properties": {
+        "facility": {
+         "type": "string"
+        },
+        "city": {
+         "type": "string"
+        },
+        "state": {
+         "type": "string"
+        },
+        "country": {
+         "type": "string"
+        },
+        "status": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "has_results": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "url": {
+      "type": "string"
+     },
+     "results": {
+      "type": [
+       "object",
+       "null"
+      ],
+      "description": "the registry's posted results (API v2 resultsSection), when the record has them; copy it unchanged"
+     }
+    },
+    "required": [
+     "nct_id",
+     "status",
+     "phase"
+    ]
+   },
+   "field_sources": {
+    "type": "object",
+    "description": "only for a record built from web search: for each trial field you filled, the URL(s) of the search results that state it"
+   }
+  },
+  "required": [
+   "nct_id",
+   "found"
+  ]
+ },
+ "classify": {
+  "type": "object",
+  "properties": {
+   "is_drug_trial": {
+    "type": "boolean"
+   },
+   "interventions": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "canonical_name": {
+       "type": "string"
+      },
+      "mechanism_class": {
+       "type": "string"
+      },
+      "modality": {
+       "type": "string"
+      },
+      "route": {
+       "type": "string"
+      },
+      "dosing_frequency": {
+       "type": "string"
+      },
+      "developer": {
+       "type": "string"
+      },
+      "role": {
+       "type": "string",
+       "enum": [
+        "investigational",
+        "comparator",
+        "background",
+        "other"
+       ]
+      }
+     },
+     "required": [
+      "name",
+      "canonical_name",
+      "mechanism_class",
+      "modality",
+      "route",
+      "dosing_frequency",
+      "developer",
+      "role"
+     ]
+    }
+   },
+   "primary_mechanism_class": {
+    "type": "string"
+   },
+   "key_endpoint": {
+    "type": "object",
+    "properties": {
+     "primary": {
+      "type": "boolean"
+     },
+     "secondary": {
+      "type": "boolean"
+     },
+     "measure": {
+      "type": "string"
+     },
+     "timepoint_weeks": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "primary",
+     "secondary",
+     "measure",
+     "timepoint_weeks"
+    ]
+   },
+   "population": {
+    "type": "object",
+    "properties": {
+     "severity_criteria": {
+      "type": "string"
+     },
+     "age_group": {
+      "type": "string",
+      "enum": [
+       "adults",
+       "adolescents",
+       "children",
+       "mixed",
+       "unclear"
+      ]
+     },
+     "prior_treatment_requirement": {
+      "type": "string"
+     },
+     "reference_population_overlap": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low",
+       "unclear"
+      ]
+     },
+     "special_population": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "severity_criteria",
+     "age_group",
+     "prior_treatment_requirement",
+     "reference_population_overlap",
+     "special_population"
+    ]
+   },
+   "design": {
+    "type": "object",
+    "properties": {
+     "randomized": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "blinding": {
+      "type": "string"
+     },
+     "placebo_controlled": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "active_comparator": {
+      "type": "string"
+     },
+     "duration_weeks": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "n_arms": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "dose_ranging": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "randomized",
+     "blinding",
+     "placebo_controlled",
+     "active_comparator",
+     "duration_weeks",
+     "n_arms",
+     "dose_ranging"
+    ]
+   },
+   "novel_investigational": {
+    "type": "boolean"
+   },
+   "analog_features": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "relevance_score": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 5
+   },
+   "one_line": {
+    "type": "string"
+   },
+   "notes": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "is_drug_trial",
+   "interventions",
+   "primary_mechanism_class",
+   "key_endpoint",
+   "population",
+   "design",
+   "novel_investigational",
+   "analog_features",
+   "relevance_score",
+   "one_line",
+   "notes"
+  ]
+ },
+ "trial_checklist": {
+  "type": "object",
+  "properties": {
+   "group": {
+    "type": "string"
+   },
+   "items": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "answer": {
+       "type": "object"
+      },
+      "answer_markdown": {
+       "type": "string"
+      },
+      "confidence": {
+       "type": "string",
+       "enum": [
+        "high",
+        "medium",
+        "low"
+       ]
+      },
+      "sources": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "gaps": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     },
+     "required": [
+      "id",
+      "answer",
+      "answer_markdown",
+      "confidence",
+      "sources",
+      "gaps"
+     ]
+    }
+   },
+   "paper_requests": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "doi": {
+       "type": "string"
+      },
+      "pmid": {
+       "type": "string"
+      },
+      "title": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "doi",
+      "pmid",
+      "title",
+      "why"
+     ]
+    }
+   },
+   "adjacent_findings": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "group",
+   "items",
+   "paper_requests",
+   "adjacent_findings"
+  ]
+ },
+ "condense_trial": {
+  "type": "object",
+  "properties": {
+   "analysis_markdown": {
+    "type": "string"
+   },
+   "card_markdown": {
+    "type": "string"
+   },
+   "key_facts": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "gaps": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "analysis_markdown",
+   "card_markdown",
+   "key_facts",
+   "gaps"
+  ]
+ },
+ "digest": {
+  "type": "object",
+  "properties": {
+   "digest_markdown": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "digest_markdown"
+  ]
+ },
+ "plan": {
+  "type": "object",
+  "properties": {
+   "questions": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "section": {
+       "type": "string"
+      },
+      "question": {
+       "type": "string"
+      },
+      "why_it_matters": {
+       "type": "string"
+      },
+      "what_would_answer_it": {
+       "type": "string"
+      },
+      "priority": {
+       "type": "integer"
+      },
+      "could_flip_recommendation": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "id",
+      "section",
+      "question",
+      "why_it_matters",
+      "what_would_answer_it",
+      "priority",
+      "could_flip_recommendation"
+     ]
+    }
+   },
+   "stop_recommended": {
+    "type": "boolean"
+   },
+   "rationale": {
+    "type": "string"
+   },
+   "sections_retired": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "blocked_items": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "what": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "what",
+      "why"
+     ]
+    }
+   }
+  },
+  "required": [
+   "questions",
+   "stop_recommended",
+   "rationale",
+   "sections_retired",
+   "blocked_items"
+  ]
+ },
+ "answer": {
+  "type": "object",
+  "properties": {
+   "answer_markdown": {
+    "type": "string"
+   },
+   "bottom_line": {
+    "type": "string"
+   },
+   "confidence": {
+    "type": "string",
+    "enum": [
+     "high",
+     "medium",
+     "low"
+    ]
+   },
+   "key_numbers": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "sources": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "gaps": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "follow_up_questions": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "paper_requests": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "doi": {
+       "type": "string"
+      },
+      "pmid": {
+       "type": "string"
+      },
+      "title": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "doi",
+      "pmid",
+      "title",
+      "why"
+     ]
+    }
+   }
+  },
+  "required": [
+   "answer_markdown",
+   "bottom_line",
+   "confidence",
+   "key_numbers",
+   "sources",
+   "gaps",
+   "follow_up_questions",
+   "paper_requests"
+  ]
+ },
+ "check": {
+  "type": "object",
+  "properties": {
+   "checks": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "key_number": {
+       "type": "string"
+      },
+      "verdict": {
+       "type": "string",
+       "enum": [
+        "confirmed",
+        "corrected",
+        "unverifiable"
+       ]
+      },
+      "source_quote": {
+       "type": "string"
+      },
+      "corrected_value": {
+       "type": "string"
+      },
+      "what_went_wrong": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "key_number",
+      "verdict",
+      "source_quote",
+      "corrected_value",
+      "what_went_wrong"
+     ]
+    }
+   },
+   "summary": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "checks",
+   "summary"
+  ]
+ },
+ "integrate": {
+  "type": "object",
+  "properties": {
+   "synthesis_markdown": {
+    "type": "string"
+   },
+   "open_questions": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "synthesis_markdown",
+   "open_questions"
+  ]
+ },
+ "params": {
+  "type": "object",
+  "properties": {
+   "trial": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "description": {
+      "type": "string"
+     },
+     "design_basis": {
+      "type": "string"
+     },
+     "arms": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "label": {
+         "type": "string"
+        },
+        "n": {
+         "type": "integer"
+        },
+        "role": {
+         "type": "string",
+         "enum": [
+          "treatment",
+          "control",
+          "active_comparator"
+         ]
+        }
+       },
+       "required": [
+        "id",
+        "label",
+        "n",
+        "role"
+       ]
+      }
+     },
+     "population": {
+      "type": "string"
+     },
+     "duration_weeks": {
+      "type": "number"
+     },
+     "endpoints": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "properties": {
+        "id": {
+         "type": "string"
+        },
+        "label": {
+         "type": "string"
+        },
+        "type": {
+         "type": "string",
+         "enum": [
+          "binary",
+          "continuous",
+          "time_to_event"
+         ]
+        },
+        "timepoint_weeks": {
+         "type": "number"
+        },
+        "role": {
+         "type": "string",
+         "enum": [
+          "primary",
+          "co_primary",
+          "key_secondary",
+          "secondary"
+         ]
+        },
+        "analysis": {
+         "type": "string"
+        },
+        "success_rule": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "id",
+        "label",
+        "type",
+        "timepoint_weeks",
+        "role",
+        "analysis",
+        "success_rule"
+       ]
+      }
+     },
+     "alpha_two_sided": {
+      "type": "number"
+     },
+     "multiplicity_rule": {
+      "type": "string"
+     },
+     "trial_success_definition": {
+      "type": "string"
+     },
+     "program": {
+      "type": "object",
+      "properties": {
+       "n_trials": {
+        "type": "integer"
+       },
+       "program_success_rule": {
+        "type": "string"
+       },
+       "shared_uncertainty_note": {
+        "type": "string"
+       }
+      },
+      "required": [
+       "n_trials",
+       "program_success_rule",
+       "shared_uncertainty_note"
+      ]
+     }
+    },
+    "required": [
+     "name",
+     "description",
+     "design_basis",
+     "arms",
+     "population",
+     "duration_weeks",
+     "endpoints",
+     "alpha_two_sided",
+     "multiplicity_rule",
+     "trial_success_definition",
+     "program"
+    ]
+   },
+   "parameters": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      },
+      "kind": {
+       "type": "string",
+       "enum": [
+        "epistemic",
+        "aleatoric_model",
+        "design",
+        "operational"
+       ]
+      },
+      "applies_to": {
+       "type": "string"
+      },
+      "distribution": {
+       "type": "object",
+       "properties": {
+        "family": {
+         "type": "string",
+         "enum": [
+          "fixed",
+          "beta",
+          "normal",
+          "lognormal",
+          "uniform",
+          "triangular",
+          "student_t",
+          "logit_normal",
+          "bernoulli",
+          "discrete",
+          "gamma",
+          "mixture"
+         ]
+        },
+        "params": {
+         "type": "object"
+        },
+        "note": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "family",
+        "params",
+        "note"
+       ]
+      },
+      "point_estimate": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "interval_90": {
+       "type": [
+        "array",
+        "null"
+       ],
+       "items": {
+        "type": "number"
+       }
+      },
+      "units": {
+       "type": "string"
+      },
+      "basis": {
+       "type": "string"
+      },
+      "sources": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "alternatives_considered": {
+       "type": "string"
+      },
+      "confidence": {
+       "type": "string",
+       "enum": [
+        "high",
+        "medium",
+        "low"
+       ]
+      },
+      "expected_sensitivity": {
+       "type": "string",
+       "enum": [
+        "high",
+        "medium",
+        "low"
+       ]
+      }
+     },
+     "required": [
+      "id",
+      "name",
+      "kind",
+      "applies_to",
+      "distribution",
+      "point_estimate",
+      "interval_90",
+      "units",
+      "basis",
+      "sources",
+      "alternatives_considered",
+      "confidence",
+      "expected_sensitivity"
+     ]
+    }
+   },
+   "dependencies": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "between": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "description": {
+       "type": "string"
+      },
+      "rho": {
+       "type": [
+        "number",
+        "null"
+       ]
+      },
+      "basis": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "between",
+      "description",
+      "rho",
+      "basis"
+     ]
+    }
+   },
+   "failure_modes": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "description": {
+       "type": "string"
+      },
+      "probability": {
+       "type": "object",
+       "properties": {
+        "family": {
+         "type": "string",
+         "enum": [
+          "fixed",
+          "beta",
+          "normal",
+          "lognormal",
+          "uniform",
+          "triangular",
+          "student_t",
+          "logit_normal",
+          "bernoulli",
+          "discrete",
+          "gamma",
+          "mixture"
+         ]
+        },
+        "params": {
+         "type": "object"
+        },
+        "note": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "family",
+        "params",
+        "note"
+       ]
+      },
+      "basis": {
+       "type": "string"
+      },
+      "sources": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     },
+     "required": [
+      "id",
+      "description",
+      "probability",
+      "basis",
+      "sources"
+     ]
+    }
+   },
+   "scenarios": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "label": {
+       "type": "string"
+      },
+      "overrides": {
+       "type": "object"
+      },
+      "why": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "id",
+      "label",
+      "overrides",
+      "why"
+     ]
+    }
+   },
+   "reference_class": {
+    "type": "object",
+    "properties": {
+     "description": {
+      "type": "string"
+     },
+     "base_rate": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "interval": {
+      "type": [
+       "array",
+       "null"
+      ],
+      "items": {
+       "type": "number"
+      }
+     },
+     "sources": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     }
+    },
+    "required": [
+     "description",
+     "base_rate",
+     "interval",
+     "sources"
+    ]
+   },
+   "key_uncertainties": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "assumptions": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "notes_for_builder": {
+    "type": "string"
+   },
+   "change_log": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "trial",
+   "parameters",
+   "dependencies",
+   "failure_modes",
+   "scenarios",
+   "reference_class",
+   "key_uncertainties",
+   "assumptions",
+   "notes_for_builder",
+   "change_log"
+  ]
+ },
+ "build": {
+  "type": "object",
+  "properties": {
+   "status": {
+    "type": "string",
+    "enum": [
+     "ok",
+     "partial",
+     "failed"
+    ]
+   },
+   "pts_overall": {
+    "type": [
+     "number",
+     "null"
+    ]
+   },
+   "mc_se": {
+    "type": [
+     "number",
+     "null"
+    ]
+   },
+   "n_sims": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "files": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "summary": {
+    "type": "string"
+   },
+   "issues": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "status",
+   "pts_overall",
+   "mc_se",
+   "n_sims",
+   "files",
+   "summary",
+   "issues"
+  ]
+ },
+ "critic": {
+  "type": "object",
+  "properties": {
+   "verdict": {
+    "type": "string",
+    "enum": [
+     "accept",
+     "revise_params",
+     "revise_code",
+     "revise_both"
+    ]
+   },
+   "overall_assessment": {
+    "type": "string"
+   },
+   "scores": {
+    "type": "object",
+    "properties": {
+     "parameter_fidelity": {
+      "type": "integer"
+     },
+     "statistical_correctness": {
+      "type": "integer"
+     },
+     "uncertainty_representation": {
+      "type": "integer"
+     },
+     "interpretability": {
+      "type": "integer"
+     },
+     "reproducibility": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "parameter_fidelity",
+     "statistical_correctness",
+     "uncertainty_representation",
+     "interpretability",
+     "reproducibility"
+    ]
+   },
+   "change_requests": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "target": {
+       "type": "string",
+       "enum": [
+        "params",
+        "code",
+        "report"
+       ]
+      },
+      "priority": {
+       "type": "integer"
+      },
+      "what": {
+       "type": "string"
+      },
+      "why": {
+       "type": "string"
+      },
+      "evidence": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "target",
+      "priority",
+      "what",
+      "why",
+      "evidence"
+     ]
+    }
+   },
+   "critique_markdown": {
+    "type": "string"
+   },
+   "open_research_questions": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "verdict",
+   "overall_assessment",
+   "scores",
+   "change_requests",
+   "critique_markdown",
+   "open_research_questions"
+  ]
+ },
+ "section": {
+  "type": "object",
+  "properties": {
+   "section_markdown": {
+    "type": "string"
+   },
+   "key_takeaways": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "evidence_gaps": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "confidence": {
+    "type": "string",
+    "enum": [
+     "high",
+     "medium",
+     "low"
+    ]
+   }
+  },
+  "required": [
+   "section_markdown",
+   "key_takeaways",
+   "evidence_gaps",
+   "confidence"
+  ]
+ },
+ "chapter": {
+  "type": "object",
+  "properties": {
+   "section_markdown": {
+    "type": "string"
+   },
+   "key_takeaways": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "evidence_gaps": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "confidence": {
+    "type": "string",
+    "enum": [
+     "high",
+     "medium",
+     "low"
+    ]
+   },
+   "figure_specs": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "filename": {
+       "type": "string"
+      },
+      "kind": {
+       "type": "string",
+       "enum": [
+        "forest",
+        "bar",
+        "scatter",
+        "waterfall",
+        "curve",
+        "heatmap"
+       ]
+      },
+      "title": {
+       "type": "string"
+      },
+      "caption": {
+       "type": "string"
+      },
+      "x_label": {
+       "type": "string"
+      },
+      "y_label": {
+       "type": "string"
+      },
+      "series": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "label": {
+          "type": "string"
+         },
+         "type": {
+          "type": "string",
+          "enum": [
+           "points",
+           "line",
+           "bars",
+           "band"
+          ]
+         },
+         "labels": {
+          "type": "array",
+          "items": {
+           "type": "string"
+          }
+         },
+         "x": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          }
+         },
+         "y": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          }
+         },
+         "lo": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          }
+         },
+         "hi": {
+          "type": "array",
+          "items": {
+           "type": "number"
+          }
+         },
+         "matrix": {
+          "type": "array",
+          "items": {
+           "type": "array",
+           "items": {
+            "type": "number"
+           }
+          }
+         }
+        },
+        "required": [
+         "label"
+        ]
+       }
+      },
+      "reference_lines": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "axis": {
+          "type": "string",
+          "enum": [
+           "x",
+           "y"
+          ]
+         },
+         "value": {
+          "type": "number"
+         },
+         "label": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "axis",
+         "value",
+         "label"
+        ]
+       }
+      }
+     },
+     "required": [
+      "filename",
+      "kind",
+      "title",
+      "caption",
+      "series"
+     ]
+    }
+   }
+  },
+  "required": [
+   "section_markdown",
+   "key_takeaways",
+   "evidence_gaps",
+   "confidence",
+   "figure_specs"
+  ]
+ },
+ "summary_editor": {
+  "type": "object",
+  "properties": {
+   "summary_markdown": {
+    "type": "string"
+   },
+   "methods_markdown": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "summary_markdown",
+   "methods_markdown"
+  ]
+ },
+ "polish": {
+  "type": "object",
+  "properties": {
+   "section_markdown": {
+    "type": "string"
+   }
+  },
+  "required": [
+   "section_markdown"
+  ]
+ },
+ "extract": {
+  "type": "object",
+  "properties": {
+   "claims": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string"
+      },
+      "claim": {
+       "type": "string"
+      },
+      "context": {
+       "type": "string"
+      },
+      "section": {
+       "type": "string"
+      },
+      "kind": {
+       "type": "string",
+       "enum": [
+        "number",
+        "rule",
+        "timeline",
+        "precedent",
+        "parameter",
+        "recommendation"
+       ]
+      },
+      "public_claim": {
+       "type": "string"
+      },
+      "public_context": {
+       "type": "string"
+      },
+      "sponsor_only": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "id",
+      "claim",
+      "context",
+      "section",
+      "kind",
+      "public_claim",
+      "public_context",
+      "sponsor_only"
+     ]
+    }
+   }
+  },
+  "required": [
+   "claims"
+  ]
+ },
+ "verify": {
+  "type": "object",
+  "properties": {
+   "assertions": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "assertion": {
+       "type": "string"
+      },
+      "primary_source": {
+       "type": "string"
+      },
+      "source_quote": {
+       "type": "string"
+      },
+      "source_type": {
+       "type": "string",
+       "enum": [
+        "primary",
+        "secondary",
+        "none"
+       ]
+      },
+      "matches": {
+       "type": "string",
+       "enum": [
+        "yes",
+        "partly",
+        "no",
+        "unknown"
+       ]
+      }
+     },
+     "required": [
+      "assertion",
+      "primary_source",
+      "source_quote",
+      "source_type",
+      "matches"
+     ]
+    }
+   },
+   "conditions": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   },
+   "examples": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "id": {
+       "type": "string"
+      },
+      "what": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "name",
+      "id",
+      "what"
+     ]
+    }
+   },
+   "precedent_count": {
+    "type": "string"
+   },
+   "misread_risk": {
+    "type": "string"
+   },
+   "proposal_as_fact": {
+    "type": "string"
+   },
+   "verdict": {
+    "type": "string",
+    "enum": [
+     "supported",
+     "supported-with-caveats",
+     "partly-wrong",
+     "unsupported",
+     "could-not-verify"
+    ]
+   },
+   "confidence": {
+    "type": "string",
+    "enum": [
+     "H",
+     "M",
+     "L"
+    ]
+   },
+   "corrected_wording": {
+    "type": "string"
+   },
+   "sources": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    }
+   }
+  },
+  "required": [
+   "assertions",
+   "conditions",
+   "examples",
+   "precedent_count",
+   "misread_risk",
+   "proposal_as_fact",
+   "verdict",
+   "confidence",
+   "corrected_wording",
+   "sources"
+  ]
+ }
+}

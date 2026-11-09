@@ -10,8 +10,11 @@ three fields that `references/00-research-standards.md` requires and a note of h
 far the source was read. Use exactly these key names:
 
 ```json
-{"source_url": "...", "source_type": "...", "quote": "...", "read": "full|excerpt_only"}
+{"source_url": "...", "source_type": "...", "quote": "...", "read": "full|abstract|excerpt_only"}
 ```
+
+Set `read` to `abstract` when only the abstract was read (for example, a paywalled
+paper), and `excerpt_only` when only a search excerpt was seen.
 
 `quote` is a single string. If one source supports several findings, add one
 entry per quote; never put two quoted strings in one value. After writing a
@@ -116,7 +119,7 @@ When complete:
 ```json
 {
   "sources": [
-    {"title": "...", "url": "...", "source_type": "...", "date_accessed": "...", "result": "success|excerpt_only|partial|failed"}
+    {"title": "...", "url": "...", "source_type": "...", "date_accessed": "...", "result": "success|abstract|excerpt_only|partial|failed"}
   ]
 }
 ```

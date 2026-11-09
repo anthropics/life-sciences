@@ -46,9 +46,11 @@ regulatory path and trial design.
 | Literature | A PubMed MCP server or connector, if available |
 | Web | Web search and web fetch: FDA and EMA guidance and approval pages, treatment guidelines (NCCN, AASLD, specialty societies), CDC and WHO epidemiology pages |
 | Documents | Web fetch reads a remote page or PDF as text; see the research standards for PDFs whose figures carry the data |
-| Parallel research | If a subagent tool is available, use it for Phases 2-4: one subagent per source family in a phase, each given its part of the phase's reference file, the research standards and `meta.json`. Tell each one to return findings rather than write waypoint files, and to return with them every URL it tried and how far it got (read in full, excerpt only, failed) and every caveat about a source. Running the same searches yourself, in turn, is the fallback for when no subagent tool exists; it covers less ground |
+| Parallel research | If a subagent tool is available, use it for Phases 2-4: one subagent per source family in a phase, each given its part of the phase's reference file, the research standards and `meta.json`. Tell each one to return findings rather than write waypoint files, and to return with them every URL it tried and how far it got (read in full, abstract only, excerpt only, failed) and every caveat about a source. Running the same searches yourself, in turn, is the fallback for when no subagent tool exists; it covers less ground |
 
-If a clinical trials or PubMed connector isn't available, say so and fall back to web search against the public site (clinicaltrials.gov, pubmed.ncbi.nlm.nih.gov), recording what the fallback loses.
+If a clinical trials or PubMed connector isn't available, say so and fall back to the public sites, recording what the fallback loses. For a trial record, fetch `https://clinicaltrials.gov/api/v2/studies/<NCT ID>`, which returns the record as JSON; the `https://clinicaltrials.gov/study/<NCT ID>` page returns no trial data to a plain fetch, though it is still the link to cite. For literature, use web search and pubmed.ncbi.nlm.nih.gov.
+
+If web search or web fetch isn't available, stop before Phase 1 and say which is missing. The dossier rests on sources read in this run; never write it from memory.
 
 ## Output layout
 

@@ -179,10 +179,12 @@ This file is an index for downstream use. Do not copy the waypoints' contents in
 CRITICAL: Write `waypoints/indication_dossier_report.md` FIRST, then this step.
 
 The dossier is finished only when every quantitative claim, date and trial
-result in the report is cited as `references/06-writing-style.md` requires,
+result in the report is cited as `references/06-writing-style.md` requires
+and matches the `quote` recorded in the waypoints for the source it links to,
 and every therapy, trial, approval, guidance document and guideline named in a
 waypoint either appears in the report or falls under an entry in "Not followed up" in
-section 6. Check both before marking it complete.
+section 6. Check all three before marking it complete. Correct or remove any
+figure that its source's `quote` does not state.
 
 Write `waypoints/progress.json`:
 ```json

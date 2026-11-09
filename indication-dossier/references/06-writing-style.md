@@ -5,8 +5,9 @@ completely.
 
 ## Inline citation format
 
-Cite every factual claim with an inline markdown link:
-`[descriptive claim text](source_url)`. Write every link as `[title](url)`;
+Cite every factual claim, except those listed under "Don't cite" below, with an
+inline markdown link: `[descriptive claim text](source_url)`. Apart from numbered
+references (below), write every link as `[title](url)`;
 when there is no natural claim text, use the source name and document type
 as the title.
 

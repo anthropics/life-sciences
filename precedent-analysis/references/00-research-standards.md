@@ -10,7 +10,7 @@
 
 **Mandatory_Fields** — Every finding MUST include: `source_url` (direct URL to the primary source, not homepage) · `source_type` (one of the values above) · `quote` (verbatim text from the source supporting the claim). Findings missing these fields cannot be cited and will be flagged as incomplete.
 
-**URL_Validation** — Only use URLs you successfully fetched or that a tool returned, or canonical links built from an identifier a tool returned (`https://clinicaltrials.gov/study/<NCT ID>`, `https://pubmed.ncbi.nlm.nih.gov/<PMID>/`). NEVER otherwise construct or guess URLs. If a URL fails, note it in `anomaly_flags`. Academic journal links often break — try DOI resolver (`https://doi.org/[DOI]`).
+**URL_Validation** — Only use URLs you successfully fetched or that a tool returned, or canonical links built from an identifier a tool returned (`https://clinicaltrials.gov/study/<NCT ID>`, `https://pubmed.ncbi.nlm.nih.gov/<PMID>/`), or ClinicalTrials.gov API calls built as `SKILL.md` describes (`https://clinicaltrials.gov/api/v2/studies?...` to search, `https://clinicaltrials.gov/api/v2/studies/<NCT ID>` for one record). The study page returns no trial data to a plain fetch, so fetch the API record, use its URL as the `source_url` of any quote taken from it, and link the study page in the report. NEVER otherwise construct or guess URLs. If a URL fails, note it in `anomaly_flags`. Academic journal links often break — try DOI resolver (`https://doi.org/[DOI]`).
 
 ## Anti-fabrication protocol
 

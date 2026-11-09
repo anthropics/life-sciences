@@ -40,7 +40,12 @@ Read `references/00-research-standards.md`. It governs sourcing, the anti-fabric
 | Web | Web search and web fetch, including `site:fda.gov` |
 | Licensed data | Any pipeline or regulatory intelligence connector the user has, which can widen the search beyond public sources |
 
-If a clinical trials or PubMed connector isn't available, say so and fall back to web search against the public source, recording what the fallback loses.
+If a clinical trials or PubMed connector isn't available, say so and fall back to web search against the public source, recording what the fallback loses. For the trial registry, the fallback is the ClinicalTrials.gov API, not the study pages, which return no trial data to a plain fetch:
+
+- **Search**: `https://clinicaltrials.gov/api/v2/studies?query.cond=<condition>&query.intr=<intervention>&filter.advanced=AREA[Phase]PHASE3&pageSize=100&countTotal=true`. Leave out `filter.overallStatus` to get trials in every status, or list statuses with commas (`COMPLETED,TERMINATED,WITHDRAWN,SUSPENDED,UNKNOWN,ACTIVE_NOT_RECRUITING,RECRUITING,NOT_YET_RECRUITING,ENROLLING_BY_INVITATION`). `AREA[Phase]PHASE3` also returns trials registered as Phase 2/3. If the reply has a `nextPageToken`, pass it back as `pageToken` for the next page
+- **One record**: `https://clinicaltrials.gov/api/v2/studies/<NCT ID>`
+
+If web search and web fetch are both unavailable, stop and tell the user: the skill can't check outcomes or status on the run date without them, even with connectors.
 
 ## Phase 1: Gather inputs
 
@@ -95,7 +100,7 @@ Search the sources in parallel where you can, with subagents if available. Give 
 
 **Check status on the run date.** Status changes, and what you remember may be out of date. For every case labeled `ongoing` or `pending`, and wherever you say that something hasn't happened (no readout, no resubmission, no approval), check a source fetched during this run. If you couldn't, say so in Caveats.
 
-- **Clinical mode**: Search the registry for matching trials **in every status**: completed, terminated, withdrawn, suspended, unknown, and trials still listed as under way, including "Active, not recruiting". Registry status doesn't say whether a trial has read out. A trial can stay "Active, not recruiting" during long-term follow-up after its primary endpoint has been reported, and trials with an unknown status have often gone quiet past their completion date. A trial counts as resolved once its primary endpoint result is public, in the registry, a publication or a sponsor release, whatever its status. Use the literature and sponsor releases to confirm each outcome.
+- **Clinical mode**: Search the registry for matching trials **in every status**: completed, terminated, withdrawn, suspended, unknown, and trials still listed as under way, including "Active, not recruiting". Without a registry connector, use the API search above with no status filter. Registry status doesn't say whether a trial has read out. A trial can stay "Active, not recruiting" during long-term follow-up after its primary endpoint has been reported, and trials with an unknown status have often gone quiet past their completion date. A trial counts as resolved once its primary endpoint result is public, in the registry, a publication or a sponsor release, whatever its status. Use the literature and sponsor releases to confirm each outcome.
 - **Regulatory mode**: Work through the public sources in the table below for approvals, CRLs and advisory committee outcomes, then use the registry and literature for the underlying trial designs.
 
 **Regulatory sources.** Regulatory mode covers FDA decisions only. All of these sources are public:
@@ -118,8 +123,10 @@ Classify every clinical case:
 | `missed` | Reported its primary endpoint and missed it | Yes, as a failure |
 | `stopped_for_failure` | Stopped for futility, safety or lack of efficacy. This includes a trial stopped because another trial of the same drug failed | Yes, as a failure |
 | `stopped_other` | Withdrawn before enrolling anyone, or stopped for a specific stated reason unrelated to the drug's efficacy or safety in this or any other trial, such as slow enrollment or a supply problem | No, but report the count |
-| `no_results` | Ended or went quiet with no public result, stopped with no stated reason, or stopped after enrollment began for a vague reason ("business decision", "strategic reasons", "sponsor decision") with no public result | No, but it sets the bounds below |
-| `ongoing` | Primary endpoint not yet reported and the trial is still running, or suspended and may resume | No |
+| `no_results` | Ended or went quiet with no public result, stopped with no stated reason, or stopped after enrollment began for a vague reason ("business decision", "strategic reasons", "sponsor decision") with no public result. A trial has gone quiet once the period set in the inclusion rules has passed since its primary completion date in the registry with no public result, whatever its status | No, but it sets the bounds below |
+| `ongoing` | Primary endpoint not yet reported, and the trial is still running or suspended and may resume, and the period set in the inclusion rules hasn't passed since its primary completion date | No |
+
+Before searching, write down in the inclusion rules how long after its primary completion date a trial with no public result counts as gone quiet, for example two years. Use the actual date if the registry gives one and the anticipated date if not, and record which.
 
 **Counting rules.** The unit is the trial, and report how many distinct programs the cases come from, because trials in one program aren't independent.
 
@@ -133,7 +140,7 @@ Classify every clinical case:
 - **Several arms.** Count the arm that matches the pattern. If more than one arm matches, it is still one case, judged by the trial's own rule for success.
 - **Doubtful stops.** If a stopped trial could be either `stopped_other` or `no_results`, use `no_results`, which widens the bounds instead of dropping the case.
 
-Classify regulatory cases by **FDA's action on the submission in the pattern**. The unit is one review cycle: an original application or one resubmission, and what FDA did with it. Report how many distinct applications the review cycles come from, because cycles of one application aren't independent. Name the unit with every count in the report: a count of review cycles isn't a count of applications.
+Classify regulatory cases by **FDA's action on the submission in the pattern**. The unit is one review cycle: an original application or one resubmission, and what FDA did with it. Record which cycle it is in `cycle`: the application number and the cycle together identify a case, so remove duplicates on both when you merge files. Report how many distinct applications the review cycles come from, because cycles of one application aren't independent. Name the unit with every count in the report: a count of review cycles isn't a count of applications.
 
 | Outcome | In the base rate? |
 |---|---|
@@ -142,7 +149,7 @@ Classify regulatory cases by **FDA's action on the submission in the pattern**. 
 | `refuse_to_file` (FDA declined to accept the application for review) | Yes, as a failure |
 | `withdrawn` (by the sponsor, before FDA acted) | No, but it sets the bounds below, counted both ways. A sponsor may withdraw because it expects a refusal, so the true rate is more likely to sit near the lower bound |
 | `pending` | No |
-| `undisclosed` (the submission is known to have been made, but no FDA action on it has been made public, and it isn't known to be under review) | No, but it sets the bounds below, counted with `withdrawn`. Don't label a case `crl` or `refuse_to_file` without a source that shows the letter |
+| `undisclosed` (the submission is known to have been made, but no FDA action on it has been made public, and it isn't known to be under review) | No, but it sets the bounds below, counted with `withdrawn`. Don't label a case `crl` or `refuse_to_file` without a source that reports the letter, such as the letter itself or a sponsor's press release or SEC filing |
 | `not_resubmitted` (the pattern starts from a CRL or a refusal to file, and the sponsor hasn't resubmitted within the period set in the inclusion rules) | No, but report the count |
 
 **Patterns that start from an earlier FDA action.** If the pattern is what happens after a CRL or a refusal to file, some sponsors never resubmit. Those applications have no later review cycle, so a rate per review cycle leaves them out and holds only for sponsors who resubmitted. Label them `not_resubmitted` and record the date of the earlier action, because a recent one may still be resubmitted. Say in the report that the rate is conditional on resubmission, and next to it give the eventual-approval rate per application, defined below, in which they count as failures. Before searching, write down in the inclusion rules how long a sponsor must have gone without resubmitting before an application counts as a failure, for example two years from the earlier action. Label newer ones `pending`, and give their count.
@@ -162,6 +169,7 @@ Record every candidate in `precedents.json`, in this shape in both modes:
   "cases": [
     {
       "id": "registry ID or application number",
+      "cycle": "regulatory only: which review cycle of the application, e.g. original, resubmission 1, resubmission 2",
       "name": "",
       "drug": "",
       "program": "",
@@ -209,7 +217,7 @@ For each reference class you can enumerate, report the figures below. The broade
 
 - **Base rate**: successes divided by resolved cases. If N is 0, report "No resolved cases"
 - **N**: the number of resolved cases, meaning the cases whose outcome is marked "Yes" in the classification tables above
-- **95% interval**: a Wilson score interval. With small N this will be wide, and that's the honest answer
+- **95% interval**: a Wilson score interval. With small N this will be wide, and that's the honest answer. It treats every case as independent, which trials in one program and review cycles of one application aren't, so when a few programs supply many of the cases the true uncertainty is wider than the interval. Say so next to it
 - **Bounds for missing results**: the rate if every `no_results` (or `withdrawn` or `undisclosed`) case were a failure, and the rate if every one were a success. Show these next to the headline rate, because the interval doesn't account for missing cases
 - **Confidence**: low if N<5 or the bounds are more than 20 points apart. Otherwise high if N≥15, the class is the narrowest one, and no two programs supply more than half of the resolved cases, and medium if not. In regulatory mode, no higher than medium (see above)
 

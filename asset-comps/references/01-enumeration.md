@@ -12,9 +12,9 @@ better to include too many than to miss a key competitor.
 ## Subject asset
 
 Start by profiling the subject asset from sources: company, target, mechanism,
-stage, key clinical data and any stated development timeline. Tiering and
-every later comparison depend on this, so don't fill it in from memory. If it
-can't be identified, stop and ask the user. On an unattended run, say why in
+stage in the indication and region, key clinical data and any stated
+development timeline. Tiering and every later comparison depend on this, so
+don't fill it in from memory. If it can't be identified, stop and ask the user. On an unattended run, say why in
 `iteration_notes` in `progress.json` and end the run.
 
 ## Target information
@@ -24,7 +24,10 @@ For each competitor, capture:
 - Drug name (generic and brand if applicable)
 - Company/sponsor
 - Target and mechanism class
-- Development stage, with its source
+- Development stage in the subject asset's indication and the region it
+  applies to, with its source. Record a higher stage in another indication or
+  region separately, so that a drug marketed elsewhere but in Phase II here
+  reads as Phase II
 - Category (`same_target`, `target_specific_soc`, `baseline_soc`,
   `adjacent_mechanism`, `other_pipeline`, `withdrawn_failed`)
 

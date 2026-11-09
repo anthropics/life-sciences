@@ -27,10 +27,13 @@ who reaches the market first, and when; which patients remain open; what would c
 This is a reading of the evidence. It isn't a recommendation to invest, license or prescribe.]
 
 ## Main rivals against [Asset Name]
-[One table. A row for the subject asset, then one for each Level 1 competitor. Columns: stage and next
-milestone; efficacy on the endpoint that matters, with trial and population; safety; dosing and route;
-ahead of, level with or behind the subject asset, and on what. Take the last column from
-`differentiation_vs_subject` in findings.json. Follow "Comparing across trials" below.]
+[One table. A row for the subject asset, from `subject_asset` in findings.json, then one for each Level 1
+competitor. Columns: stage in the indication (with region) and next milestone; efficacy on the endpoint
+that matters, with trial and population; safety; dosing and route; timing against the subject asset:
+ahead of, level with or behind it in development, on stage and stated milestones. Take the last column
+from `timeline` in findings.json. It places drugs by development timing only, never by efficacy or
+safety: follow "Comparing across trials" below. Write "Not publicly available" in a cell only where
+findings.json does.]
 
 ## Standard of Care Context
 [What does current SOC achieve? What % reach treatment goals? Key unmet needs?]
@@ -117,7 +120,9 @@ Apply `references/04-writing-style.md`.
 - Only a head-to-head trial supports saying that one drug outperforms
   another. Where the figures come from separate trials, say so, name the
   differences that matter (population, prior therapy, endpoint definition,
-  length of follow-up) and don't rank the drugs on them
+  length of follow-up) and don't rank the drugs on them. "Ahead of" or
+  "behind" the subject asset refers to development timing, not to efficacy
+  or safety
 
 **Describe each program once**, in the section where it matters most. Elsewhere
 refer to it by name, with only the point that section adds.

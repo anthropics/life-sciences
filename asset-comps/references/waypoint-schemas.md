@@ -39,7 +39,7 @@ All competitors found.
     "indication": "[discovered or provided]",
     "target": "[primary target]",
     "mechanism": "[mechanism class]",
-    "stage": "[development stage]",
+    "stage": "[development stage in the indication, with region]",
     "key_data": "[headline clinical data]",
     "stated_timeline": "[company-stated milestones, or Not publicly available]",
     "sources": [{"source_url": "[URL]", "source_type": "[type]", "quote": "[verbatim]"}]
@@ -51,8 +51,10 @@ All competitors found.
       "company": "[company]",
       "target": "[target]",
       "mechanism": "[mechanism]",
-      "stage": "[Preclinical/Phase I/Phase II/Phase III/Under review/Marketed/Withdrawn/Discontinued]",
+      "stage": "[stage in the subject asset's indication: Preclinical/Phase I/Phase II/Phase III/Under review/Marketed/Withdrawn/Discontinued]",
+      "stage_region": "[region(s) where that stage holds: US, EU, China, Japan, global...]",
       "stage_source_url": "[URL]",
+      "other_stages": "[higher stages in other indications or regions, e.g. Marketed in [indication] (EU), or none]",
       "category": "[same_target|target_specific_soc|baseline_soc|adjacent_mechanism|other_pipeline|withdrawn_failed]",
       "threat_level": 1
     }
@@ -73,6 +75,21 @@ Accumulated research findings (written/updated in research phase).
 
 ```json
 {
+  "subject_asset": {
+    "name": "<asset>",
+    "stage": "[stage in the indication, with region]",
+    "next_milestone": "[company-stated milestone, or Not publicly available]",
+    "efficacy": ["[entries in the same shape as a competitor's efficacy]"],
+    "safety": "[an object in the same shape as a competitor's safety]",
+    "dosing_route": {
+      "dose": "[dose and frequency]",
+      "route": "[oral/IV/SC/...]",
+      "basis": "[approved label or the trial it was used in]",
+      "source_url": "[URL]",
+      "source_type": "[type]",
+      "quote": "[verbatim]"
+    }
+  },
   "landscape": [
     {
       "topic": "[soc_outcomes|unmet_need|combinations|failure_reason]",
@@ -87,8 +104,8 @@ Accumulated research findings (written/updated in research phase).
       "name": "[drug name]",
       "aliases": ["[code name or brand name]"],
       "company": "[company]",
-      "stage": "[stage]",
-      "timeline": "[stated milestones and who's ahead of the subject asset]",
+      "stage": "[stage in the indication, with region; other indications or regions noted separately]",
+      "timeline": "[stated milestones, and whether it is ahead of, level with or behind the subject asset in development]",
       "mechanism": "[detailed mechanism of action]",
       "efficacy": [
         {
@@ -109,6 +126,13 @@ Accumulated research findings (written/updated in research phase).
         "comparator": "[comparator]",
         "key_aes": [{"ae": "[name]", "incidence": "[X%]"}],
         "black_box": "[true/false/none]",
+        "source_url": "[URL]",
+        "source_type": "[type]",
+        "quote": "[verbatim]"
+      },
+      "dosing_route": {
+        "dose": "[dose and frequency]",
+        "route": "[oral/IV/SC/...]",
         "source_url": "[URL]",
         "source_type": "[type]",
         "quote": "[verbatim]"

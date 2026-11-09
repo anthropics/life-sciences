@@ -42,7 +42,9 @@ Builds a comprehensive competitive map for a therapeutic asset: finds the compet
 | Licensed data | Any pipeline or competitive intelligence connector the user has, which should be preferred for pipeline and competitor data. Cross-check stage and dates against the registry or the sponsor, and follow the source's license terms on what can be quoted or shared |
 | Parallel research | If a subagent tool is available, use it for Phase 2, whatever the size of the landscape. Running the same research yourself, in turn, is the fallback for when no subagent tool exists; it covers less ground |
 
-If a connector isn't available, say so and fall back to web search against the public source (clinicaltrials.gov, ebi.ac.uk/chembl, accessdata.fda.gov, pubmed.ncbi.nlm.nih.gov), recording what the fallback loses.
+If a connector isn't available, say so and fall back to web search against the public source (clinicaltrials.gov, ebi.ac.uk/chembl, accessdata.fda.gov, pubmed.ncbi.nlm.nih.gov), recording what the fallback loses. For a trial record, fetch `https://clinicaltrials.gov/api/v2/studies/<NCT ID>`, which returns the record as JSON; a plain fetch of `clinicaltrials.gov/study/<NCT ID>` returns a JavaScript page with no trial data. Keep the study page as the link you cite.
+
+If there is no web search or web fetch either, and no connector covers what a phase needs, stop and tell the user which tools are missing. Don't fill the map from memory. On an unattended run, say so in `iteration_notes` in `progress.json` and end the run.
 
 ## Output layout
 
@@ -84,7 +86,7 @@ Read `references/01-enumeration.md`. Profile the subject asset, then find all po
 
 Read `references/02-research.md`. Research each competitor, with depth scaled to threat level (Level 1 exhaustive, Level 4 minimal). Consolidate into `waypoints/findings.json` and check coverage.
 
-**Checkpoint**: report coverage by threat level (Level 1 must be 100%, Level 2 at least 90%), remaining gaps and `anomaly_flags`. If Level 1 or 2 gaps remain, run targeted searches and checkpoint again before advancing. Data confirmed as not public counts as covered.
+**Checkpoint**: report coverage by threat level (Level 1 must be 100%, Level 2 at least 90%), remaining gaps and `anomaly_flags`. If Level 1 or 2 gaps remain and the budget allows, run targeted searches and checkpoint again before advancing. Once the budget is reached, advance to Phase 3 with the gaps recorded. Data confirmed as not public, under the rule in `references/00-research-standards.md`, counts as covered.
 
 ### Phase 3: Synthesis
 

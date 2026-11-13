@@ -26,6 +26,23 @@
       ]
     },
     {
+      "name": "indication-dossier",
+      "source": "./",
+      "description": "Write a cited dossier on one therapeutic indication: its patients, epidemiology, biology, standard of care, regulatory path and key trials",
+      "category": "life-sciences",
+      "tags": [
+        "clinical-development",
+        "epidemiology",
+        "regulatory",
+        "clinical-trials",
+        "research"
+      ],
+      "strict": false,
+      "skills": [
+        "./indication-dossier"
+      ]
+    },
+    {
       "name": "scientific-problem-selection",
       "source": "./",
       "description": "Systematic framework for scientific problem selection and strategic research decisions based on Fischbach & Walsh methodology",
